@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>מבצע אומניטריקס - אותיות</title>
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 15px;
+            overflow-x: hidden;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        h1 {
+            color: #39ff14;
+            text-shadow: 0 0 10px #39ff14;
+            font-size: 1.8rem;
+            margin-top: 10px;
+        }
+
+        #omnitrix-container {
+            width: 90%;
+            max-width: 500px;
+            background: #151515;
+            border: 3px solid #222;
+            border-radius: 20px;
+            margin: 15px auto;
+            padding: 8px;
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
+        }
+
+        #omnitrix-bar {
+            height: 25px;
+            width: 0%;
+            background: linear-gradient(90deg, #39ff14, #1d9e08);
+            border-radius: 15px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px #39ff14;
+        }
+
+        #game-box {
+            background: #111;
+            border: 4px solid #39ff14;
+            border-radius: 25px;
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.9);
+        }
+
+        #alien-display {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #1a1a1a;
+            border-radius: 15px;
+            border: 2px dashed #444;
+        }
+
+        .alien-name {
+            font-size: 2.2rem;
+            color: #00ffff;
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+            text-shadow: 0 0 5px rgba(0,255,255,0.5);
+        }
+
+        #options-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .letter-btn {
+            background: #222;
+            color: white;
+            border: 3px solid #444;
+            font-size: 3.5rem;
+            font-weight: bold;
+            padding: 10px 0;
+            width: 90px;
+            height: 90px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .letter-btn:active {
+            transform: scale(0.9);
+        }
+
+        .correct {
+            background: #1d9e08 !important;
+            border-color: #39ff14 !important;
+            animation: celebrate 0.4s ease infinite alternate;
+        }
+
+        .wrong {
+            animation: shake 0.4s ease;
+            background: #442222 !important;
+            opacity: 0.6;
+        }
+
+        .hint {
+            animation: pulse-hint 0.8s infinite alternate;
+            border-color: #39ff14 !important;
+            background: #113311 !important;
+        }
+
+        #feedback {
+            margin-top: 25px;
+            font-size: 1.4rem;
+            height: 40px;
+            font-weight: bold;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @keyframes pulse-hint {
+            0% { box-shadow: 0 0 5px #39ff14; transform: scale(1); }
+            100% { box-shadow: 0 0 25px #39ff14; transform: scale(1.08); }
+        }
+
+        @keyframes celebrate {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-12px); }
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <h1>🟢 מבצע אומניטריקס: כיתה א' 🟢</h1>
+    
+    <div id="omnitrix-container">
+        <div id="omnitrix-bar"></div>
+    </div>
+
+    <div id="game-box">
+        <div id="level-screen">
+            <div id="alien-display">
+                מצא את האות שבה מתחיל:
+                <span id="alien-target" class="alien-name">ארבע זרועות</span>
+            </div>
+
+            <div id="options-container"></div>
+
+            <div id="feedback"></div>
+        </div>
+
+        <div id="victory-screen" class="hidden">
+            <h2 style="color: #39ff14; font-size: 2.8rem; margin-bottom:10px;">!!אללוף!!</h2>
+            <p style="font-size: 1.4rem; padding: 0 10px;">האומניטריקס טעון ב-100% כוח! כל האותיות ניצלו מווילגאקס!</p>
+            <button onclick="resetGame()" style="background:#39ff14; color:#000; font-size:1.6rem; padding:12px 30px; border:none; border-radius:15px; cursor:pointer; font-weight:bold; margin-top:20px; box-shadow: 0 5px 15px rgba(57,255,20,0.4);">לשחק שוב ⚡</button>
+        </div>
+    </div>
+
+    <script>
+        // מאגר המשימות המורחב של בן טן
+        const questions = [
+            { alien: "אָרְבַּע זְרוֹעוֹת", correct: "א", options: ["א", "ב", "ג"] },
+            { alien: "בֶּן טֶן", correct: "ב", options: ["מ", "ב", "ק"] },
+            { alien: "חַיְזָר אִיקְס", correct: "ח", options: ["ה", "כ", "ח"] },
+            { alien: "וִילְגַאקְס", correct: "ו", options: ["ז", "ו", "ד"] },
+            { alien: "דַּיְימוֹנְדְהֶד", correct: "ד", options: ["ר", "ד", "ז"] },
+            { alien: "קֶנְוֹנְבּוֹלְט", correct: "ק", options: ["כ", "ק", "ג"] },
+            { alien: "מֶגָה-וָואט", correct: "מ", options: ["נ", "ת", "מ"] }
+        ];
+
+        let currentQuestionIndex = 0;
+        let hintTimer;
+
+        function loadQuestion() {
+            clearTimeout(hintTimer);
+            const q = questions[currentQuestionIndex];
+            
+            document.getElementById('alien-target').innerText = q.alien;
+            
+            // עדכון מד התקדמות
+            const progress = (currentQuestionIndex / questions.length) * 100;
+            document.getElementById('omnitrix-bar').style.width = progress + '%';
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            document.getElementById('feedback').innerText = '';
+
+            // ערבוב קל של האפשרויות שהאות הנכונה לא תהיה תמיד באותו מקום
+            const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+
+            shuffledOptions.forEach(letter => {
+                const btn = document.createElement('button');
+                btn.className = 'letter-btn';
+                btn.innerText = letter;
+                // שימוש ב-pointerdown לתגובה מהירה במגע בנייד
+                btn.addEventListener('pointerdown', (e) => {
+                    e.preventDefault();
+                    checkAnswer(btn, letter, q.correct);
+                });
+                container.appendChild(btn);
+            });
+
+            // רמז ללא תסכול: אחרי 6 שניות ללא לחיצה, האות הנכונה תתחיל להבהב בירוק
+            hintTimer = setTimeout(() => {
+                const buttons = document.querySelectorAll('.letter-btn');
+                buttons.forEach(b => {
+                    if(b.innerText === q.correct) {
+                        b.classList.add('hint');
+                    }
+                });
+            }, 6000); 
+        }
+
+        function checkAnswer(button, selected, correct) {
+            if (button.disabled) return;
+
+            if (selected === correct) {
+                clearTimeout(hintTimer);
+                button.classList.add('correct');
+                
+                document.querySelectorAll('.letter-btn').forEach(b => b.disabled = true);
+                
+                document.getElementById('feedback').innerText = "כל הכבוד! האומניטריקס נטען! ⚡";
+                document.getElementById('feedback').style.color = "#39ff14";
+
+                setTimeout(() => {
+                    currentQuestionIndex++;
+                    if (currentQuestionIndex < questions.length) {
+                        loadQuestion();
+                    } else {
+                        showVictory();
+                    }
+                }, 1800);
+            } else {
+                // חסין כישלון: האות נצבעת זמנית, אין צליל רע, וממשיכים לנסות
+                button.classList.add('wrong');
+                document.getElementById('feedback').innerText = "קרוב מאוד! בוא ננסה שוב...";
+                document.getElementById('feedback').style.color = "#ffcc00";
+                
+                setTimeout(() => {
+                    button.classList.remove('wrong');
+                }, 600);
+            }
+        }
+
+        function showVictory() {
+            document.getElementById('omnitrix-bar').style.width = '100%';
+            document.getElementById('level-screen').classList.add('hidden');
+            document.getElementById('victory-screen').classList.remove('hidden');
+        }
+
+        function resetGame() {
+            currentQuestionIndex = 0;
+            document.getElementById('level-screen').classList.remove('hidden');
+            document.getElementById('victory-screen').classList.add('hidden');
+            loadQuestion();
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
