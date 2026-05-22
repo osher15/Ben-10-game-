@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>בן 10 - הרפתקת האותיות 🛸</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800;900&family=Rubik:wght@500;700;900&display=swap');
+
+  :root {
+    --omni-green: #8fff00;
+    --omni-green-dark: #5fb800;
+    --omni-black: #0a0e1a;
+    --omni-black2: #131a2e;
+    --hero-blue: #00d4ff;
+    --hero-red: #ff3b3b;
+    --hero-orange: #ff9500;
+    --gold: #ffd24a;
+    --panel: rgba(18,26,46,0.92);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+  html,body {
+    height:100%;
+    font-family:'Heebo',sans-serif;
+    background:var(--omni-black);
+    overflow:hidden;
+    user-select:none;
+    touch-action:manipulation;
+  }
+
+  #app {
+    position:fixed; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(143,255,0,0.12), transparent 55%),
+      radial-gradient(ellipse at 50% 100%, rgba(0,212,255,0.12), transparent 55%),
+      linear-gradient(160deg, #060912 0%, #0a0e1a 50%, #0d1424 100%);
+  }
+
+  /* moving grid background */
+  #app::before {
+    content:''; position:absolute; inset:-50%;
+    background-image:
+      linear-gradient(rgba(143,255,0,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(143,255,0,0.06) 1px, transparent 1px);
+    background-size:44px 44px;
+    transform:perspective(400px) rotateX(55deg);
+    animation:gridMove 8s linear infinite;
+    pointer-events:none;
+  }
+  @keyframes gridMove { from{background-position:0 0;} to{background-position:0 44px;} }
+
+  .screen {
+    position:relative; z-index:2;
+    width:100%; max-width:520px; height:100%;
+    max-height:920px;
+    display:none; flex-direction:column;
+    padding:18px 16px 22px;
+  }
+  .screen.active { display:flex; animation:screenIn .5s cubic-bezier(.2,.9,.3,1.4); }
+  @keyframes screenIn { from{opacity:0; transform:scale(.92) translateY(20px);} to{opacity:1; transform:scale(1) translateY(0);} }
+
+  /* ===== HEADER / OMNITRIX BADGE ===== */
+  .omni-badge {
+    width:64px; height:64px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #1a2238, #060912);
+    border:4px solid #2a3550;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 0 0 3px #0a0e1a, 0 0 22px rgba(143,255,0,.5);
+    flex-shrink:0;
+  }
+  .omni-core {
+    width:38px; height:38px; border-radius:50%;
+    background:var(--omni-green);
+    clip-path: polygon(50% 0, 62% 38%, 100% 38%, 70% 62%, 82% 100%, 50% 75%, 18% 100%, 30% 62%, 0 38%, 38% 38%);
+    transform:rotate(0deg);
+    box-shadow:0 0 18px var(--omni-green);
+    animation:omniPulse 2s ease-in-out infinite;
+  }
+  @keyframes omniPulse { 0%,100%{filter:brightness(1);} 50%{filter:brightness(1.5);} }
+
+  /* ===== TITLE SCREEN ===== */
+  #titleScreen { justify-content:center; align-items:center; text-align:center; gap:8px; }
+  .big-omni {
+    width:150px; height:150px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #1a2238, #04060d);
+    border:8px solid #2a3550;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 0 0 6px #0a0e1a, 0 0 60px rgba(143,255,0,.6), inset 0 0 30px rgba(0,0,0,.6);
+    margin-bottom:6px;
+    animation:floaty 3s ease-in-out infinite;
+    cursor:pointer;
+  }
+  @keyframes floaty { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-12px);} }
+  .big-omni .omni-core { width:92px; height:92px; }
+
+  .game-title {
+    font-family:'Rubik',sans-serif; font-weight:900;
+    font-size:2.4rem; line-height:1.05; color:#fff;
+    text-shadow:0 0 18px rgba(143,255,0,.7), 0 4px 0 #2a3550;
+    letter-spacing:1px;
+  }
+  .game-title .ten {
+    color:var(--omni-black); background:var(--omni-green);
+    padding:0 12px; border-radius:10px; display:inline-block;
+    box-shadow:0 0 20px var(--omni-green);
+  }
+  .subtitle { color:var(--hero-blue); font-size:1.1rem; font-weight:700; margin-bottom:6px; text-shadow:0 0 12px rgba(0,212,255,.6); }
+  .tagline { color:#9fb0d0; font-size:.95rem; margin-bottom:14px; }
+
+  /* ===== BUTTONS ===== */
+  .btn {
+    font-family:'Rubik',sans-serif; font-weight:700;
+    border:none; cursor:pointer; color:#fff;
+    border-radius:18px; padding:16px 22px;
+    font-size:1.15rem; position:relative;
+    transition:transform .12s, box-shadow .2s, filter .2s;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    width:100%;
+  }
+  .btn:active { transform:scale(.95); }
+  .btn-green { background:linear-gradient(135deg,#9fff1f,#5fb800); color:#06210a; box-shadow:0 6px 0 #3d7a00, 0 0 22px rgba(143,255,0,.5); }
+  .btn-blue  { background:linear-gradient(135deg,#3ee0ff,#0086c9); box-shadow:0 6px 0 #005a8a, 0 0 22px rgba(0,212,255,.45); }
+  .btn-red   { background:linear-gradient(135deg,#ff6b6b,#cc1f1f); box-shadow:0 6px 0 #8a0000, 0 0 22px rgba(255,59,59,.45); }
+  .btn-orange{ background:linear-gradient(135deg,#ffb24a,#e07000); box-shadow:0 6px 0 #9a4a00, 0 0 22px rgba(255,149,0,.45); }
+  .btn-ghost { background:rgba(255,255,255,.08); border:2px solid rgba(255,255,255,.2); box-shadow:none; padding:12px; font-size:1rem; }
+  .btn:active.btn-green,.btn:active.btn-blue,.btn:active.btn-red,.btn:active.btn-orange { box-shadow:0 2px 0 rgba(0,0,0,.4); }
+  .menu-btns { width:100%; max-width:340px; display:flex; flex-direction:column; gap:12px; }
+
+  /* ===== MODE SELECT ===== */
+  #menuScreen { justify-content:center; gap:14px; }
+  .menu-head { text-align:center; margin-bottom:4px; }
+  .menu-head h2 { font-family:'Rubik'; font-weight:900; color:#fff; font-size:1.7rem; text-shadow:0 0 14px rgba(143,255,0,.5); }
+  .menu-head p { color:#9fb0d0; font-size:.95rem; margin-top:4px; }
+  .mode-card {
+    display:flex; align-items:center; gap:14px;
+    background:var(--panel); border:2px solid rgba(255,255,255,.08);
+    border-radius:20px; padding:14px 16px; cursor:pointer;
+    transition:transform .12s, border-color .2s, box-shadow .2s;
+  }
+  .mode-card:active { transform:scale(.97); }
+  .mode-card .ic { width:56px; height:56px; border-radius:16px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:2rem; }
+  .mode-card .txt h3 { font-family:'Rubik'; color:#fff; font-size:1.15rem; font-weight:700; }
+  .mode-card .txt p { color:#9fb0d0; font-size:.82rem; margin-top:2px; line-height:1.3; }
+  .mode-card.m1 { border-color:rgba(143,255,0,.4); } .mode-card.m1 .ic { background:linear-gradient(135deg,#9fff1f,#5fb800); }
+  .mode-card.m2 { border-color:rgba(0,212,255,.4); } .mode-card.m2 .ic { background:linear-gradient(135deg,#3ee0ff,#0086c9); }
+  .mode-card.m3 { border-color:rgba(255,149,0,.4); } .mode-card.m3 .ic { background:linear-gradient(135deg,#ffb24a,#e07000); }
+  .mode-card.m4 { border-color:rgba(255,59,59,.4); } .mode-card.m4 .ic { background:linear-gradient(135deg,#ff6b6b,#cc1f1f); }
+
+  /* ===== GAME HUD ===== */
+  .hud { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
+  .hud-left { display:flex; align-items:center; gap:10px; }
+  .pill {
+    background:var(--panel); border:2px solid rgba(255,255,255,.1);
+    border-radius:14px; padding:8px 12px; display:flex; align-items:center; gap:6px;
+    font-family:'Rubik'; font-weight:700; color:#fff; font-size:.95rem;
+  }
+  .pill .lbl { color:#9fb0d0; font-size:.72rem; font-weight:500; }
+  .stars-row { display:flex; gap:3px; }
+  .star { font-size:1.05rem; filter:grayscale(1) opacity(.4); transition:.3s; }
+  .star.on { filter:none; transform:scale(1.15); }
+  .icon-btn { width:42px; height:42px; border-radius:12px; background:rgba(255,255,255,.08); border:2px solid rgba(255,255,255,.15); color:#fff; font-size:1.2rem; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .icon-btn:active { transform:scale(.9); }
+
+  /* timer bar */
+  .timer-wrap { height:12px; background:rgba(255,255,255,.08); border-radius:10px; overflow:hidden; margin-bottom:14px; border:1px solid rgba(255,255,255,.1); }
+  .timer-fill { height:100%; width:100%; background:linear-gradient(90deg,#9fff1f,#5fb800); border-radius:10px; transition:width 1s linear, background .3s; }
+  .timer-fill.warn { background:linear-gradient(90deg,#ffb24a,#e07000); }
+  .timer-fill.danger { background:linear-gradient(90deg,#ff6b6b,#cc1f1f); animation:pulseBar .5s infinite; }
+  @keyframes pulseBar { 0%,100%{opacity:1;} 50%{opacity:.6;} }
+
+  /* ===== QUESTION AREA ===== */
+  .game-body { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; }
+
+  .grey-bubble {
+    display:flex; align-items:center; gap:12px;
+    background:linear-gradient(135deg, rgba(120,140,160,.25), rgba(80,100,120,.15));
+    border:2px solid rgba(160,180,200,.35);
+    border-radius:22px; padding:12px 18px; max-width:100%;
+    box-shadow:0 0 22px rgba(120,160,200,.2);
+  }
+  .grey-avatar { width:54px; height:54px; flex-shrink:0; }
+  .grey-text { color:#eaf2ff; font-size:1.05rem; font-weight:700; line-height:1.35; }
+  .grey-bubble.speaking { animation:bubbleTalk .4s ease-in-out infinite; }
+  @keyframes bubbleTalk { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-3px);} }
+
+  .prompt-card {
+    background:var(--panel); border:3px solid rgba(143,255,0,.3);
+    border-radius:26px; padding:20px; width:100%; text-align:center;
+    box-shadow:0 10px 40px rgba(0,0,0,.5), inset 0 0 30px rgba(143,255,0,.06);
+    position:relative; overflow:hidden;
+  }
+  .prompt-card .word-img-emoji { font-size:5rem; line-height:1; display:block; margin-bottom:6px; filter:drop-shadow(0 4px 12px rgba(0,0,0,.5)); animation:bob 2.5s ease-in-out infinite; }
+  @keyframes bob { 0%,100%{transform:translateY(0) rotate(-2deg);} 50%{transform:translateY(-8px) rotate(2deg);} }
+  .prompt-card .word-label { font-family:'Rubik'; font-weight:900; color:#fff; font-size:1.9rem; }
+  .prompt-card .word-hint { color:var(--omni-green); font-size:1rem; font-weight:700; margin-top:6px; }
+  .big-letter-display { font-family:'Rubik'; font-weight:900; font-size:6rem; color:var(--omni-green); text-shadow:0 0 30px rgba(143,255,0,.6); line-height:1; }
+
+  /* answer choices */
+  .choices { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; width:100%; }
+  .choices.three { grid-template-columns:repeat(3,1fr); }
+  .choice {
+    background:linear-gradient(135deg,#1a2440,#0d1424);
+    border:3px solid rgba(255,255,255,.12); border-radius:20px;
+    padding:18px 8px; font-family:'Rubik'; font-weight:900;
+    font-size:2.4rem; color:#fff; cursor:pointer;
+    transition:transform .12s, border-color .2s, background .2s;
+    display:flex; align-items:center; justify-content:center;
+    min-height:80px;
+  }
+  .choice .sub { font-size:.8rem; font-weight:500; color:#9fb0d0; display:block; margin-top:2px; }
+  .choice:active { transform:scale(.93); }
+  .choice.correct { background:linear-gradient(135deg,#9fff1f,#5fb800); color:#06210a; border-color:#fff; animation:correctPop .5s; box-shadow:0 0 30px rgba(143,255,0,.7); }
+  .choice.wrong { background:linear-gradient(135deg,#ff6b6b,#cc1f1f); border-color:#fff; animation:shake .4s; }
+  .choice.dim { opacity:.4; }
+  @keyframes correctPop { 0%{transform:scale(1);} 40%{transform:scale(1.15);} 100%{transform:scale(1);} }
+  @keyframes shake { 0%,100%{transform:translateX(0);} 20%{transform:translateX(-8px);} 40%{transform:translateX(8px);} 60%{transform:translateX(-6px);} 80%{transform:translateX(6px);} }
+
+  /* ===== FEEDBACK OVERLAY ===== */
+  .fb-overlay {
+    position:fixed; inset:0; z-index:50; display:none;
+    align-items:center; justify-content:center; flex-direction:column;
+    background:rgba(4,6,13,.82); backdrop-filter:blur(6px);
+    text-align:center; padding:20px;
+  }
+  .fb-overlay.show { display:flex; animation:fbIn .3s; }
+  @keyframes fbIn { from{opacity:0;} to{opacity:1;} }
+  .fb-hero { font-size:7rem; line-height:1; animation:heroEntrance .6s cubic-bezier(.2,.9,.3,1.6); margin-bottom:10px; filter:drop-shadow(0 0 30px rgba(143,255,0,.6)); }
+  @keyframes heroEntrance { 0%{transform:scale(0) rotate(-180deg);} 70%{transform:scale(1.2) rotate(10deg);} 100%{transform:scale(1) rotate(0);} }
+  .fb-title { font-family:'Rubik'; font-weight:900; font-size:2.6rem; color:var(--omni-green); text-shadow:0 0 22px rgba(143,255,0,.7); }
+  .fb-title.bad { color:var(--hero-orange); text-shadow:0 0 22px rgba(255,149,0,.7); }
+  .fb-sub { color:#eaf2ff; font-size:1.2rem; margin-top:8px; font-weight:700; max-width:340px; }
+
+  /* ===== RESULTS ===== */
+  #resultsScreen { justify-content:center; align-items:center; text-align:center; gap:14px; }
+  .result-hero { font-size:8rem; line-height:1; animation:floaty 3s ease-in-out infinite; }
+  .result-title { font-family:'Rubik'; font-weight:900; font-size:2.2rem; color:#fff; text-shadow:0 0 18px rgba(143,255,0,.6); }
+  .result-stars { display:flex; gap:8px; justify-content:center; margin:6px 0; }
+  .result-stars .star { font-size:3rem; }
+  .result-stat { display:flex; gap:16px; justify-content:center; }
+  .stat-box { background:var(--panel); border:2px solid rgba(255,255,255,.1); border-radius:18px; padding:14px 20px; min-width:90px; }
+  .stat-box .num { font-family:'Rubik'; font-weight:900; font-size:2rem; color:var(--omni-green); }
+  .stat-box .lbl { color:#9fb0d0; font-size:.82rem; }
+
+  /* confetti / particles */
+  .particle { position:fixed; z-index:60; pointer-events:none; font-size:1.5rem; animation:fall 2.2s linear forwards; }
+  @keyframes fall { to{ transform:translateY(110vh) rotate(720deg); opacity:0; } }
+
+  /* settings modal */
+  .modal-bg { position:fixed; inset:0; z-index:80; background:rgba(4,6,13,.85); display:none; align-items:center; justify-content:center; padding:20px; }
+  .modal-bg.show { display:flex; }
+  .modal { background:var(--omni-black2); border:3px solid rgba(143,255,0,.3); border-radius:24px; padding:24px; width:100%; max-width:360px; }
+  .modal h3 { font-family:'Rubik'; color:#fff; font-size:1.4rem; text-align:center; margin-bottom:16px; }
+  .setting-row { display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid rgba(255,255,255,.08); }
+  .setting-row span { color:#eaf2ff; font-weight:700; }
+  .toggle { width:54px; height:30px; border-radius:16px; background:rgba(255,255,255,.15); position:relative; cursor:pointer; transition:.3s; }
+  .toggle.on { background:var(--omni-green); }
+  .toggle::after { content:''; position:absolute; width:24px; height:24px; border-radius:50%; background:#fff; top:3px; right:3px; transition:.3s; }
+  .toggle.on::after { right:27px; }
+
+  .voice-tip { font-size:.78rem; color:#7a8aa8; text-align:center; margin-top:10px; line-height:1.4; }
+
+  /* progress dots */
+  .prog-dots { display:flex; gap:6px; justify-content:center; margin-bottom:8px; flex-wrap:wrap; }
+  .pdot { width:10px; height:10px; border-radius:50%; background:rgba(255,255,255,.15); transition:.3s; }
+  .pdot.done { background:var(--omni-green); box-shadow:0 0 8px var(--omni-green); }
+  .pdot.current { background:var(--hero-blue); transform:scale(1.3); }
+
+  .speaker-btn { background:rgba(0,212,255,.15); border:2px solid rgba(0,212,255,.4); color:var(--hero-blue); border-radius:14px; padding:8px 16px; font-family:'Rubik'; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; font-size:.95rem; }
+  .speaker-btn:active { transform:scale(.94); }
+
+  /* extra mode cards */
+  .mode-card.m5 { border-color:rgba(180,90,255,.4); } .mode-card.m5 .ic { background:linear-gradient(135deg,#c47bff,#7a2fd6); }
+  .mode-card.m6 { border-color:rgba(255,210,74,.45); } .mode-card.m6 .ic { background:linear-gradient(135deg,#ffe07a,#e0a000); }
+
+  /* difficulty buttons */
+  .diff-btn { text-align:right; justify-content:flex-start; gap:14px; padding:18px 20px; line-height:1.25; }
+  .diff-btn small { font-size:.78rem; }
+
+  /* ===== DRAG MATCH (mode 5) ===== */
+  .match-area { width:100%; display:flex; flex-direction:column; gap:14px; }
+  .match-targets { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .drop-zone {
+    background:var(--panel); border:3px dashed rgba(255,255,255,.2);
+    border-radius:18px; aspect-ratio:1/1; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; transition:.2s; position:relative;
+  }
+  .drop-zone .dz-emoji { font-size:2.6rem; line-height:1; }
+  .drop-zone.over { border-color:var(--omni-green); background:rgba(143,255,0,.12); transform:scale(1.05); }
+  .drop-zone.filled { border-style:solid; }
+  .drop-zone.correct-zone { border-color:var(--omni-green); background:rgba(143,255,0,.18); box-shadow:0 0 18px rgba(143,255,0,.4); }
+  .drop-zone .placed-label {
+    position:absolute; bottom:6px; font-family:'Rubik'; font-weight:900;
+    font-size:.95rem; color:var(--omni-green); background:rgba(6,33,10,.85);
+    padding:2px 8px; border-radius:8px; animation:correctPop .4s;
+  }
+  .word-bank { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; min-height:54px; }
+  .word-chip {
+    background:linear-gradient(135deg,#1a2440,#0d1424);
+    border:2px solid var(--hero-blue); border-radius:14px;
+    padding:12px 18px; font-family:'Rubik'; font-weight:900; font-size:1.25rem;
+    color:#fff; cursor:grab; touch-action:none; transition:transform .12s, box-shadow .2s;
+    box-shadow:0 0 12px rgba(0,212,255,.2);
+  }
+  .word-chip:active { cursor:grabbing; transform:scale(1.08); box-shadow:0 0 22px rgba(0,212,255,.5); }
+  .word-chip.dragging { opacity:.85; position:fixed; z-index:90; pointer-events:none; }
+  .word-chip.used { opacity:0; pointer-events:none; transform:scale(0); }
+  .match-instruction { color:#9fb0d0; font-size:.9rem; text-align:center; }
+
+  /* ===== PUZZLE (mode 6) ===== */
+  .puzzle-stage { display:flex; flex-direction:column; align-items:center; gap:14px; width:100%; }
+  .puzzle-board {
+    width:280px; height:280px; max-width:80vw; max-height:80vw;
+    display:grid; gap:4px; background:rgba(0,0,0,.4);
+    border:4px solid rgba(143,255,0,.4); border-radius:18px; padding:5px;
+    box-shadow:0 0 30px rgba(143,255,0,.25);
+  }
+  .puzzle-slot { background:rgba(255,255,255,.04); border-radius:6px; position:relative; overflow:hidden; transition:.2s; }
+  .puzzle-slot.over { background:rgba(143,255,0,.15); }
+  .puzzle-slot.filled { background:transparent; }
+  .puzzle-cell {
+    width:100%; height:100%; display:flex; align-items:center; justify-content:center;
+    font-size:2.2rem; background:linear-gradient(135deg,#1a2440,#0d1424);
+    border-radius:6px; cursor:grab; touch-action:none; transition:transform .12s;
+    border:1px solid rgba(143,255,0,.2); overflow:hidden;
+  }
+  .puzzle-cell.placed { cursor:default; border-color:transparent; animation:correctPop .35s; }
+  .puzzle-cell.dragging { opacity:.9; position:fixed; z-index:90; pointer-events:none; }
+  .puzzle-tray { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; min-height:70px; }
+  .puzzle-tray .puzzle-cell { width:62px; height:62px; box-shadow:0 0 12px rgba(143,255,0,.25); }
+  .puzzle-reveal-name { font-family:'Rubik'; font-weight:900; font-size:1.6rem; color:var(--omni-green); text-shadow:0 0 16px rgba(143,255,0,.6); text-align:center; animation:correctPop .5s; }
+  .puzzle-img-wrap { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:0; }
+  .puzzle-piece-canvas { width:100%; height:100%; display:block; }
+
+  @media (max-height:680px){
+    .prompt-card .word-img-emoji { font-size:3.6rem; }
+    .big-letter-display { font-size:4.5rem; }
+    .choice { min-height:64px; font-size:2rem; padding:12px 6px; }
+    .big-omni { width:110px; height:110px; }
+    .game-title { font-size:1.9rem; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ============ TITLE SCREEN ============ -->
+  <div class="screen active" id="titleScreen">
+    <div class="big-omni" onclick="Game.startSound()">
+      <div class="omni-core"></div>
+    </div>
+    <div class="game-title">בן <span class="ten">10</span></div>
+    <div class="subtitle">הרפתקת האותיות 🛸</div>
+    <div class="tagline">למד אותיות וצלילים פותחים עם הגיבורים החייזרים!</div>
+    <div class="menu-btns">
+      <button class="btn btn-green" onclick="Game.goMenu()">▶️ בואו נתחיל!</button>
+      <button class="btn btn-ghost" onclick="Game.openSettings()">⚙️ הגדרות</button>
+    </div>
+    <div class="voice-tip">💡 כדאי להפעיל עם קול! גרי מטר ידבר אליך 🔊</div>
+  </div>
+
+  <!-- ============ MENU / MODE SELECT ============ -->
+  <div class="screen" id="menuScreen">
+    <div class="hud">
+      <button class="icon-btn" onclick="Game.goTitle()">🏠</button>
+      <div class="menu-head"><h2>בחר משימה</h2></div>
+      <button class="icon-btn" onclick="Game.openSettings()">⚙️</button>
+    </div>
+    <div class="menu-head"><p>גרי מטר ימתין לך בכל משימה!</p></div>
+
+    <div class="mode-card m1" onclick="Game.startMode('firstSound')">
+      <div class="ic">🔤</div>
+      <div class="txt"><h3>איזה צליל פותח?</h3><p>שמע מילה ובחר את האות שבה היא מתחילה</p></div>
+    </div>
+    <div class="mode-card m2" onclick="Game.startMode('findLetter')">
+      <div class="ic">🔎</div>
+      <div class="txt"><h3>מצא את האות</h3><p>גרי מטר אומר אות — מצא אותה במהירות!</p></div>
+    </div>
+    <div class="mode-card m3" onclick="Game.startMode('matchWord')">
+      <div class="ic">🖼️</div>
+      <div class="txt"><h3>איזו מילה מתאימה?</h3><p>בחר את התמונה שמתחילה באות הנכונה</p></div>
+    </div>
+    <div class="mode-card m4" onclick="Game.startMode('letterOrder')">
+      <div class="ic">🔢</div>
+      <div class="txt"><h3>מי בא אחרי?</h3><p>למד את סדר האותיות בא-ב</p></div>
+    </div>
+    <div class="mode-card m5" onclick="Game.startMode('matchName')">
+      <div class="ic">🧩</div>
+      <div class="txt"><h3>התאם שם לתמונה</h3><p>גרור כל מילה אל התמונה הנכונה שלה</p></div>
+    </div>
+    <div class="mode-card m6" onclick="Game.startMode('puzzle')">
+      <div class="ic">🛸</div>
+      <div class="txt"><h3>פאזל החייזר</h3><p>הרכב את תמונת החייזר וגלה מי הוא!</p></div>
+    </div>
+  </div>
+
+  <!-- ============ DIFFICULTY SCREEN ============ -->
+  <div class="screen" id="diffScreen">
+    <div class="hud">
+      <button class="icon-btn" onclick="Game.goMenu()">⬅️</button>
+      <div class="menu-head"><h2>בחר רמה</h2></div>
+      <button class="icon-btn" onclick="Game.openSettings()">⚙️</button>
+    </div>
+    <div class="game-body" style="gap:14px; justify-content:center;">
+      <div class="grey-bubble" id="diffBubble" style="margin-bottom:6px;">
+        <svg class="grey-avatar" id="greyAvatarDiff" viewBox="0 0 100 110"></svg>
+        <div class="grey-text">באיזו רמה תרצה להתחיל, גיבור?</div>
+      </div>
+      <div class="menu-btns" style="max-width:380px; gap:14px;">
+        <button class="btn btn-green diff-btn" onclick="Game.startGame(1)">
+          <span style="font-size:1.5rem">🥚</span>
+          <span>רמה 1 · מתחילים<br><small style="font-weight:500;opacity:.8">איטי · 4 אפשרויות · רמזים</small></span>
+        </button>
+        <button class="btn btn-blue diff-btn" onclick="Game.startGame(2)">
+          <span style="font-size:1.5rem">⚡</span>
+          <span>רמה 2 · מתקדמים<br><small style="font-weight:500;opacity:.8">בינוני · יותר אפשרויות</small></span>
+        </button>
+        <button class="btn btn-red diff-btn" onclick="Game.startGame(3)">
+          <span style="font-size:1.5rem">🔥</span>
+          <span>רמה 3 · גיבורי-על<br><small style="font-weight:500;opacity:.8">מהיר · קשה · אלוף!</small></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ GAME SCREEN ============ -->
+  <div class="screen" id="gameScreen">
+    <div class="hud">
+      <div class="hud-left">
+        <button class="icon-btn" onclick="Game.quitToMenu()">⬅️</button>
+        <div class="pill"><span>⭐</span><span id="scoreVal">0</span></div>
+      </div>
+      <div class="pill"><span class="lbl">חיים</span><span id="livesVal">❤️❤️❤️</span></div>
+    </div>
+
+    <div class="prog-dots" id="progDots"></div>
+    <div class="timer-wrap"><div class="timer-fill" id="timerFill"></div></div>
+
+    <div class="game-body">
+      <div class="grey-bubble" id="greyBubble">
+        <svg class="grey-avatar" id="greyAvatar" viewBox="0 0 100 110"></svg>
+        <div class="grey-text" id="greyText">...</div>
+      </div>
+
+      <button class="speaker-btn" id="repeatBtn" onclick="Game.repeatPrompt()">🔊 שמע שוב</button>
+
+      <div class="prompt-card" id="promptCard"></div>
+
+      <div class="choices" id="choices"></div>
+    </div>
+  </div>
+
+  <!-- ============ RESULTS SCREEN ============ -->
+  <div class="screen" id="resultsScreen">
+    <div class="result-hero" id="resultHero">🦸</div>
+    <div class="result-title" id="resultTitle">כל הכבוד גיבור!</div>
+    <div class="result-stars" id="resultStars"></div>
+    <div class="result-stat">
+      <div class="stat-box"><div class="num" id="rsScore">0</div><div class="lbl">נקודות</div></div>
+      <div class="stat-box"><div class="num" id="rsCorrect">0</div><div class="lbl">תשובות נכונות</div></div>
+    </div>
+    <div class="menu-btns">
+      <button class="btn btn-green" onclick="Game.replay()">🔁 שחק שוב</button>
+      <button class="btn btn-blue" onclick="Game.goMenu()">🎮 משימה אחרת</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ FEEDBACK OVERLAY ============ -->
+<div class="fb-overlay" id="fbOverlay">
+  <div class="fb-hero" id="fbHero">🦸</div>
+  <div class="fb-title" id="fbTitle">מעולה!</div>
+  <div class="fb-sub" id="fbSub"></div>
+</div>
+
+<!-- ============ SETTINGS MODAL ============ -->
+<div class="modal-bg" id="settingsModal">
+  <div class="modal">
+    <h3>⚙️ הגדרות</h3>
+    <div class="setting-row">
+      <span>🔊 קול גרי מטר</span>
+      <div class="toggle on" id="tgVoice" onclick="Game.toggleSetting('voice',this)"></div>
+    </div>
+    <div class="setting-row">
+      <span>🎵 צלילי משחק</span>
+      <div class="toggle on" id="tgSfx" onclick="Game.toggleSetting('sfx',this)"></div>
+    </div>
+    <div class="setting-row">
+      <span>⏱️ טיימר</span>
+      <div class="toggle on" id="tgTimer" onclick="Game.toggleSetting('timer',this)"></div>
+    </div>
+    <div class="voice-tip">הקול עובד הכי טוב בדפדפן כרום 🌐<br>אם אין קול — לחץ "שמע שוב"</div>
+    <button class="btn btn-green" style="margin-top:16px" onclick="Game.closeSettings()">סגור ✓</button>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   בן 10 - הרפתקת האותיות
+   משחק לימוד אותיות וצלילים פותחים לכיתה א'
+   ===================================================================== */
+
+// ---------- מאגר מילים לפי אות פותחת (מילים מוכרות לילדי כיתה א') ----------
+const WORDS = {
+  'א': [{w:'אריה', e:'🦁'},{w:'אוטו', e:'🚗'},{w:'אבטיח', e:'🍉'},{w:'אווז', e:'🦢'}],
+  'ב': [{w:'בננה', e:'🍌'},{w:'בית', e:'🏠'},{w:'בלון', e:'🎈'},{w:'בקבוק', e:'🍼'}],
+  'ג': [{w:'גלידה', e:'🍦'},{w:'גמל', e:'🐫'},{w:'גזר', e:'🥕'},{w:'גיטרה', e:'🎸'}],
+  'ד': [{w:'דג', e:'🐟'},{w:'דב', e:'🐻'},{w:'דלת', e:'🚪'},{w:'דבורה', e:'🐝'}],
+  'ה': [{w:'הר', e:'⛰️'},{w:'המבורגר', e:'🍔'}],
+  'ו': [{w:'וופל', e:'🧇'},{w:'ורד', e:'🌹'}],
+  'ז': [{w:'זברה', e:'🦓'},{w:'זאב', e:'🐺'},{w:'זהב', e:'🥇'}],
+  'ח': [{w:'חתול', e:'🐱'},{w:'חמור', e:'🫏'},{w:'חלב', e:'🥛'},{w:'חולצה', e:'👕'}],
+  'ט': [{w:'טלפון', e:'📱'},{w:'טרקטור', e:'🚜'},{w:'טווס', e:'🦚'}],
+  'י': [{w:'ילד', e:'👦'},{w:'יד', e:'✋'},{w:'יונה', e:'🕊️'},{w:'ירח', e:'🌙'}],
+  'כ': [{w:'כלב', e:'🐶'},{w:'כדור', e:'⚽'},{w:'כתר', e:'👑'},{w:'כוכב', e:'⭐'}],
+  'ל': [{w:'לימון', e:'🍋'},{w:'לב', e:'❤️'},{w:'ליצן', e:'🤡'},{w:'לוויתן', e:'🐳'}],
+  'מ': [{w:'מטוס', e:'✈️'},{w:'מלך', e:'🤴'},{w:'מפתח', e:'🔑'},{w:'מתנה', e:'🎁'}],
+  'נ': [{w:'נר', e:'🕯️'},{w:'נחש', e:'🐍'},{w:'נמר', e:'🐯'},{w:'נעל', e:'👟'}],
+  'ס': [{w:'סוס', e:'🐴'},{w:'סוכרייה', e:'🍬'},{w:'סירה', e:'⛵'},{w:'ספר', e:'📚'}],
+  'ע': [{w:'עין', e:'👁️'},{w:'עכבר', e:'🐭'},{w:'עץ', e:'🌳'},{w:'עוגה', e:'🎂'}],
+  'פ': [{w:'פיל', e:'🐘'},{w:'פרח', e:'🌸'},{w:'פרפר', e:'🦋'},{w:'פיצה', e:'🍕'}],
+  'צ': [{w:'צב', e:'🐢'},{w:'צפרדע', e:'🐸'},{w:'ציפור', e:'🐦'}],
+  'ק': [{w:'קוף', e:'🐵'},{w:'קשת', e:'🌈'},{w:'קרח', e:'🧊'},{w:'קפה', e:'☕'}],
+  'ר': [{w:'רכבת', e:'�train'.replace('train','')+'🚆'},{w:'רגל', e:'🦶'},{w:'רובוט', e:'🤖'}],
+  'ש': [{w:'שמש', e:'☀️'},{w:'שועל', e:'🦊'},{w:'שעון', e:'⏰'},{w:'שולחן', e:'🪑'}],
+  'ת': [{w:'תפוח', e:'🍎'},{w:'תות', e:'🍓'},{w:'תרנגול', e:'🐓'},{w:'תוכי', e:'🦜'}],
+};
+// תיקון רכבת
+WORDS['ר'][0] = {w:'רכבת', e:'🚆'};
+
+const LETTERS = Object.keys(WORDS); // כל האותיות שיש להן מילים
+const ALEFBET = ['א','ב','ג','ד','ה','ו','ז','ח','ט','י','כ','ל','מ','נ','ס','ע','פ','צ','ק','ר','ש','ת'];
+
+// שמות אותיות לקריאה בקול
+const LETTER_NAMES = {
+  'א':'אָלֶף','ב':'בֵּית','ג':'גִימֶל','ד':'דָלֶת','ה':'הֵא','ו':'וָו','ז':'זַיִן',
+  'ח':'חֵית','ט':'טֵית','י':'יוֹד','כ':'כָּף','ל':'לָמֶד','מ':'מֵם','נ':'נוּן',
+  'ס':'סָמֶך','ע':'עַיִן','פ':'פֵּא','צ':'צָדִי','ק':'קוּף','ר':'רֵיש','ש':'שִין','ת':'תָו'
+};
+
+// דמויות בן 10 לפידבק
+const HEROES = ['🦸','👽','⚡','🔥','💪','🛸','🟢'];
+const HERO_NAMES = ['גרי מטר','פور ארמز','XLR8','הלהבה','ראת','בן'];
+
+// חייזרים לפאזל (אמוג'י שמייצג כל חייזר + שם בעברית)
+const PUZZLE_HEROES = [
+  {e:'🦖', name:'הומנגוסאור'},
+  {e:'⚡', name:'XLR8'},
+  {e:'🔥', name:'הלהבה'},
+  {e:'💎', name:'יהלומן'},
+  {e:'🐺', name:'וויילדמאט'},
+  {e:'🦇', name:'סטינקפליי'},
+  {e:'👾', name:'גרי מטר'},
+  {e:'🤖', name:'אפגרייד'},
+  {e:'🐙', name:'ראת'},
+  {e:'❄️', name:'ביג צ׳יל'},
+];
+
+// ---------- מנוע צליל (Web Audio) ----------
+const SFX = {
+  ctx: null,
+  init(){ if(!this.ctx){ try{ this.ctx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } },
+  beep(freq, dur, type='sine', vol=0.2){
+    if(!Game.settings.sfx) return;
+    this.init(); if(!this.ctx) return;
+    const o = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol, this.ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + dur);
+    o.connect(g); g.connect(this.ctx.destination);
+    o.start(); o.stop(this.ctx.currentTime + dur);
+  },
+  // צליל אומניטריקס - "טרנספורם"
+  transform(){
+    if(!Game.settings.sfx) return;
+    this.beep(220,0.12,'sawtooth',0.15);
+    setTimeout(()=>this.beep(440,0.12,'sawtooth',0.15),100);
+    setTimeout(()=>this.beep(660,0.18,'square',0.18),200);
+  },
+  correct(){
+    this.beep(523,0.12,'sine',0.2);
+    setTimeout(()=>this.beep(659,0.12,'sine',0.2),110);
+    setTimeout(()=>this.beep(784,0.12,'sine',0.2),220);
+    setTimeout(()=>this.beep(1047,0.25,'sine',0.22),330);
+  },
+  wrong(){
+    this.beep(200,0.18,'square',0.15);
+    setTimeout(()=>this.beep(150,0.25,'square',0.15),150);
+  },
+  click(){ this.beep(600,0.06,'sine',0.12); },
+  tick(){ this.beep(800,0.04,'sine',0.06); },
+  win(){
+    const notes=[523,587,659,784,880,1047];
+    notes.forEach((n,i)=>setTimeout(()=>this.beep(n,0.2,'triangle',0.2),i*120));
+  }
+};
+
+// ---------- קול גרי מטר (Web Speech API) ----------
+const Voice = {
+  voices: [],
+  hebVoice: null,
+  ready: false,
+  load(){
+    if(!('speechSynthesis' in window)) return;
+    this.voices = speechSynthesis.getVoices();
+    // חיפוש קול עברי
+    this.hebVoice = this.voices.find(v=>v.lang && (v.lang.startsWith('he')||v.lang.startsWith('iw')));
+    this.ready = true;
+  },
+  speak(text, opts={}){
+    if(!Game.settings.voice) return;
+    if(!('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    if(this.hebVoice) u.voice = this.hebVoice;
+    u.lang = 'he-IL';
+    // קול גרי מטר - גבוה ומהיר (חייזר קטן וחכם!)
+    u.pitch = opts.pitch !== undefined ? opts.pitch : 1.5;
+    u.rate  = opts.rate  !== undefined ? opts.rate  : 0.92;
+    u.volume = 1;
+    // אנימציית דיבור
+    const bubble = document.getElementById('greyBubble');
+    u.onstart = ()=> bubble && bubble.classList.add('speaking');
+    u.onend   = ()=> bubble && bubble.classList.remove('speaking');
+    speechSynthesis.speak(u);
+  },
+  stop(){ if('speechSynthesis' in window) speechSynthesis.cancel();
+    const b=document.getElementById('greyBubble'); if(b)b.classList.remove('speaking'); }
+};
+if('speechSynthesis' in window){
+  Voice.load();
+  speechSynthesis.onvoiceschanged = ()=>Voice.load();
+}
+
+// ---------- ציור גרי מטר (SVG) ----------
+function drawGreyMatter(id){
+  const svg = document.getElementById(id || 'greyAvatar');
+  if(!svg) return;
+  svg.innerHTML = `
+    <!-- ראש -->
+    <ellipse cx="50" cy="30" rx="30" ry="26" fill="#8a99ad" stroke="#5a6b80" stroke-width="2"/>
+    <!-- עיניים גדולות צהובות -->
+    <ellipse cx="36" cy="28" rx="13" ry="14" fill="#000"/>
+    <ellipse cx="64" cy="28" rx="13" ry="14" fill="#000"/>
+    <ellipse cx="36" cy="28" rx="9" ry="10" fill="#d4ff3a"/>
+    <ellipse cx="64" cy="28" rx="9" ry="10" fill="#d4ff3a"/>
+    <rect x="33" y="26" width="6" height="3.5" rx="1.5" fill="#000"/>
+    <rect x="61" y="26" width="6" height="3.5" rx="1.5" fill="#000"/>
+    <!-- פס מרכזי -->
+    <rect x="47" y="14" width="6" height="14" rx="2" fill="#3a4658"/>
+    <!-- גוף לבן -->
+    <path d="M40 50 Q50 46 60 50 L58 78 Q50 82 42 78 Z" fill="#f0f4fa" stroke="#5a6b80" stroke-width="1.5"/>
+    <rect x="48" y="50" width="4" height="28" fill="#3a4658"/>
+    <!-- זרועות -->
+    <path d="M40 54 Q28 62 26 76" stroke="#8a99ad" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M60 54 Q72 62 74 76" stroke="#8a99ad" stroke-width="5" fill="none" stroke-linecap="round"/>
+  `;
+}
+
+// =====================================================================
+//  מנוע המשחק
+// =====================================================================
+const Game = {
+  settings: { voice:true, sfx:true, timer:true },
+  state: {
+    mode:null, score:0, lives:3, correct:0,
+    qIndex:0, totalQ:8, current:null,
+    timer:null, timeLeft:0, maxTime:12, locked:false
+  },
+
+  // ---------- ניווט מסכים ----------
+  show(id){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  },
+  startSound(){ SFX.init(); SFX.transform(); },
+  goTitle(){ this.stopTimer(); Voice.stop(); SFX.click(); this.show('titleScreen'); },
+  goMenu(){
+    this.stopTimer(); Voice.stop(); SFX.init(); SFX.click();
+    this.show('menuScreen');
+    drawGreyMatter();
+    setTimeout(()=>Voice.speak('שלום! אני גרי מטר. בחר משימה ובוא נלמד אותיות יחד!',{pitch:1.6,rate:0.9}),300);
+  },
+
+  // ---------- הגדרות ----------
+  openSettings(){ SFX.click(); document.getElementById('settingsModal').classList.add('show'); },
+  closeSettings(){ SFX.click(); document.getElementById('settingsModal').classList.remove('show'); },
+  toggleSetting(key,el){
+    this.settings[key] = !this.settings[key];
+    el.classList.toggle('on', this.settings[key]);
+    SFX.click();
+    if(key==='voice' && this.settings.voice) Voice.speak('שלום! אני גרי מטר!',{pitch:1.6});
+    if(key==='voice' && !this.settings.voice) Voice.stop();
+  },
+
+  // ---------- בחירת מצב -> מסך רמת קושי ----------
+  startMode(mode){
+    SFX.init(); SFX.click();
+    this.pendingMode = mode;
+    this.show('diffScreen');
+    drawGreyMatter('greyAvatarDiff');
+    setTimeout(()=>Voice.speak('באיזו רמה תרצה להתחיל?',{pitch:1.6,rate:0.92}),300);
+  },
+
+  // ---------- פרמטרי רמת קושי ----------
+  diffParams(level, mode){
+    // בסיס לכל מצב
+    const base = {
+      1: { time:16, choices:4, totalQ:6 },
+      2: { time:11, choices:6, totalQ:8 },
+      3: { time:7,  choices:9, totalQ:10 },
+    }[level];
+    // התאמות ספציפיות למצב
+    let choices = base.choices;
+    if(mode==='firstSound' || mode==='letterOrder') choices = {1:3,2:4,3:6}[level];
+    if(mode==='matchWord') choices = {1:3,2:4,3:6}[level];
+    if(mode==='findLetter') choices = {1:4,2:6,3:9}[level];
+    // mode 5 (התאמת שמות): כמה זוגות
+    const pairs = {1:3,2:4,3:5}[level];
+    // mode 6 (פאזל): גודל רשת
+    const grid = {1:2,2:3,3:4}[level]; // 2x2, 3x3, 4x4
+    return { ...base, choices, pairs, grid, level };
+  },
+
+  // ---------- התחלת משחק בפועל ----------
+  startGame(level){
+    SFX.init(); SFX.transform();
+    const mode = this.pendingMode;
+    const dp = this.diffParams(level, mode);
+    // מצבי גרירה הם משימות שלמות - פחות סבבים
+    let totalQ = dp.totalQ;
+    if(mode==='matchName') totalQ = {1:3,2:3,3:4}[level];
+    if(mode==='puzzle')    totalQ = {1:3,2:3,3:3}[level];
+    this.state = {
+      mode, level, score:0, lives:3, correct:0,
+      qIndex:0, totalQ, current:null,
+      timer:null, timeLeft:0, maxTime:dp.time,
+      choices:dp.choices, pairs:dp.pairs, grid:dp.grid, locked:false
+    };
+    drawGreyMatter();
+    this.show('gameScreen');
+    this.updateHUD();
+    this.buildProgDots();
+    setTimeout(()=>this.nextQuestion(), 450);
+  },
+
+  // ---------- HUD ----------
+  updateHUD(){
+    document.getElementById('scoreVal').textContent = this.state.score;
+    document.getElementById('livesVal').textContent = '❤️'.repeat(this.state.lives) + '🤍'.repeat(3-this.state.lives);
+  },
+  buildProgDots(){
+    const c = document.getElementById('progDots'); c.innerHTML='';
+    for(let i=0;i<this.state.totalQ;i++){
+      const d=document.createElement('div'); d.className='pdot'; d.id='pdot'+i; c.appendChild(d);
+    }
+  },
+  updateProgDots(){
+    for(let i=0;i<this.state.totalQ;i++){
+      const d=document.getElementById('pdot'+i); if(!d)continue;
+      d.className='pdot';
+      if(i<this.state.qIndex) d.classList.add('done');
+      else if(i===this.state.qIndex) d.classList.add('current');
+    }
+  },
+
+  // ---------- שאלה הבאה ----------
+  nextQuestion(){
+    if(this.state.qIndex >= this.state.totalQ || this.state.lives<=0){
+      return this.endGame();
+    }
+    this.state.locked = false;
+    this.updateProgDots();
+    const mode = this.state.mode;
+    // אפס תצוגה: החזר promptCard ו-repeatBtn (מצבים 5/6 מסתירים אותם)
+    const repeatBtn = document.getElementById('repeatBtn');
+    const promptCard = document.getElementById('promptCard');
+    const choicesEl = document.getElementById('choices');
+    choicesEl.style.display = '';
+    const isStd = ['firstSound','findLetter','matchWord','letterOrder'].includes(mode);
+    promptCard.style.display = isStd ? '' : 'none';
+    repeatBtn.style.display = isStd ? '' : 'none';
+    if(mode==='firstSound') this.qFirstSound();
+    else if(mode==='findLetter') this.qFindLetter();
+    else if(mode==='matchWord') this.qMatchWord();
+    else if(mode==='letterOrder') this.qLetterOrder();
+    else if(mode==='matchName') this.qMatchName();
+    else if(mode==='puzzle') this.qPuzzle();
+  },
+
+  rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; },
+  shuffle(arr){ return arr.slice().sort(()=>Math.random()-0.5); },
+
+  // ===== מצב 1: איזה צליל פותח =====
+  qFirstSound(){
+    const n = this.state.choices || 4;
+    const correctLetter = this.rand(LETTERS);
+    const wordObj = this.rand(WORDS[correctLetter]);
+    const others = this.shuffle(LETTERS.filter(l=>l!==correctLetter)).slice(0, n-1);
+    const options = this.shuffle([correctLetter, ...others]);
+    this.state.current = {answer:correctLetter, options};
+
+    const prompt = document.getElementById('promptCard');
+    prompt.innerHTML = `<span class="word-img-emoji">${wordObj.e}</span>
+      <div class="word-label">${wordObj.w}</div>
+      <div class="word-hint">באיזו אות מתחילה המילה?</div>`;
+
+    this.renderChoices(options, 'letter', correctLetter);
+    this.setGreyText(`איזה צליל פותח את המילה "${wordObj.w}"?`);
+    this.speakGrey(`איזה צליל פותח את המילה ${wordObj.w}? ${wordObj.w}`);
+    this.startTimer();
+  },
+
+  // ===== מצב 2: מצא את האות =====
+  qFindLetter(){
+    const n = this.state.choices || 6;
+    const target = this.rand(ALEFBET);
+    const others = this.shuffle(ALEFBET.filter(l=>l!==target)).slice(0, n-1);
+    const options = this.shuffle([target, ...others]);
+    this.state.current = {answer:target, options};
+
+    const prompt = document.getElementById('promptCard');
+    prompt.innerHTML = `<div class="word-hint" style="font-size:1.2rem">גרי מטר אמר את האות:</div>
+      <div class="big-letter-display">${LETTER_NAMES[target]||target}</div>`;
+
+    const cont = document.getElementById('choices');
+    cont.className = 'choices three';
+    cont.innerHTML='';
+    options.forEach(l=>{
+      const b=document.createElement('button'); b.className='choice'; b.textContent=l;
+      b.onclick=()=>this.answer(l===target, b, target, options);
+      cont.appendChild(b);
+    });
+    this.setGreyText(`מצא את האות ${LETTER_NAMES[target]||target}!`);
+    this.speakGrey(`מצא את האות ${LETTER_NAMES[target]||target}`);
+    this.startTimer();
+  },
+
+  // ===== מצב 3: איזו מילה מתאימה לאות =====
+  qMatchWord(){
+    const n = this.state.choices || 4;
+    const correctLetter = this.rand(LETTERS);
+    const correctWord = this.rand(WORDS[correctLetter]);
+    const otherLetters = this.shuffle(LETTERS.filter(l=>l!==correctLetter)).slice(0, n-1);
+    const wrongWords = otherLetters.map(l=>this.rand(WORDS[l]));
+    const options = this.shuffle([correctWord, ...wrongWords]);
+    this.state.current = {answer:correctWord.w, options};
+
+    const prompt = document.getElementById('promptCard');
+    prompt.innerHTML = `<div class="word-hint" style="font-size:1.1rem">איזו מילה מתחילה באות:</div>
+      <div class="big-letter-display">${correctLetter}</div>`;
+
+    const cont = document.getElementById('choices');
+    cont.className = n>4 ? 'choices three' : 'choices';
+    cont.innerHTML='';
+    options.forEach(wObj=>{
+      const b=document.createElement('button'); b.className='choice';
+      b.style.flexDirection='column'; b.style.fontSize='1rem';
+      b.innerHTML=`<span style="font-size:2.6rem">${wObj.e}</span><span class="sub">${wObj.w}</span>`;
+      b.onclick=()=>this.answer(wObj.w===correctWord.w, b, correctWord.w, options.map(o=>o.w));
+      cont.appendChild(b);
+    });
+    this.setGreyText(`איזו מילה מתחילה באות ${LETTER_NAMES[correctLetter]||correctLetter}?`);
+    this.speakGrey(`איזו מילה מתחילה באות ${LETTER_NAMES[correctLetter]||correctLetter}?`);
+    this.startTimer();
+  },
+
+  // ===== מצב 4: מי בא אחרי (סדר א-ב) =====
+  qLetterOrder(){
+    const n = this.state.choices || 4;
+    const idx = Math.floor(Math.random()*(ALEFBET.length-1));
+    const cur = ALEFBET[idx];
+    const next = ALEFBET[idx+1];
+    const others = this.shuffle(ALEFBET.filter(l=>l!==next&&l!==cur)).slice(0, n-1);
+    const options = this.shuffle([next, ...others]);
+    this.state.current = {answer:next, options};
+
+    const prompt = document.getElementById('promptCard');
+    prompt.innerHTML = `<div class="word-hint" style="font-size:1.1rem">איזו אות באה אחרי:</div>
+      <div class="big-letter-display">${cur} ❓</div>`;
+
+    this.renderChoices(options, 'letter', next);
+    this.setGreyText(`איזו אות באה אחרי האות ${LETTER_NAMES[cur]||cur}?`);
+    this.speakGrey(`איזו אות באה אחרי ${LETTER_NAMES[cur]||cur}?`);
+    this.startTimer();
+  },
+
+  // ---------- רינדור כפתורי בחירה (אותיות) ----------
+  renderChoices(options, type, answer){
+    const cont = document.getElementById('choices');
+    cont.className = options.length>4 ? 'choices three' : 'choices';
+    cont.innerHTML='';
+    options.forEach(opt=>{
+      const b=document.createElement('button'); b.className='choice'; b.textContent=opt;
+      b.onclick=()=>this.answer(opt===answer, b, answer, options);
+      cont.appendChild(b);
+    });
+  },
+
+  // ===== מצב 5: התאם שם לתמונה (גרירה) =====
+  qMatchName(){
+    const nPairs = this.state.pairs || 3;
+    // זמן נדיב יותר - משימה מרובת פריטים (כ-9 שניות לכל זוג)
+    this.state.maxTime = nPairs * 9;
+    // בחר מילים מאותיות שונות
+    const letters = this.shuffle(LETTERS).slice(0, nPairs);
+    const items = letters.map(l=>this.rand(WORDS[l]));
+    this.state.matchItems = items;
+    this.state.matchSolved = 0;
+
+    document.getElementById('promptCard').style.display='none';
+    document.getElementById('repeatBtn').style.display='none';
+    const cont = document.getElementById('choices');
+    cont.className=''; cont.style.display='block';
+
+    const targets = this.shuffle(items);   // תמונות בסדר אחד
+    const chips   = this.shuffle(items);   // מילים בסדר אחר
+
+    let html = `<div class="match-area">
+      <div class="match-instruction">גרור כל מילה אל התמונה הנכונה 👆</div>
+      <div class="match-targets">`;
+    targets.forEach(it=>{
+      html += `<div class="drop-zone" data-word="${it.w}"><span class="dz-emoji">${it.e}</span></div>`;
+    });
+    html += `</div><div class="word-bank">`;
+    chips.forEach(it=>{
+      html += `<div class="word-chip" data-word="${it.w}">${it.w}</div>`;
+    });
+    html += `</div></div>`;
+    cont.innerHTML = html;
+
+    this.setGreyText('גרור כל מילה אל התמונה המתאימה!');
+    this.speakGrey('גרור כל מילה אל התמונה המתאימה לה!');
+    this.setupDragMatch();
+    this.startTimer();
+  },
+
+  setupDragMatch(){
+    const chips = document.querySelectorAll('.word-chip');
+    const zones = document.querySelectorAll('.drop-zone');
+    const self = this;
+    chips.forEach(chip=>{
+      this.makeDraggable(chip, zones, (zone, chip)=>{
+        const correct = zone.dataset.word === chip.dataset.word;
+        if(correct){
+          zone.classList.add('filled','correct-zone');
+          const lbl=document.createElement('div'); lbl.className='placed-label'; lbl.textContent=chip.dataset.word;
+          zone.appendChild(lbl);
+          chip.classList.add('used');
+          SFX.correct();
+          self.state.matchSolved++;
+          self.state.score += 10;
+          self.updateHUD();
+          self.miniPop(zone);
+          if(self.state.matchSolved >= self.state.matchItems.length){
+            self.stopTimer();
+            self.state.correct++;
+            self.state.locked=true;
+            self.spawnParticles();
+            setTimeout(()=>self.showFeedback(true),500);
+          }
+        } else {
+          SFX.wrong();
+          zone.classList.add('over');
+          setTimeout(()=>zone.classList.remove('over'),300);
+          self.speakGrey('נסה שוב! זה לא מתאים.');
+        }
+        return correct;
+      });
+    });
+  },
+
+  // ===== מצב 6: פאזל החייזר =====
+  qPuzzle(){
+    const grid = this.state.grid || 2;          // 2x2 / 3x3 / 4x4
+    const total = grid*grid;
+    // זמן נדיב לפי מספר חתיכות (כ-7 שניות לחתיכה)
+    this.state.maxTime = total * 7;
+    const hero = this.rand(PUZZLE_HEROES);
+    this.state.puzzleHero = hero;
+    this.state.puzzlePlaced = 0;
+    this.state.puzzleTotal = total;
+
+    document.getElementById('promptCard').style.display='none';
+    document.getElementById('repeatBtn').style.display='none';
+    const cont = document.getElementById('choices');
+    cont.className=''; cont.style.display='block';
+
+    // בנה רשת חתיכות - כל חתיכה היא חלק מהאמוג'י (נשתמש ב-canvas של האמוג'י חתוך)
+    let board = `<div class="puzzle-stage">
+      <div class="match-instruction">הרכב את החייזר! גרור כל חתיכה למקום 🧩</div>
+      <div class="puzzle-board" id="puzzleBoard" style="grid-template-columns:repeat(${grid},1fr); grid-template-rows:repeat(${grid},1fr);">`;
+    for(let i=0;i<total;i++){
+      board += `<div class="puzzle-slot" data-idx="${i}"></div>`;
+    }
+    board += `</div><div class="puzzle-tray" id="puzzleTray"></div>
+      <div class="puzzle-reveal-name" id="puzzleName" style="visibility:hidden">${hero.name}</div>
+    </div>`;
+    cont.innerHTML = board;
+
+    // צור את חתיכות הפאזל (חתיכות אמוג'י דרך canvas)
+    this.buildPuzzlePieces(hero, grid);
+
+    this.setGreyText('הרכב את החייזר וגלה מי הוא!');
+    this.speakGrey('הרכב את חתיכות הפאזל וגלה איזה חייזר זה!');
+    this.startTimer();
+  },
+
+  buildPuzzlePieces(hero, grid){
+    const total = grid*grid;
+    const size = 240; // canvas גודל מקור
+    const piece = size/grid;
+    // צייר את האמוג'י על canvas גדול ואז חתוך
+    const src = document.createElement('canvas');
+    src.width=size; src.height=size;
+    const sctx = src.getContext('2d');
+    sctx.font = (size*0.8)+'px serif';
+    sctx.textAlign='center'; sctx.textBaseline='middle';
+    sctx.fillText(hero.e, size/2, size/2+8);
+
+    // צור חתיכות בערבוב
+    const order = this.shuffle([...Array(total).keys()]);
+    const tray = document.getElementById('puzzleTray');
+    const slots = document.querySelectorAll('.puzzle-slot');
+    const self = this;
+
+    order.forEach(idx=>{
+      const cv=document.createElement('canvas');
+      cv.width=62; cv.height=62; cv.className='puzzle-piece-canvas';
+      const cx=cv.getContext('2d');
+      const r=Math.floor(idx/grid), c=idx%grid;
+      cx.drawImage(src, c*piece, r*piece, piece, piece, 0,0,62,62);
+
+      const cell=document.createElement('div');
+      cell.className='puzzle-cell'; cell.dataset.idx=idx;
+      cell.appendChild(cv);
+      tray.appendChild(cell);
+
+      this.makeDraggable(cell, slots, (slot, cellEl)=>{
+        const correct = parseInt(slot.dataset.idx) === parseInt(cellEl.dataset.idx) && !slot.classList.contains('filled');
+        if(correct){
+          slot.classList.add('filled');
+          const c2=cellEl.querySelector('canvas').cloneNode(true);
+          c2.style.width='100%'; c2.style.height='100%';
+          const wrap=document.createElement('div'); wrap.className='puzzle-img-wrap'; wrap.appendChild(c2);
+          slot.appendChild(wrap);
+          cellEl.style.display='none';
+          SFX.click();
+          self.state.puzzlePlaced++;
+          self.state.score += 5;
+          self.updateHUD();
+          self.miniPop(slot);
+          if(self.state.puzzlePlaced >= self.state.puzzleTotal){
+            self.stopTimer();
+            self.state.correct++;
+            self.state.locked=true;
+            // חשוף את השם
+            const nm=document.getElementById('puzzleName'); if(nm) nm.style.visibility='visible';
+            SFX.win();
+            self.spawnParticles();
+            self.speakGrey(`כל הכבוד! הרכבת את ${hero.name}!`);
+            setTimeout(()=>self.showFeedback(true, 'הרכבת את ' + hero.name + '! 🛸', 'איזה גיבור אתה!'),1400);
+          }
+          return true;
+        } else {
+          if(!slot.classList.contains('filled')){ SFX.wrong(); }
+          return false;
+        }
+      });
+    });
+  },
+
+  miniPop(el){
+    el.animate([{transform:'scale(1.15)'},{transform:'scale(1)'}],{duration:300,easing:'ease-out'});
+  },
+
+  // ---------- מנוע גרירה אוניברסלי (עכבר + מגע) ----------
+  makeDraggable(el, zones, onDrop){
+    let dragging=false, clone=null, ox=0, oy=0;
+    const self=this;
+
+    const getPoint=(e)=>{
+      if(e.touches&&e.touches[0]) return {x:e.touches[0].clientX,y:e.touches[0].clientY};
+      if(e.changedTouches&&e.changedTouches[0]) return {x:e.changedTouches[0].clientX,y:e.changedTouches[0].clientY};
+      return {x:e.clientX,y:e.clientY};
+    };
+    const zoneUnder=(p)=>{
+      for(const z of zones){
+        const r=z.getBoundingClientRect();
+        if(p.x>=r.left&&p.x<=r.right&&p.y>=r.top&&p.y<=r.bottom) return z;
+      }
+      return null;
+    };
+    const move=(e)=>{
+      if(!dragging) return;
+      e.preventDefault();
+      const p=getPoint(e);
+      clone.style.left=(p.x-ox)+'px';
+      clone.style.top=(p.y-oy)+'px';
+      zones.forEach(z=>z.classList.remove('over'));
+      const z=zoneUnder(p);
+      if(z && !z.classList.contains('filled')) z.classList.add('over');
+    };
+    const end=(e)=>{
+      if(!dragging) return;
+      dragging=false;
+      // הסר מאזינים גלובליים (מונע דליפה)
+      document.removeEventListener('mousemove',move);
+      document.removeEventListener('touchmove',move);
+      document.removeEventListener('mouseup',end);
+      document.removeEventListener('touchend',end);
+      const p=getPoint(e);
+      const z=zoneUnder(p);
+      zones.forEach(zz=>zz.classList.remove('over'));
+      if(clone){ clone.remove(); clone=null; }
+      let success=false;
+      if(z) success=onDrop(z, el);
+      el.style.opacity = success?'0':'1';
+    };
+    const start=(e)=>{
+      if(self.state.locked) return;
+      e.preventDefault();
+      const p=getPoint(e);
+      const rect=el.getBoundingClientRect();
+      ox=p.x-rect.left; oy=p.y-rect.top;
+      clone=el.cloneNode(true);
+      clone.classList.add('dragging');
+      clone.style.width=rect.width+'px'; clone.style.height=rect.height+'px';
+      clone.style.left=rect.left+'px'; clone.style.top=rect.top+'px';
+      document.body.appendChild(clone);
+      el.style.opacity='0.25';
+      dragging=true;
+      // הוסף מאזינים רק בזמן גרירה פעילה
+      document.addEventListener('mousemove',move);
+      document.addEventListener('touchmove',move,{passive:false});
+      document.addEventListener('mouseup',end);
+      document.addEventListener('touchend',end);
+      move(e);
+    };
+
+    el.addEventListener('mousedown',start);
+    el.addEventListener('touchstart',start,{passive:false});
+  },
+
+
+  // ---------- גרי מטר מדבר ----------
+  setGreyText(t){ document.getElementById('greyText').textContent = t; this._lastPrompt=t; },
+  speakGrey(t){ this._lastSpeak=t; Voice.speak(t,{pitch:1.6,rate:0.9}); },
+  repeatPrompt(){ SFX.click(); if(this._lastSpeak) Voice.speak(this._lastSpeak,{pitch:1.6,rate:0.9}); },
+
+  // ---------- טיימר ----------
+  startTimer(){
+    this.stopTimer();
+    if(!this.settings.timer){ document.getElementById('timerFill').style.width='100%'; return; }
+    this.state.timeLeft = this.state.maxTime;
+    const fill = document.getElementById('timerFill');
+    fill.style.width='100%'; fill.className='timer-fill';
+    this.state.timer = setInterval(()=>{
+      this.state.timeLeft--;
+      const pct = (this.state.timeLeft/this.state.maxTime)*100;
+      fill.style.width = pct+'%';
+      if(pct<=50 && pct>25) fill.className='timer-fill warn';
+      else if(pct<=25){ fill.className='timer-fill danger'; SFX.tick(); }
+      if(this.state.timeLeft<=0){ this.stopTimer(); this.timeUp(); }
+    },1000);
+  },
+  stopTimer(){ if(this.state.timer){ clearInterval(this.state.timer); this.state.timer=null; } },
+  timeUp(){
+    if(this.state.locked) return;
+    this.state.locked=true;
+    SFX.wrong();
+    this.loseLife();
+    const dragMode = (this.state.mode==='matchName' || this.state.mode==='puzzle');
+    if(!dragMode) this.highlightCorrect();
+    const sub = dragMode ? 'אל דאגה, ננסה משימה חדשה!' : 'בוא ננסה את הבא ביחד!';
+    this.showFeedback(false, 'נגמר הזמן! ⏰', sub);
+  },
+
+  // ---------- תשובה ----------
+  answer(isCorrect, btn, answer, options){
+    if(this.state.locked) return;
+    this.state.locked = true;
+    this.stopTimer();
+
+    if(isCorrect){
+      btn.classList.add('correct');
+      SFX.correct();
+      // ניקוד - בונוס על זמן
+      const bonus = this.settings.timer ? Math.max(0, Math.floor(this.state.timeLeft/3)) : 0;
+      const pts = 10 + bonus;
+      this.state.score += pts;
+      this.state.correct++;
+      this.updateHUD();
+      this.spawnParticles();
+      this.showFeedback(true);
+    } else {
+      btn.classList.add('wrong');
+      SFX.wrong();
+      this.loseLife();
+      this.highlightCorrect();
+      this.showFeedback(false);
+    }
+  },
+
+  highlightCorrect(){
+    // סמן את הכפתור הנכון בירוק
+    const ans = this.state.current.answer;
+    document.querySelectorAll('#choices .choice').forEach(b=>{
+      const val = b.dataset.val || b.textContent.trim();
+      // התאמה לפי תוכן
+      let match=false;
+      if(b.querySelector('.sub')) match = b.querySelector('.sub').textContent===ans;
+      else match = b.textContent.trim()===ans || b.textContent.trim()===String(ans);
+      if(match) b.classList.add('correct');
+      else b.classList.add('dim');
+    });
+  },
+
+  loseLife(){
+    this.state.lives--;
+    this.updateHUD();
+  },
+
+  // ---------- פידבק חיובי / תיקון ----------
+  showFeedback(correct, customTitle, customSub){
+    const ov = document.getElementById('fbOverlay');
+    const hero = document.getElementById('fbHero');
+    const title = document.getElementById('fbTitle');
+    const sub = document.getElementById('fbSub');
+
+    if(correct){
+      const praises = [
+        {t:'מעולה! 🎉', s:'גרי מטר גאה בך!', spk:'מעולה! כל הכבוד! גרי מטר גאה בך!'},
+        {t:'כל הכבוד! 💪', s:'אתה גיבור אמיתי!', spk:'כל הכבוד! אתה גיבור אמיתי!'},
+        {t:'איזה יופי! ⚡', s:'תשובה נכונה!', spk:'איזה יופי! תשובה נכונה!'},
+        {t:'מדהים! 🌟', s:'אתה לומד מהר!', spk:'מדהים! אתה לומד מהר מאוד!'},
+        {t:'נהדר! 🚀', s:'ממשיכים הלאה!', spk:'נהדר! ממשיכים הלאה!'},
+      ];
+      const p = this.rand(praises);
+      hero.textContent = this.rand(HEROES);
+      title.textContent = p.t; title.className='fb-title';
+      sub.textContent = p.s;
+      this.speakGrey(p.spk);
+    } else {
+      hero.textContent = '👽';
+      title.textContent = customTitle || 'כמעט! 💚'; title.className='fb-title bad';
+      const enc = customSub || 'אל תדאג, גיבורים גם טועים. נסה שוב!';
+      sub.textContent = enc;
+      // גרי מטר מעודד ומלמד
+      if(customSub){
+        this.speakGrey(customSub);
+      } else {
+        const ans = this.state.current ? this.state.current.answer : '';
+        const ansName = LETTER_NAMES[ans] || ans;
+        this.speakGrey(`כמעט! התשובה הנכונה היא ${ansName}. אתה תצליח בפעם הבאה!`);
+      }
+    }
+
+    ov.classList.add('show');
+    setTimeout(()=>{
+      ov.classList.remove('show');
+      this.state.qIndex++;
+      this.nextQuestion();
+    }, correct ? 1700 : 2400);
+  },
+
+  // ---------- חלקיקים (קונפטי) ----------
+  spawnParticles(){
+    if(!this.settings.sfx && false) return;
+    const emojis=['⭐','🌟','✨','💚','🟢','⚡'];
+    for(let i=0;i<18;i++){
+      const p=document.createElement('div');
+      p.className='particle'; p.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+      p.style.left=Math.random()*100+'vw';
+      p.style.top='-30px';
+      p.style.fontSize=(1+Math.random()*1.5)+'rem';
+      p.style.animationDelay=(Math.random()*0.4)+'s';
+      document.body.appendChild(p);
+      setTimeout(()=>p.remove(),2600);
+    }
+  },
+
+  // ---------- סיום ----------
+  endGame(){ this.stopTimer(); setTimeout(()=>this.showResults(),300); },
+  quitToMenu(){ this.stopTimer(); Voice.stop(); SFX.click(); this.goMenu(); },
+
+  showResults(){
+    this.show('resultsScreen');
+    const s=this.state;
+    document.getElementById('rsScore').textContent = s.score;
+    document.getElementById('rsCorrect').textContent = s.correct + '/' + s.totalQ;
+
+    // כוכבים לפי ביצועים
+    const ratio = s.correct / s.totalQ;
+    let stars = 1;
+    if(ratio>=0.9) stars=3; else if(ratio>=0.6) stars=2;
+    const sc=document.getElementById('resultStars'); sc.innerHTML='';
+    for(let i=0;i<3;i++){
+      const st=document.createElement('span'); st.className='star'+(i<stars?' on':''); st.textContent='⭐';
+      st.style.animationDelay=(i*0.2)+'s'; sc.appendChild(st);
+    }
+
+    let title, hero, spk;
+    if(stars===3){ title='גיבור אומניטריקס! 🏆'; hero='🦸'; spk='וואו! אתה גיבור אומניטריקס אמיתי! ענית כמעט על הכל נכון! אני כל כך גאה בך!'; }
+    else if(stars===2){ title='כל הכבוד גיבור! 🎉'; hero='💪'; spk='כל הכבוד! עבדת מצוין! בוא נמשיך להתאמן יחד!'; }
+    else { title='התחלה מצוינת! 🌟'; hero='👽'; spk='התחלה מצוינת! כל גיבור מתחיל לאט. בוא ננסה שוב ונשתפר!'; }
+    document.getElementById('resultTitle').textContent=title;
+    document.getElementById('resultHero').textContent=hero;
+
+    SFX.win();
+    setTimeout(()=>Voice.speak(spk,{pitch:1.6,rate:0.92}),500);
+    // קונפטי
+    if(stars>=2) this.spawnParticles();
+  },
+
+  replay(){ SFX.click(); this.pendingMode = this.state.mode; this.startGame(this.state.level || 1); },
+};
+
+// אתחול ראשוני - הפעלת אודיו על אינטראקציה ראשונה
+document.addEventListener('click', ()=>{ SFX.init(); if(Voice.voices.length===0) Voice.load(); }, {once:true});
+window.addEventListener('load', ()=>{ drawGreyMatter(); Voice.load(); });
+
+</script>
+</body>
+</html>
