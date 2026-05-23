@@ -278,6 +278,8 @@
 
   /* in-game buddy avatar (image) */
   .grey-avatar-img { width:54px; height:54px; border-radius:12px; object-fit:cover; flex-shrink:0; border:2px solid rgba(160,180,200,.4); }
+  .char-quiz-img { width:130px; height:130px; border-radius:18px; object-fit:cover; display:block; margin:0 auto 8px; border:3px solid var(--omni-green); box-shadow:0 0 24px rgba(143,255,0,.4); animation:bob 2.5s ease-in-out infinite; }
+  .char-quiz-img.big { width:170px; height:170px; }
   .fb-hero-img { width:140px; height:140px; border-radius:24px; object-fit:cover; border:4px solid var(--omni-green); box-shadow:0 0 40px rgba(143,255,0,.6); animation:heroEntrance .6s cubic-bezier(.2,.9,.3,1.6); }
 
   /* voice settings section */
@@ -308,6 +310,8 @@
   /* extra mode cards */
   .mode-card.m5 { border-color:rgba(180,90,255,.4); } .mode-card.m5 .ic { background:linear-gradient(135deg,#c47bff,#7a2fd6); }
   .mode-card.m6 { border-color:rgba(255,210,74,.45); } .mode-card.m6 .ic { background:linear-gradient(135deg,#ffe07a,#e0a000); }
+  .mode-card.m7 { border-color:rgba(143,255,0,.45); } .mode-card.m7 .ic { background:linear-gradient(135deg,#9fff1f,#5fb800); }
+  .mode-card.m8 { border-color:rgba(0,212,255,.45); } .mode-card.m8 .ic { background:linear-gradient(135deg,#3ee0ff,#0086c9); }
 
   /* difficulty buttons */
   .diff-btn { text-align:right; justify-content:flex-start; gap:14px; padding:18px 20px; line-height:1.25; }
@@ -432,6 +436,14 @@
     <div class="mode-card m6" onclick="Game.startMode('puzzle')">
       <div class="ic">🛸</div>
       <div class="txt"><h3>פאזל החייזר</h3><p>הרכב את תמונת החייזר וגלה מי הוא!</p></div>
+    </div>
+    <div class="mode-card m7" onclick="Game.startMode('alienName')">
+      <div class="ic">👽</div>
+      <div class="txt"><h3>חידון החייזרים</h3><p>איזו אות פותחת את שם החייזר?</p></div>
+    </div>
+    <div class="mode-card m8" onclick="Game.startMode('whoAlien')">
+      <div class="ic">❓</div>
+      <div class="txt"><h3>מי החייזר?</h3><p>ראה תמונה ובחר את השם הנכון</p></div>
     </div>
 
     <div class="buddy-strip">
@@ -595,6 +607,21 @@ const PUZZLE_CHARS = [
 ];
 
 
+const CHAR_QUIZ = [
+  {key:'IMG_20260521_180533_jpg', name:"גרי מטר", letter:'ג'},
+  {key:'Four_Arms_Ben_10_jpeg', name:"פור ארמז", letter:'פ'},
+  {key:'ba01e456d40438530f23d8415d8ea906_jpg', name:"גופ", letter:'ג'},
+  {key:'708d2b32baddca5bba7d99bdec42702d_jpg', name:"ויילדמאט", letter:'ו'},
+  {key:'16299188db175dfe471c33509ffd18f4_jpg', name:"ראת", letter:'ר'},
+  {key:'6f716bdd91f1a4df349372ad8a86d2f7_jpg', name:"אפגרייד", letter:'א'},
+  {key:'d567b336f62471f5f642940ac74a803a_jpg', name:"ביג צ׳יל", letter:'ב'},
+  {key:'dd8c8e7d5dd4ba9b68c9f02d1acdc512_jpg', name:"קנונבולט", letter:'ק'},
+  {key:'b33ac8b7d48ba62079069132c46250e7_jpg', name:"חייזר איקס", letter:'ח'},
+  {key:'6a0b089e5e5057a9e40f87a65cd44682_jpg', name:"הומנגוסאור", letter:'ה'},
+  {key:'535bb04f3629b007a42d4bb9fa0fd1e6_jpg', name:"מאסטר חיות", letter:'מ'},
+];
+
+
 /* =====================================================================
    בן 10 - הרפתקת האותיות
    משחק לימוד אותיות וצלילים פותחים לכיתה א'
@@ -602,31 +629,29 @@ const PUZZLE_CHARS = [
 
 // ---------- מאגר מילים לפי אות פותחת (מילים מוכרות לילדי כיתה א') ----------
 const WORDS = {
-  'א': [{w:'אריה', e:'🦁'},{w:'אוטו', e:'🚗'},{w:'אבטיח', e:'🍉'},{w:'אווז', e:'🦢'}],
-  'ב': [{w:'בננה', e:'🍌'},{w:'בית', e:'🏠'},{w:'בלון', e:'🎈'},{w:'בקבוק', e:'🍼'}],
-  'ג': [{w:'גלידה', e:'🍦'},{w:'גמל', e:'🐫'},{w:'גזר', e:'🥕'},{w:'גיטרה', e:'🎸'}],
-  'ד': [{w:'דג', e:'🐟'},{w:'דב', e:'🐻'},{w:'דלת', e:'🚪'},{w:'דבורה', e:'🐝'}],
-  'ה': [{w:'הר', e:'⛰️'},{w:'המבורגר', e:'🍔'}],
-  'ו': [{w:'וופל', e:'🧇'},{w:'ורד', e:'🌹'}],
-  'ז': [{w:'זברה', e:'🦓'},{w:'זאב', e:'🐺'},{w:'זהב', e:'🥇'}],
-  'ח': [{w:'חתול', e:'🐱'},{w:'חמור', e:'🫏'},{w:'חלב', e:'🥛'},{w:'חולצה', e:'👕'}],
-  'ט': [{w:'טלפון', e:'📱'},{w:'טרקטור', e:'🚜'},{w:'טווס', e:'🦚'}],
-  'י': [{w:'ילד', e:'👦'},{w:'יד', e:'✋'},{w:'יונה', e:'🕊️'},{w:'ירח', e:'🌙'}],
-  'כ': [{w:'כלב', e:'🐶'},{w:'כדור', e:'⚽'},{w:'כתר', e:'👑'},{w:'כוכב', e:'⭐'}],
-  'ל': [{w:'לימון', e:'🍋'},{w:'לב', e:'❤️'},{w:'ליצן', e:'🤡'},{w:'לוויתן', e:'🐳'}],
-  'מ': [{w:'מטוס', e:'✈️'},{w:'מלך', e:'🤴'},{w:'מפתח', e:'🔑'},{w:'מתנה', e:'🎁'}],
-  'נ': [{w:'נר', e:'🕯️'},{w:'נחש', e:'🐍'},{w:'נמר', e:'🐯'},{w:'נעל', e:'👟'}],
-  'ס': [{w:'סוס', e:'🐴'},{w:'סוכרייה', e:'🍬'},{w:'סירה', e:'⛵'},{w:'ספר', e:'📚'}],
-  'ע': [{w:'עין', e:'👁️'},{w:'עכבר', e:'🐭'},{w:'עץ', e:'🌳'},{w:'עוגה', e:'🎂'}],
-  'פ': [{w:'פיל', e:'🐘'},{w:'פרח', e:'🌸'},{w:'פרפר', e:'🦋'},{w:'פיצה', e:'🍕'}],
-  'צ': [{w:'צב', e:'🐢'},{w:'צפרדע', e:'🐸'},{w:'ציפור', e:'🐦'}],
-  'ק': [{w:'קוף', e:'🐵'},{w:'קשת', e:'🌈'},{w:'קרח', e:'🧊'},{w:'קפה', e:'☕'}],
-  'ר': [{w:'רכבת', e:'�train'.replace('train','')+'🚆'},{w:'רגל', e:'🦶'},{w:'רובוט', e:'🤖'}],
-  'ש': [{w:'שמש', e:'☀️'},{w:'שועל', e:'🦊'},{w:'שעון', e:'⏰'},{w:'שולחן', e:'🪑'}],
-  'ת': [{w:'תפוח', e:'🍎'},{w:'תות', e:'🍓'},{w:'תרנגול', e:'🐓'},{w:'תוכי', e:'🦜'}],
+  'א': [{w:'אריה', e:'🦁'},{w:'אוטו', e:'🚗'},{w:'אבטיח', e:'🍉'},{w:'אווז', e:'🦢'},{w:'אוזן', e:'👂'},{w:'אצבע', e:'👆'},{w:'אננס', e:'🍍'},{w:'אופניים', e:'🚲'}],
+  'ב': [{w:'בננה', e:'🍌'},{w:'בית', e:'🏠'},{w:'בלון', e:'🎈'},{w:'בקבוק', e:'🍼'},{w:'ברווז', e:'🦆'},{w:'ביצה', e:'🥚'},{w:'בצל', e:'🧅'},{w:'בובה', e:'🪆'}],
+  'ג': [{w:'גלידה', e:'🍦'},{w:'גמל', e:'🐫'},{w:'גזר', e:'🥕'},{w:'גיטרה', e:'🎸'},{w:'גשם', e:'🌧️'},{w:'גרביים', e:'🧦'},{w:'גלגל', e:'🎡'},{w:'גורילה', e:'🦍'}],
+  'ד': [{w:'דג', e:'🐟'},{w:'דב', e:'🐻'},{w:'דלת', e:'🚪'},{w:'דבורה', e:'🐝'},{w:'דובדבן', e:'🍒'},{w:'דגל', e:'🚩'},{w:'דלעת', e:'🎃'},{w:'דינוזאור', e:'🦕'}],
+  'ה': [{w:'הר', e:'⛰️'},{w:'המבורגר', e:'🍔'},{w:'הליקופטר', e:'🚁'},{w:'היפופוטם', e:'🦛'}],
+  'ו': [{w:'וופל', e:'🧇'},{w:'ורד', e:'🌹'},{w:'וילון', e:'🪟'}],
+  'ז': [{w:'זברה', e:'🦓'},{w:'זאב', e:'🐺'},{w:'זהב', e:'🥇'},{w:'זחל', e:'🐛'},{w:'זרעים', e:'🌰'},{w:'זנב', e:'🦊'}],
+  'ח': [{w:'חתול', e:'🐱'},{w:'חמור', e:'🫏'},{w:'חלב', e:'🥛'},{w:'חולצה', e:'👕'},{w:'חציל', e:'🍆'},{w:'חזיר', e:'🐷'},{w:'חטיף', e:'🍪'},{w:'חד-קרן', e:'🦄'}],
+  'ט': [{w:'טלפון', e:'📱'},{w:'טרקטור', e:'🚜'},{w:'טווס', e:'🦚'},{w:'טיל', e:'🚀'},{w:'טוסטר', e:'🍞'},{w:'טמבל', e:'🧢'}],
+  'י': [{w:'ילד', e:'👦'},{w:'יד', e:'✋'},{w:'יונה', e:'🕊️'},{w:'ירח', e:'🌙'},{w:'יין', e:'🍇'},{w:'יהלום', e:'💎'},{w:'ינשוף', e:'🦉'}],
+  'כ': [{w:'כלב', e:'🐶'},{w:'כדור', e:'⚽'},{w:'כתר', e:'👑'},{w:'כוכב', e:'⭐'},{w:'כיסא', e:'🪑'},{w:'כריש', e:'🦈'},{w:'כובע', e:'🎩'},{w:'כנף', e:'🍗'}],
+  'ל': [{w:'לימון', e:'🍋'},{w:'לב', e:'❤️'},{w:'ליצן', e:'🤡'},{w:'לוויתן', e:'🐳'},{w:'לטאה', e:'🦎'},{w:'לחם', e:'🍞'},{w:'ליאון', e:'🦁'}],
+  'מ': [{w:'מטוס', e:'✈️'},{w:'מלך', e:'🤴'},{w:'מפתח', e:'🔑'},{w:'מתנה', e:'🎁'},{w:'מטרייה', e:'☂️'},{w:'מספריים', e:'✂️'},{w:'מנורה', e:'💡'},{w:'מקרר', e:'🧊'}],
+  'נ': [{w:'נר', e:'🕯️'},{w:'נחש', e:'🐍'},{w:'נמר', e:'🐯'},{w:'נעל', e:'👟'},{w:'נמלה', e:'🐜'},{w:'נשר', e:'🦅'},{w:'נקניק', e:'🌭'}],
+  'ס': [{w:'סוס', e:'🐴'},{w:'סוכרייה', e:'🍬'},{w:'סירה', e:'⛵'},{w:'ספר', e:'📚'},{w:'סולם', e:'🪜'},{w:'סביבון', e:'🪀'},{w:'סנדל', e:'🩴'},{w:'סלמון', e:'🐟'}],
+  'ע': [{w:'עין', e:'👁️'},{w:'עכבר', e:'🐭'},{w:'עץ', e:'🌳'},{w:'עוגה', e:'🎂'},{w:'עגבנייה', e:'🍅'},{w:'עפיפון', e:'🪁'},{w:'עכביש', e:'🕷️'},{w:'עורב', e:'🐦‍⬛'}],
+  'פ': [{w:'פיל', e:'🐘'},{w:'פרח', e:'🌸'},{w:'פרפר', e:'🦋'},{w:'פיצה', e:'🍕'},{w:'פינגווין', e:'🐧'},{w:'פטרייה', e:'🍄'},{w:'פנס', e:'🔦'},{w:'פופקורן', e:'🍿'}],
+  'צ': [{w:'צב', e:'🐢'},{w:'צפרדע', e:'🐸'},{w:'ציפור', e:'🐦'},{w:'צדף', e:'🐚'},{w:'צבע', e:'🎨'},{w:'צוללת', e:'🤿'}],
+  'ק': [{w:'קוף', e:'🐵'},{w:'קשת', e:'🌈'},{w:'קרח', e:'🧊'},{w:'קפה', e:'☕'},{w:'קנגורו', e:'🦘'},{w:'קקטוס', e:'🌵'},{w:'קשקש', e:'🐠'},{w:'קסדה', e:'⛑️'}],
+  'ר': [{w:'רכבת', e:'🚆'},{w:'רגל', e:'🦶'},{w:'רובוט', e:'🤖'},{w:'רימון', e:'🔴'},{w:'רוח', e:'🌬️'},{w:'רמזור', e:'🚦'}],
+  'ש': [{w:'שמש', e:'☀️'},{w:'שועל', e:'🦊'},{w:'שעון', e:'⏰'},{w:'שולחן', e:'🪑'},{w:'שלג', e:'❄️'},{w:'שקית', e:'🛍️'},{w:'שן', e:'🦷'},{w:'שמלה', e:'👗'}],
+  'ת': [{w:'תפוח', e:'🍎'},{w:'תות', e:'🍓'},{w:'תרנגול', e:'🐓'},{w:'תוכי', e:'🦜'},{w:'תמנון', e:'🐙'},{w:'תנין', e:'🐊'},{w:'תוף', e:'🥁'},{w:'תירס', e:'🌽'}],
 };
-// תיקון רכבת
-WORDS['ר'][0] = {w:'רכבת', e:'🚆'};
 
 const LETTERS = Object.keys(WORDS); // כל האותיות שיש להן מילים
 const ALEFBET = ['א','ב','ג','ד','ה','ו','ז','ח','ט','י','כ','ל','מ','נ','ס','ע','פ','צ','ק','ר','ש','ת'];
@@ -890,6 +915,8 @@ const Game = {
     if(mode==='firstSound' || mode==='letterOrder') choices = {1:3,2:4,3:6}[level];
     if(mode==='matchWord') choices = {1:3,2:4,3:6}[level];
     if(mode==='findLetter') choices = {1:4,2:6,3:9}[level];
+    if(mode==='alienName') choices = {1:3,2:4,3:5}[level];   // חידון אות פותחת של חייזר
+    if(mode==='whoAlien')  choices = {1:2,2:3,3:4}[level];   // זיהוי שם חייזר מתמונה
     // mode 5 (התאמת שמות): כמה זוגות
     const pairs = {1:3,2:4,3:5}[level];
     // mode 6 (פאזל): גודל רשת
@@ -952,7 +979,7 @@ const Game = {
     const promptCard = document.getElementById('promptCard');
     const choicesEl = document.getElementById('choices');
     choicesEl.style.display = '';
-    const isStd = ['firstSound','findLetter','matchWord','letterOrder'].includes(mode);
+    const isStd = ['firstSound','findLetter','matchWord','letterOrder','alienName'].includes(mode);
     promptCard.style.display = isStd ? '' : 'none';
     repeatBtn.style.display = isStd ? '' : 'none';
     if(mode==='firstSound') this.qFirstSound();
@@ -961,6 +988,8 @@ const Game = {
     else if(mode==='letterOrder') this.qLetterOrder();
     else if(mode==='matchName') this.qMatchName();
     else if(mode==='puzzle') this.qPuzzle();
+    else if(mode==='alienName') this.qAlienName();
+    else if(mode==='whoAlien') this.qWhoAlien();
   },
 
   rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; },
@@ -1057,6 +1086,57 @@ const Game = {
     this.renderChoices(options, 'letter', next);
     this.setGreyText(`איזו אות באה אחרי האות ${LETTER_NAMES[cur]||cur}?`);
     this.speakGrey(`איזו אות באה אחרי ${LETTER_NAMES[cur]||cur}?`);
+    this.startTimer();
+  },
+
+  // ===== מצב 7: חידון חייזרים - איזו אות פותחת את שם החייזר =====
+  qAlienName(){
+    const n = this.state.choices || 4;
+    const char = this.rand(CHAR_QUIZ);
+    const correct = char.letter;
+    const others = this.shuffle(ALEFBET.filter(l=>l!==correct)).slice(0, n-1);
+    const options = this.shuffle([correct, ...others]);
+    this.state.current = {answer:correct, options};
+
+    const prompt = document.getElementById('promptCard');
+    prompt.innerHTML = `<img src="${CHAR_IMAGES[char.key].src}" class="char-quiz-img" alt="">
+      <div class="word-label">${char.name}</div>
+      <div class="word-hint">באיזו אות מתחיל השם?</div>`;
+
+    this.renderChoices(options, 'letter', correct);
+    this.setGreyText(`באיזו אות מתחיל השם "${char.name}"?`);
+    this.speakGrey(`זה ${char.name}! באיזו אות מתחיל השם ${char.name}?`);
+    this.startTimer();
+  },
+
+  // ===== מצב 8: מי החייזר? - זיהוי שם מתמונה =====
+  qWhoAlien(){
+    const n = this.state.choices || 3;
+    // בחר חייזרים עם שמות שונים
+    const uniqueByName = [];
+    const seenN = new Set();
+    this.shuffle(CHAR_QUIZ).forEach(c=>{ if(!seenN.has(c.name)){ seenN.add(c.name); uniqueByName.push(c); } });
+    const correct = uniqueByName[0];
+    const wrongs = uniqueByName.slice(1, n);
+    const options = this.shuffle([correct, ...wrongs]);
+    this.state.current = {answer:correct.name, options};
+
+    const prompt = document.getElementById('promptCard');
+    prompt.style.display='';
+    prompt.innerHTML = `<img src="${CHAR_IMAGES[correct.key].src}" class="char-quiz-img big" alt="">
+      <div class="word-hint">מי החייזר הזה?</div>`;
+
+    const cont = document.getElementById('choices');
+    cont.className = 'choices';
+    cont.innerHTML='';
+    options.forEach(c=>{
+      const b=document.createElement('button'); b.className='choice';
+      b.style.fontSize='1.15rem'; b.textContent=c.name;
+      b.onclick=()=>this.answer(c.name===correct.name, b, correct.name, options.map(o=>o.name));
+      cont.appendChild(b);
+    });
+    this.setGreyText('מי החייזר הזה?');
+    this.speakGrey('מי החייזר הזה? בחר את השם הנכון!');
     this.startTimer();
   },
 
@@ -1414,9 +1494,14 @@ const Game = {
       const praises = [
         {t:'מעולה! 🎉', s:'גרי מטר גאה בך!', spk:'מעולה! כל הכבוד! גרי מטר גאה בך!'},
         {t:'כל הכבוד! 💪', s:'אתה גיבור אמיתי!', spk:'כל הכבוד! אתה גיבור אמיתי!'},
-        {t:'איזה יופי! ⚡', s:'תשובה נכונה!', spk:'איזה יופי! תשובה נכונה!'},
+        {t:'איזה יופי! ⚡', s:'תשובה נכונה!', spk:'איזה יופי! צדקת!'},
         {t:'מדהים! 🌟', s:'אתה לומד מהר!', spk:'מדהים! אתה לומד מהר מאוד!'},
         {t:'נהדר! 🚀', s:'ממשיכים הלאה!', spk:'נהדר! ממשיכים הלאה!'},
+        {t:'וואו! 🤩', s:'אתה אלוף!', spk:'וואו! אתה אלוף אמיתי!'},
+        {t:'מצוין! ✨', s:'ידעת את זה!', spk:'מצוין! ידעת את זה יופי!'},
+        {t:'בול! 🎯', s:'פגעת בדיוק!', spk:'בול! פגעת בדיוק בול!'},
+        {t:'גאון! 🧠', s:'אתה חכם כמו גרי מטר!', spk:'אתה חכם כמו גרי מטר!'},
+        {t:'חזק! 🦾', s:'אתה בלתי מנוצח!', spk:'חזק מאוד! אתה בלתי מנוצח!'},
       ];
       const p = this.rand(praises);
       // אם נבחר חבר חייזר - הצג את התמונה שלו, אחרת אמוג'י
