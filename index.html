@@ -473,6 +473,141 @@
 .rp-chip{ display:inline-block; background:rgba(255,255,255,.14); border-radius:7px;
   padding:1px 7px; margin:2px 1px; font-weight:700; }
 
+
+/* ===== מסך האומניטריקס ===== */
+.alien-svg{ width:100%; height:100%; display:block; overflow:visible; }
+
+#omniScreen{ align-items:center; }
+.omni-head{ text-align:center; margin-bottom:4px; }
+.omni-head h2{ font-family:'Rubik','Heebo',Arial,sans-serif; font-weight:900; color:#fff;
+  font-size:1.6rem; text-shadow:0 0 14px rgba(143,255,0,.55); }
+.omni-count{ font-size:.82rem; opacity:.8; margin-top:2px; }
+
+/* החוגה: העיגול הגדול מהציור */
+.omni-dial{ position:relative; width:min(90vw, 400px); aspect-ratio:1; margin:6px auto;
+  border-radius:50%; flex-shrink:0;
+  background:
+    radial-gradient(circle at 50% 50%, #1d2735 0%, #131a25 62%, #0c1119 100%);
+  border:7px solid var(--omni-green, #8fff00);
+  box-shadow:0 0 34px rgba(143,255,0,.35), inset 0 0 40px rgba(0,0,0,.7); }
+/* ליבת האומניטריקס במרכז */
+.omni-dial::before{ content:''; position:absolute; left:50%; top:50%; width:22%; aspect-ratio:1;
+  transform:translate(-50%,-50%); border-radius:50%;
+  background:radial-gradient(circle at 38% 34%, #d4ff6a, #8fff00 55%, #4d8f00);
+  box-shadow:0 0 26px rgba(143,255,0,.8); }
+.omni-dial::after{ content:''; position:absolute; left:50%; top:50%; width:11%; aspect-ratio:1;
+  transform:translate(-50%,-50%) rotate(45deg);
+  background:
+    linear-gradient(to bottom, #101720 42%, transparent 42%, transparent 58%, #101720 58%),
+    linear-gradient(to right,  #101720 42%, transparent 42%, transparent 58%, #101720 58%); }
+
+.omni-slot{ position:absolute; width:21%; aspect-ratio:1; transform:translate(-50%,-50%);
+  border-radius:50%; border:3px solid rgba(255,255,255,.22); cursor:pointer;
+  background:rgba(255,255,255,.07); padding:5px 5px 12px; transition:.18s;
+  display:flex; align-items:center; justify-content:center; }
+.omni-slot:hover{ transform:translate(-50%,-50%) scale(1.12); z-index:5; }
+.omni-slot.locked{ background:rgba(0,0,0,.45); border-style:dashed;
+  border-color:rgba(255,255,255,.16); }
+.omni-slot.active{ border-color:var(--omni-green,#8fff00); background:rgba(143,255,0,.16);
+  box-shadow:0 0 18px rgba(143,255,0,.6); }
+.omni-slot .alien-svg{ width:88%; height:88%; }
+.os-name{ position:absolute; bottom:-15px; left:50%; transform:translateX(-50%);
+  font-size:.6rem; white-space:nowrap; opacity:.9; font-weight:700; }
+.omni-slot.locked .os-name{ font-size:.85rem; color:#8fff00; opacity:.75; }
+
+/* כרטיס החייזר הנבחר */
+.omni-card{ display:flex; gap:12px; align-items:center; width:min(94vw,430px);
+  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);
+  border-radius:16px; padding:11px; margin-top:22px; text-align:right; }
+.oc-art{ width:74px; height:88px; flex-shrink:0; }
+.oc-info{ flex:1; min-width:0; }
+.oc-name{ font-family:'Rubik','Heebo',Arial,sans-serif; font-weight:900; font-size:1.15rem; color:#fff; }
+.oc-power{ font-size:.85rem; color:#a8ee5c; font-weight:700; }
+.oc-desc{ font-size:.8rem; opacity:.85; line-height:1.45; margin-top:3px; }
+.oc-letter{ font-size:.78rem; opacity:.75; margin-top:5px; }
+.oc-bar{ height:8px; border-radius:5px; background:rgba(255,255,255,.14); margin-top:7px; overflow:hidden; }
+.oc-bar i{ display:block; height:100%; background:linear-gradient(90deg,#8fff00,#d4ff6a); transition:.4s; }
+.oc-prog{ font-size:.72rem; opacity:.7; margin-top:3px; }
+.oc-go{ margin-top:8px; padding:9px 12px; font-size:.9rem; width:100%; }
+
+/* חגיגת פתיחת חייזר */
+.unlock-ov{ position:fixed; inset:0; background:rgba(6,10,16,.93); z-index:120;
+  display:none; flex-direction:column; align-items:center; justify-content:center; gap:6px; padding:20px; }
+.unlock-ov.show{ display:flex; animation:fadeIn .3s; }
+@keyframes fadeIn{ from{opacity:0} to{opacity:1} }
+.ul-tag{ color:#8fff00; font-weight:900; font-size:1.1rem; letter-spacing:1px; }
+#ulArt{ width:150px; height:180px; animation:ulPop .6s cubic-bezier(.2,1.6,.4,1); }
+@keyframes ulPop{ from{ transform:scale(.2) rotate(-25deg); opacity:0 } to{ transform:none; opacity:1 } }
+#ulName{ font-family:'Rubik','Heebo',Arial,sans-serif; font-weight:900; font-size:2rem; color:#fff;
+  text-shadow:0 0 20px rgba(143,255,0,.7); }
+#ulPower{ color:#a8ee5c; font-weight:700; }
+#ulDesc{ opacity:.85; text-align:center; max-width:330px; line-height:1.5; font-size:.9rem; }
+
+/* ===== מצב: נפץ את הקופסאות ===== */
+.smash-goal{ font-size:1.05rem; font-weight:700; }
+.sg-letter{ display:inline-block; font-family:'Rubik','Heebo',Arial,sans-serif; font-weight:900;
+  font-size:2.4rem; color:var(--omni-green,#8fff00); vertical-align:middle;
+  text-shadow:0 0 20px rgba(143,255,0,.65); margin:0 6px; }
+
+.crate-field{ position:relative; display:grid; grid-template-columns:repeat(3,1fr);
+  gap:12px; padding:8px 6px 74px; width:100%; }
+@media (max-width:380px){ .crate-field{ grid-template-columns:repeat(2,1fr); } }
+
+/* קופסת קרטון מרובעת */
+.crate{ position:relative; aspect-ratio:1; border:none; cursor:pointer; padding:0;
+  border-radius:7px; font-family:inherit; overflow:hidden;
+  background:linear-gradient(160deg,#d9a161 0%,#c08744 48%,#a06f34 100%);
+  box-shadow:inset 0 -7px 0 rgba(0,0,0,.22), inset 0 4px 0 rgba(255,255,255,.22),
+             0 5px 10px rgba(0,0,0,.4);
+  transition:transform .12s; }
+.crate:hover{ transform:translateY(-3px); }
+.crate-letter{ position:relative; z-index:2; display:flex; align-items:center; justify-content:center;
+  width:100%; height:100%; font-family:'Rubik','Heebo',Arial,sans-serif; font-weight:900;
+  font-size:2.6rem; color:#4a3016; text-shadow:0 2px 0 rgba(255,255,255,.28); }
+/* סרטי הדבקה על הקופסה */
+.tape{ position:absolute; background:rgba(226,208,170,.55); z-index:1; }
+.tape-h{ left:0; right:0; top:46%; height:13%; }
+.tape-v{ top:0; bottom:0; left:44%; width:12%; }
+
+.crate.wobble{ animation:crateWobble .45s; }
+@keyframes crateWobble{ 0%,100%{transform:translateX(0) rotate(0)}
+  20%{transform:translateX(-7px) rotate(-5deg)} 45%{transform:translateX(7px) rotate(5deg)}
+  70%{transform:translateX(-4px) rotate(-3deg)} }
+.crate.boom{ animation:crateBoom .34s forwards; pointer-events:none; }
+@keyframes crateBoom{ 0%{transform:scale(1)} 30%{transform:scale(1.22) rotate(6deg)}
+  100%{transform:scale(0) rotate(30deg); opacity:0} }
+
+/* רסיסי קרטון עפים */
+.chip{ position:fixed; background:#c08744; border-radius:2px; z-index:130; pointer-events:none;
+  box-shadow:0 1px 3px rgba(0,0,0,.4); animation:chipFly .85s ease-out forwards; }
+@keyframes chipFly{
+  0%{ transform:translate(-50%,-50%) rotate(0); opacity:1 }
+  100%{ transform:translate(calc(-50% + var(--dx)), calc(-50% + var(--dy) + 70px)) rotate(var(--rot)); opacity:0 } }
+
+/* החייזר שרץ ומרביץ */
+.smasher{ position:absolute; bottom:6px; left:50%; margin-left:-38px; width:76px; height:92px;
+  z-index:6; transition:transform .34s cubic-bezier(.4,0,.25,1); pointer-events:none;
+  filter:drop-shadow(0 5px 9px rgba(0,0,0,.55)); }
+.smasher.striking{ animation:strike .26s; }
+@keyframes strike{ 0%{ filter:drop-shadow(0 5px 9px rgba(0,0,0,.55)) }
+  40%{ filter:drop-shadow(0 0 22px rgba(255,255,255,.95)) brightness(1.5) }
+  100%{ filter:drop-shadow(0 5px 9px rgba(0,0,0,.55)) } }
+/* לכל חייזר סגנון מתקפה משלו */
+.smasher.atk-roll.charging{ animation:atkRoll .34s linear; }
+@keyframes atkRoll{ from{ rotate:0deg } to{ rotate:540deg } }
+.smasher.atk-fire.striking{ animation:strike .26s, atkFire .3s; }
+@keyframes atkFire{ 50%{ filter:drop-shadow(0 0 26px #ff8a1f) saturate(2) } }
+.smasher.atk-zap.striking{ animation:strike .26s, atkZap .3s; }
+@keyframes atkZap{ 25%,75%{ filter:drop-shadow(0 0 24px #7fd8ff) brightness(2) } }
+.smasher.atk-freeze.striking{ animation:strike .26s, atkFreeze .3s; }
+@keyframes atkFreeze{ 50%{ filter:drop-shadow(0 0 24px #bfeaff) hue-rotate(20deg) } }
+.smasher.atk-splash.charging{ animation:atkSplash .34s; }
+@keyframes atkSplash{ 50%{ transform:scaleY(.72) scaleX(1.2) } }
+.smasher.atk-pull.charging{ animation:atkPull .34s; }
+@keyframes atkPull{ 50%{ transform:scale(1.15) } }
+
+  .fb-alien{ width:120px; height:145px; margin:0 auto; }
+  .smash-word{ font-size:3.4rem; line-height:1.1; margin:6px 0 2px; }
 </style>
 </head>
 <body>
@@ -502,6 +637,14 @@
     </div>
     <div class="menu-head"><p>גרי מטר ימתין לך בכל משימה!</p></div>
 
+    <div class="mode-card m1" onclick="OmniUI.open()">
+      <div class="ic">🛸</div>
+      <div class="txt"><h3>האומניטריקס</h3><p>בחר חייזר, ופתח חייזרים חדשים בלימוד אותיות!</p></div>
+    </div>
+    <div class="mode-card m3" onclick="Game.startMode('smash')">
+      <div class="ic">📦</div>
+      <div class="txt"><h3>נפץ את הקופסאות</h3><p>החייזר שלך רץ ומנפץ את הקופסה עם האות הנכונה!</p></div>
+    </div>
     <div class="mode-card m1" onclick="Game.startMode('firstSound')">
       <div class="ic">🔤</div>
       <div class="txt"><h3>איזה צליל פותח?</h3><p>שמע מילה ובחר את האות שבה היא מתחילה</p></div>
@@ -539,6 +682,19 @@
       <div class="buddy-title">🦸 בחר את החבר החייזר שלך:</div>
       <div class="buddy-row" id="buddyRow"></div>
     </div>
+  </div>
+
+
+  <!-- ============ מסך האומניטריקס ============ -->
+  <div class="screen" id="omniScreen">
+    <div class="hud">
+      <button class="icon-btn" onclick="Game.goMenu()">⬅️</button>
+      <div class="omni-head"><h2>האומניטריקס</h2>
+        <div class="omni-count" id="omniCount"></div></div>
+      <button class="icon-btn" onclick="Game.openSettings()">⚙️</button>
+    </div>
+    <div class="omni-dial" id="omniDial"></div>
+    <div class="omni-card" id="omniCard"></div>
   </div>
 
   <!-- ============ DIFFICULTY SCREEN ============ -->
@@ -619,6 +775,17 @@
   <div class="fb-hero" id="fbHero">🦸</div>
   <div class="fb-title" id="fbTitle">מעולה!</div>
   <div class="fb-sub" id="fbSub"></div>
+</div>
+
+
+<!-- ============ חייזר חדש נפתח ============ -->
+<div class="unlock-ov" id="unlockOverlay" onclick="OmniUI.closeUnlock()">
+  <div class="ul-tag">🛸 חייזר חדש נפתח!</div>
+  <div id="ulArt"></div>
+  <div id="ulName"></div>
+  <div id="ulPower"></div>
+  <div id="ulDesc"></div>
+  <button class="btn btn-green" style="margin-top:14px" onclick="OmniUI.closeUnlock()">מגניב! ✓</button>
 </div>
 
 <!-- ============ SETTINGS MODAL ============ -->
@@ -1467,6 +1634,7 @@ const Game = {
   startSound(){ SFX.init(); SFX.transform(); },
   goTitle(){ this.stopTimer(); Voice.stop(); SFX.click(); this.show('titleScreen'); },
   goMenu(){
+    this.focusLetter = null;
     this.stopTimer(); Voice.stop(); SFX.init(); SFX.click();
     this.show('menuScreen');
     this.buildBuddyRow();
@@ -1642,6 +1810,7 @@ const Game = {
     if(mode==='findLetter') choices = {1:4,2:6,3:9}[level];
     if(mode==='alienName') choices = {1:3,2:4,3:5}[level];   // חידון אות פותחת של חייזר
     if(mode==='whoAlien')  choices = {1:2,2:3,3:4}[level];   // זיהוי שם חייזר מתמונה
+    if(mode==='smash')     choices = {1:3,2:4,3:6}[level];   // כמה קופסאות על הלוח
     // mode 5 (התאמת שמות): כמה זוגות
     const pairs = {1:3,2:4,3:5}[level];
     // mode 6 (פאזל): גודל רשת
@@ -1706,7 +1875,7 @@ const Game = {
     const promptCard = document.getElementById('promptCard');
     const choicesEl = document.getElementById('choices');
     choicesEl.style.display = '';
-    const isStd = ['firstSound','findLetter','matchWord','letterOrder','alienName'].includes(mode);
+    const isStd = ['firstSound','findLetter','matchWord','letterOrder','alienName','smash'].includes(mode);
     promptCard.style.display = isStd ? '' : 'none';
     repeatBtn.style.display = isStd ? '' : 'none';
     if(mode==='firstSound') this.qFirstSound();
@@ -1717,6 +1886,7 @@ const Game = {
     else if(mode==='puzzle') this.qPuzzle();
     else if(mode==='alienName') this.qAlienName();
     else if(mode==='whoAlien') this.qWhoAlien();
+    else if(mode==='smash') Smash.build();
   },
 
   rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; },
@@ -2178,6 +2348,7 @@ const Game = {
     this.state.locked = true;
     this.stopTimer();
     Progress.rec(this.state.current && this.state.current.letter, isCorrect);
+    const freshAlien = isCorrect ? Omnitrix.checkUnlocks() : null;
 
     if(isCorrect){
       btn.classList.add('correct');
@@ -2190,6 +2361,7 @@ const Game = {
       this.updateHUD();
       this.spawnParticles();
       this.showFeedback(true);
+      if(freshAlien) setTimeout(()=>OmniUI.celebrate(freshAlien), 1900);
     } else {
       btn.classList.add('wrong');
       SFX.wrong();
@@ -2244,7 +2416,8 @@ const Game = {
       if(this.settings.favChar && CHAR_IMAGES[this.settings.favChar]){
         hero.innerHTML = `<img src="${CHAR_IMAGES[this.settings.favChar].src}" class="fb-hero-img" alt="">`;
       } else {
-        hero.textContent = this.rand(HEROES);
+        // החייזר שנבחר באומניטריקס הוא זה שמופיע ומעודד
+        hero.innerHTML = `<div class="fb-alien">${AlienArt.svg(Omnitrix.active())}</div>`;
       }
       title.textContent = p.t; title.className='fb-title';
       sub.textContent = p.s;
@@ -2329,6 +2502,530 @@ const Game = {
   },
 
   replay(){ SFX.click(); this.pendingMode = this.state.mode; this.startGame(this.state.level || 1); },
+};
+
+/* =====================================================================
+   מערך החייזרים של האומניטריקס
+   שלוש דמויות מוכרות מהסדרה + תשעה חייזרים מקוריים חדשים.
+   כל חייזר קשור לאות עברית — לומדים את האות, פותחים את החייזר.
+   הדמויות מצוירות ב-SVG על ידי מחולל פרמטרי: חדות אינסופית, קובץ זעיר,
+   סגנון אחיד, ובלי בעיית זכויות יוצרים.
+   ===================================================================== */
+const ALIENS = [
+  { id:'fourarms', name:'אַרְבַּע זְרוֹעוֹת', short:'ארבע זרועות', letter:'א', known:true,
+    power:'כוח ענק', desc:'ארבע ידיים ענקיות שמנפצות הכל!',
+    body:'bulky', arms:4, eyes:4, horns:0, texture:'none', attack:'punch',
+    c:{ skin:'#e0453a', dark:'#9c241c', suit:'#1b1b22', accent:'#f4f4f8' } },
+
+  { id:'heatblast', name:'הִיטְבְּלַאסְט', short:'היטבלאסט', letter:'ה', known:true,
+    power:'אש ולבה', desc:'גוף של לבה בוערת שיורה כדורי אש!',
+    body:'bulky', arms:2, eyes:2, horns:0, texture:'flame', attack:'fire',
+    c:{ skin:'#ff7a18', dark:'#8c2408', suit:'#3a1206', accent:'#ffd84d' } },
+
+  { id:'cannonbolt', name:'קָנוֹנְבּוֹלְט', short:'קאננבולט', letter:'ק', known:true,
+    power:'התגלגלות', desc:'מתכדרר לכדור משוריין ומתנגש במלוא הכוח!',
+    body:'round', arms:2, eyes:2, horns:0, texture:'armor', attack:'roll',
+    c:{ skin:'#f0f2f6', dark:'#5b6172', suit:'#f5a623', accent:'#2b2f3a' } },
+
+  /* ---------- חייזרים מקוריים חדשים ---------- */
+  { id:'barkan', name:'בַּרְקָן', short:'ברקן', letter:'ב',
+    power:'ברקים', desc:'חייזר חשמל שרץ מהר כמו ברק ויורה ניצוצות!',
+    body:'slim', arms:2, eyes:2, horns:2, texture:'spark', attack:'zap',
+    c:{ skin:'#3fa9ff', dark:'#123c66', suit:'#0d2138', accent:'#ffe74a' } },
+
+  { id:'galgalan', name:'גַּלְגַּלָן', short:'גלגלן', letter:'ג',
+    power:'מהירות', desc:'הרגליים שלו הופכות לגלגלים והוא טס קדימה!',
+    body:'round', arms:2, eyes:1, horns:0, texture:'wheel', attack:'roll',
+    c:{ skin:'#a86bff', dark:'#452080', suit:'#241040', accent:'#ffd84d' } },
+
+  { id:'darban', name:'דַּרְבָּן', short:'דרבן', letter:'ד',
+    power:'קוצים', desc:'מתכסה בקוצים חדים ומתגלגל לתוך כל מכשול!',
+    body:'round', arms:2, eyes:2, horns:0, texture:'spike', attack:'roll',
+    c:{ skin:'#ff9c2b', dark:'#8a4406', suit:'#3d1e04', accent:'#ffe0a3' } },
+
+  { id:'zaharur', name:'זַהֲרוּר', short:'זהרור', letter:'ז',
+    power:'אור מסנוור', desc:'זוהר בחושך ומסנוור את כל מי שעומד מולו!',
+    body:'slim', arms:2, eyes:2, horns:0, texture:'glow', attack:'zap',
+    c:{ skin:'#ffe14d', dark:'#a37a00', suit:'#4a3600', accent:'#fffce0' } },
+
+  { id:'tiftuf', name:'טִיפְטוּף', short:'טיפטוף', letter:'ט',
+    power:'מים', desc:'גוף של מים שמשנה צורה ושוטף הכל בדרכו!',
+    body:'blob', arms:2, eyes:2, horns:0, texture:'drop', attack:'splash',
+    c:{ skin:'#3fd8e8', dark:'#0b5c6b', suit:'#06323b', accent:'#d8fbff' } },
+
+  { id:'yarkon', name:'יַרְקוֹן', short:'ירקון', letter:'י',
+    power:'צמחים', desc:'מצמיח שורשים וענפים ותופס הכל!',
+    body:'tall', arms:2, eyes:2, horns:2, texture:'leaf', attack:'punch',
+    c:{ skin:'#6ec447', dark:'#25601a', suit:'#143a0e', accent:'#d6f5a8' } },
+
+  { id:'magneton', name:'מַגְנֵטוֹן', short:'מגנטון', letter:'מ',
+    power:'מגנט', desc:'מושך אליו כל דבר ממתכת — אפילו רכבות!',
+    body:'bulky', arms:2, eyes:2, horns:2, texture:'metal', attack:'pull',
+    c:{ skin:'#c9ced9', dark:'#585f70', suit:'#d64545', accent:'#2a2e38' } },
+
+  { id:'salon', name:'סַלְעוֹן', short:'סלעון', letter:'ס',
+    power:'שריון סלע', desc:'עשוי כולו מסלעים — שום דבר לא שובר אותו!',
+    body:'bulky', arms:2, eyes:2, horns:0, texture:'rock', attack:'punch',
+    c:{ skin:'#a8836b', dark:'#4f3826', suit:'#2e2014', accent:'#e0c9a8' } },
+
+  { id:'shalgon', name:'שַׁלְגּוֹן', short:'שלגון', letter:'ש',
+    power:'קרח', desc:'מקפיא הכל בנשיפה אחת ובונה חומות קרח!',
+    body:'slim', arms:2, eyes:2, horns:2, texture:'ice', attack:'freeze',
+    c:{ skin:'#bfeaff', dark:'#2b6d99', suit:'#0f3a56', accent:'#ffffff' } },
+];
+
+const ALIEN_BY_ID = {};
+ALIENS.forEach(a => { ALIEN_BY_ID[a.id] = a; });
+
+/* =====================================================================
+   מחולל הדמויות — בונה SVG מתוך המפרט של כל חייזר
+   ===================================================================== */
+const AlienArt = {
+  cache: {},
+
+  // גוף לפי סוג — כל צורה נותנת סילואטה אחרת לגמרי
+  torso(body, c){
+    switch(body){
+      case 'bulky': return `<path d="M50 34 C34 34 26 44 25 58 L23 82 C23 90 30 95 50 95 C70 95 77 90 77 82 L75 58 C74 44 66 34 50 34Z"
+                              fill="${c.skin}" stroke="${c.dark}" stroke-width="2.4"/>`;
+      case 'slim':  return `<path d="M50 36 C41 36 37 45 37 56 L35 84 C35 91 41 95 50 95 C59 95 65 91 65 84 L63 56 C63 45 59 36 50 36Z"
+                              fill="${c.skin}" stroke="${c.dark}" stroke-width="2.4"/>`;
+      case 'round': return `<circle cx="50" cy="66" r="30" fill="${c.skin}" stroke="${c.dark}" stroke-width="2.4"/>`;
+      case 'blob':  return `<path d="M50 34 C30 34 22 50 24 68 C26 86 36 96 50 96 C64 96 74 86 76 68 C78 50 70 34 50 34Z"
+                              fill="${c.skin}" stroke="${c.dark}" stroke-width="2.4" opacity=".92"/>`;
+      case 'tall':  return `<path d="M50 30 C42 30 38 42 38 56 L36 88 C36 93 42 96 50 96 C58 96 64 93 64 88 L62 56 C62 42 58 30 50 30Z"
+                              fill="${c.skin}" stroke="${c.dark}" stroke-width="2.4"/>`;
+    }
+    return '';
+  },
+
+  head(body, c){
+    if(body === 'round') return '';                       // לחייזרים עגולים הראש הוא הגוף
+    const y = body === 'tall' ? 20 : 24;
+    const rx = body === 'slim' ? 15 : 17;
+    return `<ellipse cx="50" cy="${y}" rx="${rx}" ry="${rx-2}" fill="${c.skin}" stroke="${c.dark}" stroke-width="2.4"/>
+            <path d="M42 ${y+12} L58 ${y+12} L56 ${y+17} L44 ${y+17}Z" fill="${c.dark}"/>`;
+  },
+
+  eyes(n, body, c){
+    const cy = body === 'round' ? 58 : (body === 'tall' ? 20 : 24);
+    const white = '#fff', pupil = '#12151c';
+    const one = (x, y, r) =>
+      `<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r*1.1}" fill="${white}" stroke="${c.dark}" stroke-width="1.6"/>
+       <circle cx="${x}" cy="${y+0.5}" r="${r*0.5}" fill="${pupil}"/>
+       <circle cx="${x - r*0.3}" cy="${y - r*0.35}" r="${r*0.2}" fill="#fff"/>`;
+    if(n === 1) return one(50, cy, 8);
+    if(n === 2) return one(43, cy, 5.5) + one(57, cy, 5.5);
+    if(n === 3) return one(50, cy-5, 4.5) + one(42, cy+3, 4.5) + one(58, cy+3, 4.5);
+    return one(42, cy-3, 4.4) + one(58, cy-3, 4.4) + one(44, cy+6, 3.6) + one(56, cy+6, 3.6);
+  },
+
+  arms(n, body, c){
+    const w = body === 'round' ? 26 : 22;
+    // זוג זרועות אחד: מתחיל בגוף ויוצא החוצה, עם אגרוף בקצה
+    const pair = (yy, out, drop) => `
+      <g>
+        <path d="M${50-w} ${yy} C${38-out} ${yy+3} ${30-out} ${yy+drop-8} ${28-out} ${yy+drop}"
+              stroke="${c.skin}" stroke-width="9.5" fill="none" stroke-linecap="round"/>
+        <circle cx="${28-out}" cy="${yy+drop+3}" r="6.5" fill="${c.skin}" stroke="${c.dark}" stroke-width="2"/>
+        <path d="M${50+w} ${yy} C${62+out} ${yy+3} ${70+out} ${yy+drop-8} ${72+out} ${yy+drop}"
+              stroke="${c.skin}" stroke-width="9.5" fill="none" stroke-linecap="round"/>
+        <circle cx="${72+out}" cy="${yy+drop+3}" r="6.5" fill="${c.skin}" stroke="${c.dark}" stroke-width="2"/>
+      </g>`;
+    // ארבע זרועות: זוג עליון פרוש למעלה וזוג תחתון פרוש למטה — שניהם בולטים מהגוף
+    return n === 4 ? pair(48, 6, 12) + pair(70, 2, 14) : pair(50, 0, 20);
+  },
+
+  legs(body, c){
+    if(body === 'round' || body === 'blob') return '';
+    return `<path d="M42 94 L40 108" stroke="${c.skin}" stroke-width="10" stroke-linecap="round"/>
+            <path d="M58 94 L60 108" stroke="${c.skin}" stroke-width="10" stroke-linecap="round"/>
+            <ellipse cx="39" cy="111" rx="8" ry="4.5" fill="${c.dark}"/>
+            <ellipse cx="61" cy="111" rx="8" ry="4.5" fill="${c.dark}"/>`;
+  },
+
+  horns(n, body, c){
+    if(!n) return '';
+    const y = body === 'round' ? 40 : (body === 'tall' ? 8 : 12);
+    return `<path d="M38 ${y+6} L33 ${y-6} L45 ${y+2}Z" fill="${c.accent}" stroke="${c.dark}" stroke-width="1.6"/>
+            <path d="M62 ${y+6} L67 ${y-6} L55 ${y+2}Z" fill="${c.accent}" stroke="${c.dark}" stroke-width="1.6"/>`;
+  },
+
+  // המרקם הוא מה שנותן לכל חייזר את האופי שלו
+  texture(kind, c){
+    switch(kind){
+      case 'flame': return `
+        <path d="M50 6 q7 12 2 18 q-3 4 -8 2 q-6 -3 -3 -10 q2 -6 9 -10Z"
+              fill="${c.accent}" opacity=".95"/>
+        <path d="M33 40 q6 -14 12 -5 q4 -12 9 -2 q5 -12 10 -1 q3 -7 5 2"
+              fill="none" stroke="${c.accent}" stroke-width="4" stroke-linecap="round" opacity=".95"/>
+        <path d="M34 80 q6 -12 11 -3 q5 -11 10 -2 q4 -9 8 2"
+              fill="none" stroke="${c.accent}" stroke-width="3.4" stroke-linecap="round" opacity=".85"/>
+        <circle cx="38" cy="60" r="4" fill="${c.accent}" opacity=".5"/>
+        <circle cx="63" cy="70" r="3.4" fill="${c.accent}" opacity=".45"/>`;
+      case 'spark': return `
+        <path d="M50 48 L44 62 L52 62 L46 78" fill="none" stroke="${c.accent}"
+              stroke-width="3.4" stroke-linejoin="round" stroke-linecap="round"/>
+        <path d="M64 54 L60 62 L65 62 L61 71" fill="none" stroke="${c.accent}"
+              stroke-width="2.2" stroke-linecap="round" opacity=".8"/>`;
+      case 'spike': return `
+        ${[18,54,90,126,162,198,234,270,306,342].map(a=>{
+          const r=Math.PI*a/180, x1=50+Math.cos(r)*29, y1=66+Math.sin(r)*29;
+          const x2=50+Math.cos(r)*40, y2=66+Math.sin(r)*40;
+          return `<path d="M${x1.toFixed(1)} ${y1.toFixed(1)} L${x2.toFixed(1)} ${y2.toFixed(1)}"
+                   stroke="${c.dark}" stroke-width="6" stroke-linecap="round"/>`;
+        }).join('')}`;
+      case 'armor': return `
+        <path d="M24 58 q26 -10 52 0" fill="none" stroke="${c.suit}" stroke-width="5" opacity=".95"/>
+        <path d="M22 74 q28 10 56 0" fill="none" stroke="${c.suit}" stroke-width="5" opacity=".95"/>
+        <path d="M50 37 L50 95" stroke="${c.accent}" stroke-width="2" opacity=".35"/>`;
+      case 'wheel': return `
+        <circle cx="50" cy="66" r="19" fill="none" stroke="${c.accent}" stroke-width="3.4"/>
+        <circle cx="50" cy="66" r="7" fill="${c.accent}" opacity=".85"/>
+        ${[0,60,120,180,240,300].map(a=>{
+          const r=Math.PI*a/180;
+          return `<path d="M${(50+Math.cos(r)*7).toFixed(1)} ${(66+Math.sin(r)*7).toFixed(1)}
+                   L${(50+Math.cos(r)*19).toFixed(1)} ${(66+Math.sin(r)*19).toFixed(1)}"
+                   stroke="${c.accent}" stroke-width="2.6"/>`;
+        }).join('')}`;
+      case 'leaf': return `
+        <path d="M34 52 q-10 -8 -2 -16 q10 4 8 15Z" fill="${c.accent}" stroke="${c.dark}" stroke-width="1.4"/>
+        <path d="M66 52 q10 -8 2 -16 q-10 4 -8 15Z" fill="${c.accent}" stroke="${c.dark}" stroke-width="1.4"/>
+        <path d="M50 50 q-8 14 0 30 q8 -16 0 -30Z" fill="${c.accent}" opacity=".6"/>`;
+      case 'rock': return `
+        <path d="M32 54 l9 -5 l7 6 l-8 6Z" fill="${c.accent}" opacity=".5"/>
+        <path d="M58 62 l10 -4 l5 8 l-10 4Z" fill="${c.accent}" opacity=".45"/>
+        <path d="M36 76 l8 -3 l4 7 l-9 3Z" fill="${c.accent}" opacity=".4"/>`;
+      case 'ice': return `
+        ${[0,45,90,135].map(a=>`<path d="M50 66 L${(50+Math.cos(Math.PI*a/180)*17).toFixed(1)} ${(66+Math.sin(Math.PI*a/180)*17).toFixed(1)}
+             M50 66 L${(50-Math.cos(Math.PI*a/180)*17).toFixed(1)} ${(66-Math.sin(Math.PI*a/180)*17).toFixed(1)}"
+             stroke="${c.accent}" stroke-width="2.6" stroke-linecap="round" opacity=".85"/>`).join('')}`;
+      case 'drop': return `
+        <path d="M50 48 q9 12 0 20 q-9 -8 0 -20Z" fill="${c.accent}" opacity=".75"/>
+        <circle cx="38" cy="74" r="4" fill="${c.accent}" opacity=".55"/>
+        <circle cx="62" cy="78" r="3" fill="${c.accent}" opacity=".5"/>`;
+      case 'glow': return `
+        <circle cx="50" cy="64" r="24" fill="${c.accent}" opacity=".22"/>
+        <circle cx="50" cy="64" r="15" fill="${c.accent}" opacity=".3"/>`;
+      case 'metal': return `
+        <rect x="34" y="54" width="32" height="7" rx="3" fill="${c.suit}"/>
+        <rect x="34" y="72" width="32" height="7" rx="3" fill="${c.suit}"/>
+        <path d="M50 61 L50 72" stroke="${c.accent}" stroke-width="2.4"/>`;
+    }
+    return '';
+  },
+
+  // סמל האומניטריקס — מופיע על כל חייזר, זה מה שמקשר אותם יחד
+  badge(body){
+    const cy = body === 'round' ? 66 : 62;
+    return `<g transform="translate(50 ${cy}) scale(.95)">
+      <circle r="10" fill="#101720" stroke="#0a0f16" stroke-width="1.4"/>
+      <circle r="8" fill="#8fff00"/>
+      <path d="M-4.4 -4.4 L4.4 4.4 M4.4 -4.4 L-4.4 4.4" stroke="#101720" stroke-width="3.2" stroke-linecap="round"/>
+    </g>`;
+  },
+
+  /* בונה את ה-SVG המלא של חייזר */
+  svg(alien, opts={}){
+    const key = alien.id + (opts.locked ? ':L' : '');
+    if(this.cache[key] && !opts.nocache) return this.cache[key];
+    const c = alien.c;
+    let inner;
+    if(opts.locked){
+      // חייזר נעול = סילואטה כהה עם סימן שאלה, בדיוק כמו עיגול ריק בציור
+      inner = `${this.legs(alien.body,{skin:'#39414f',dark:'#262c36'})}
+               ${this.torso(alien.body,{skin:'#39414f',dark:'#262c36'})}
+               ${this.arms(alien.arms, alien.body,{skin:'#39414f',dark:'#262c36'})}
+               ${this.head(alien.body,{skin:'#39414f',dark:'#262c36'})}
+               <text x="50" y="${alien.body==='round'?72:30}" text-anchor="middle"
+                     font-size="22" font-weight="900" fill="#6d7789">?</text>`;
+    } else {
+      inner = `${this.legs(alien.body,c)}
+               ${this.torso(alien.body,c)}
+               ${this.texture(alien.texture,c)}
+               ${this.arms(alien.arms, alien.body, c)}
+               ${this.badge(alien.body)}
+               ${this.head(alien.body,c)}
+               ${this.horns(alien.horns, alien.body, c)}
+               ${this.eyes(alien.eyes, alien.body, c)}`;
+    }
+    const out = `<svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg"
+                   class="alien-svg" aria-label="${alien.short}">${inner}</svg>`;
+    if(!opts.nocache) this.cache[key] = out;
+    return out;
+  }
+};
+
+/* =====================================================================
+   האומניטריקס — נעילה ופתיחה של חייזרים לפי למידה
+   ===================================================================== */
+const Omnitrix = {
+  KEY: 'ben10_omnitrix_v1',
+  state: null,
+  NEEDED: 4,            // כמה תשובות נכונות באות פותחות את החייזר שלה
+
+  load(){
+    try{
+      const raw = localStorage.getItem(this.KEY);
+      this.state = raw ? JSON.parse(raw) : {};
+    }catch(e){ this.state = {}; }
+    if(!this.state.unlocked) this.state.unlocked = {};
+    // שלושת החייזרים המוכרים פתוחים מההתחלה — כדי שיהיה עם מי לשחק מיד
+    ALIENS.filter(a=>a.known).forEach(a=>{ this.state.unlocked[a.id] = true; });
+    if(!this.state.active) this.state.active = 'fourarms';
+    this.save();
+    return this.state;
+  },
+  save(){ try{ localStorage.setItem(this.KEY, JSON.stringify(this.state)); }catch(e){} },
+
+  isUnlocked(a){ return !!this.state.unlocked[a.id]; },
+  active(){ return ALIEN_BY_ID[this.state.active] || ALIENS[0]; },
+  setActive(id){ if(this.state.unlocked[id]){ this.state.active = id; this.save(); return true; } return false; },
+
+  // כמה תשובות נכונות כבר יש באות של החייזר
+  progressOf(a){
+    const d = Progress.data.letters[a.letter];
+    return Math.min(this.NEEDED, d ? d.ok : 0);
+  },
+  readyToUnlock(a){ return !this.isUnlocked(a) && this.progressOf(a) >= this.NEEDED; },
+
+  unlock(id){
+    if(this.state.unlocked[id]) return false;
+    this.state.unlocked[id] = true;
+    this.save();
+    return true;
+  },
+
+  // נקרא אחרי כל תשובה נכונה — מחזיר חייזר שנפתח עכשיו, אם יש
+  checkUnlocks(){
+    for(const a of ALIENS){
+      if(this.readyToUnlock(a)){ this.unlock(a.id); return a; }
+    }
+    return null;
+  },
+
+  countUnlocked(){ return ALIENS.filter(a=>this.isUnlocked(a)).length; }
+};
+
+/* =====================================================================
+   מסך האומניטריקס — לפי הציור: עיגול גדול, ובתוכו עיגולים עם החייזרים.
+   עיגול מלא = חייזר פתוח. עיגול ריק = חייזר שעוד צריך לפתוח בלמידה.
+   ===================================================================== */
+const OmniUI = {
+  open(){
+    SFX.click(); SFX.transform();
+    Game.show('omniScreen');
+    this.render();
+    Voice.speak('זה האומניטריקס שלך! בחר חייזר, או פתח חייזר חדש בלימוד אותיות.');
+  },
+
+  render(){
+    const dial = document.getElementById('omniDial');
+    dial.innerHTML = '';
+    const n = ALIENS.length;
+    ALIENS.forEach((a, i)=>{
+      // פריסה במעגל, בדיוק כמו העיגולים בציור
+      const ang = (-90 + i * (360 / n)) * Math.PI / 180;
+      const R = 37;                                  // אחוז מרדיוס החוגה
+      const slot = document.createElement('button');
+      const unlocked = Omnitrix.isUnlocked(a);
+      slot.className = 'omni-slot' + (unlocked ? '' : ' locked') +
+                       (Omnitrix.state.active === a.id ? ' active' : '');
+      slot.style.left = (50 + Math.cos(ang) * R) + '%';
+      slot.style.top  = (50 + Math.sin(ang) * R) + '%';
+      slot.innerHTML = AlienArt.svg(a, {locked: !unlocked}) +
+        `<span class="os-name">${unlocked ? a.short : a.letter}</span>`;
+      slot.onclick = ()=> this.pick(a);
+      dial.appendChild(slot);
+    });
+    document.getElementById('omniCount').textContent =
+      `${Omnitrix.countUnlocked()} מתוך ${ALIENS.length} חייזרים נפתחו`;
+    this.showCard(Omnitrix.active());
+  },
+
+  pick(a){
+    if(Omnitrix.isUnlocked(a)){
+      Omnitrix.setActive(a.id);
+      Game.settings.favChar = null;          // החייזר הפעיל מנצח על הבחירה הישנה
+      Game.saveSettings();
+      SFX.transform();
+      Voice.speak(a.short, {rate:0.9});
+      Voice.say(a.desc);
+      this.render();
+    } else {
+      SFX.click();
+      this.showCard(a);
+      const need = Omnitrix.NEEDED - Omnitrix.progressOf(a);
+      Voice.speak('החייזר הזה עדיין נעול. כדי לפתוח אותו צריך ללמוד את האות');
+      Voice.say(LETTER_NAMES[a.letter] || a.letter, {rate:0.8});
+    }
+  },
+
+  showCard(a){
+    const box = document.getElementById('omniCard');
+    const unlocked = Omnitrix.isUnlocked(a);
+    const got = Omnitrix.progressOf(a), need = Omnitrix.NEEDED;
+    box.innerHTML = `
+      <div class="oc-art">${AlienArt.svg(a, {locked: !unlocked})}</div>
+      <div class="oc-info">
+        <div class="oc-name">${unlocked ? a.short : 'חייזר נעול'}</div>
+        <div class="oc-power">${unlocked ? '⚡ ' + a.power : '🔒 צריך ללמוד את האות ' + a.letter}</div>
+        <div class="oc-desc">${unlocked ? a.desc : `ענה נכון על ${need} שאלות עם האות ${LETTER_NAMES[a.letter]||a.letter} והחייזר ייפתח!`}</div>
+        ${unlocked ? `<div class="oc-letter">האות שלו: <b>${a.letter}</b> · ${LETTER_NAMES[a.letter]||''}</div>`
+                   : `<div class="oc-bar"><i style="width:${got/need*100}%"></i></div>
+                      <div class="oc-prog">${got} מתוך ${need}</div>
+                      <button class="btn btn-green oc-go" onclick="OmniUI.practice('${a.letter}')">
+                        🎯 תרגל את האות ${a.letter} עכשיו</button>`}
+      </div>`;
+  },
+
+  // תרגול ממוקד על אות אחת — הדרך לפתוח את החייזר
+  practice(letter){
+    SFX.click();
+    Game.focusLetter = letter;
+    Game.pendingMode = 'smash';
+    Game.startGame(1);
+  },
+
+  /* חגיגת פתיחת חייזר חדש */
+  celebrate(a){
+    const ov = document.getElementById('unlockOverlay');
+    document.getElementById('ulArt').innerHTML = AlienArt.svg(a);
+    document.getElementById('ulName').textContent = a.short;
+    document.getElementById('ulPower').textContent = '⚡ ' + a.power;
+    document.getElementById('ulDesc').textContent = a.desc;
+    ov.classList.add('show');
+    SFX.transform(); SFX.win();
+    Voice.speak('חייזר חדש נפתח!');
+    Voice.say(a.short, {rate:0.9});
+    Voice.say(a.desc);
+    Game.spawnParticles();
+  },
+  closeUnlock(){ SFX.click(); document.getElementById('unlockOverlay').classList.remove('show'); }
+};
+
+/* =====================================================================
+   מצב משחק: נפץ את הקופסאות
+   החייזר זז ומרביץ לקופסאות קרטון מרובעות שעליהן אותיות.
+   ===================================================================== */
+const Smash = {
+  busy: false,
+
+  build(){
+    const G = Game, st = G.state;
+    st.locked = false;
+    this.busy = false;
+
+    // האות שמתרגלים: או אות ממוקדת מהאומניטריקס, או אות מותאמת אישית
+    const letter = G.focusLetter || Progress.pickLetter(LETTERS);
+    const n = Math.min(6, st.choices || 4);
+    const others = G.shuffle(ALEFBET.filter(l => l !== letter)).slice(0, n - 1);
+    const options = G.shuffle([letter, ...others]);
+    st.current = { answer: letter, options, letter };
+
+    const word = G.rand(WORDS[letter] || [{w:'', e:'📦'}]);
+    const alien = Omnitrix.active();
+
+    /* רמה 1 מראה את האות — תרגול זיהוי צורה.
+       מרמה 2 מראים רק מילה ותמונה: הילד חייב לזהות בעצמו באיזו אות היא מתחילה. */
+    const showLetter = (st.level || 1) === 1;
+    const prompt = document.getElementById('promptCard');
+    prompt.style.display = '';
+    prompt.innerHTML = showLetter
+      ? `<div class="smash-goal">נפץ את הקופסה עם האות
+           <b class="sg-letter">${letter}</b></div>
+         <div class="word-hint">${word.e || ''} ${word.w || ''}</div>`
+      : `<div class="smash-goal">נפץ את הקופסה עם האות שפותחת את המילה</div>
+         <div class="smash-word">${word.e || ''}</div>
+         <div class="word-label">${word.w || ''}</div>`;
+
+    const cont = document.getElementById('choices');
+    cont.className = 'crate-field';
+    cont.innerHTML = `<div class="smasher" id="smasher">${AlienArt.svg(alien)}</div>`;
+
+    options.forEach(l=>{
+      const b = document.createElement('button');
+      b.className = 'crate';
+      b.dataset.val = l;
+      b.innerHTML = `<span class="crate-letter">${l}</span>
+        <i class="tape tape-h"></i><i class="tape tape-v"></i>`;
+      b.onclick = ()=> this.hit(b, l === letter, letter, options);
+      cont.appendChild(b);
+    });
+
+    if(showLetter){
+      G.setGreyText(`נפץ את הקופסה עם האות ${LETTER_NAMES[letter] || letter}!`);
+      G.speakGrey(`${alien.short}, נפץ את הקופסה עם האות`);
+      Voice.say(LETTER_NAMES[letter] || letter, {rate:0.8});
+      G._lastSpeak = `נפץ את הקופסה עם האות ${LETTER_NAMES[letter] || letter}`;
+    } else {
+      G.setGreyText(`באיזו אות מתחילה המילה ${word.w}? נפץ את הקופסה שלה!`);
+      G.speakGrey('נפץ את הקופסה של האות שפותחת את המילה');
+      Voice.say(word.w, {rate:0.85});
+      G._lastSpeak = `באיזו אות מתחילה המילה ${word.w}?`;
+    }
+    G.startTimer();
+  },
+
+  async hit(box, ok, answer, options){
+    if(this.busy || Game.state.locked) return;
+    this.busy = true;
+    const alien = Omnitrix.active();
+    const field = document.getElementById('choices');
+    const smasher = document.getElementById('smasher');
+
+    // החייזר זז אל הקופסה
+    if(smasher && field){
+      const fr = field.getBoundingClientRect(), br = box.getBoundingClientRect();
+      const sr = smasher.getBoundingClientRect();
+      const dx = (br.left + br.width/2) - (sr.left + sr.width/2);
+      const dy = (br.top  + br.height/2) - (sr.top + sr.height/2);
+      smasher.classList.add('charging', 'atk-' + (alien.attack || 'punch'));
+      smasher.style.transform = `translate(${dx}px, ${dy - br.height*0.55}px)`;
+      SFX.whoosh();
+      await new Promise(r=>setTimeout(r, 340));
+      smasher.classList.add('striking');
+    }
+
+    if(ok){
+      this.explode(box);
+      SFX.correct();
+    } else {
+      box.classList.add('wobble');
+      SFX.wrong();
+      setTimeout(()=>box.classList.remove('wobble'), 500);
+    }
+
+    setTimeout(()=>{
+      if(smasher){
+        smasher.classList.remove('charging','striking','atk-punch','atk-fire',
+                                 'atk-roll','atk-zap','atk-splash','atk-freeze','atk-pull');
+        smasher.style.transform = '';
+      }
+    }, 420);
+
+    setTimeout(()=>{ this.busy = false; Game.answer(ok, box, answer, options); }, 300);
+  },
+
+  // הקופסה מתפרקת לרסיסי קרטון שעפים לכל הכיוונים
+  explode(box){
+    box.classList.add('boom');
+    const r = box.getBoundingClientRect();
+    for(let i = 0; i < 9; i++){
+      const p = document.createElement('i');
+      p.className = 'chip';
+      p.style.left = (r.left + r.width/2) + 'px';
+      p.style.top  = (r.top  + r.height/2) + 'px';
+      const ang = Math.random() * Math.PI * 2;
+      const dist = 60 + Math.random() * 90;
+      p.style.setProperty('--dx', Math.cos(ang) * dist + 'px');
+      p.style.setProperty('--dy', Math.sin(ang) * dist - 30 + 'px');
+      p.style.setProperty('--rot', (Math.random() * 720 - 360) + 'deg');
+      p.style.width = p.style.height = (7 + Math.random() * 11) + 'px';
+      document.body.appendChild(p);
+      setTimeout(()=>p.remove(), 900);
+    }
+  }
 };
 
 /* =====================================================================
@@ -2852,6 +3549,7 @@ document.addEventListener('keydown', unlockAudio, {once:true});
 
 window.addEventListener('load', ()=>{
   Progress.load();
+  Omnitrix.load();
   Game.loadSettings();
   ImgEdit.load();
   Clips.init();
