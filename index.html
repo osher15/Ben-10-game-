@@ -491,16 +491,6 @@
   border:7px solid var(--omni-green, #8fff00);
   box-shadow:0 0 34px rgba(143,255,0,.35), inset 0 0 40px rgba(0,0,0,.7); }
 /* ליבת האומניטריקס במרכז */
-.omni-dial::before{ content:''; position:absolute; left:50%; top:50%; width:22%; aspect-ratio:1;
-  transform:translate(-50%,-50%); border-radius:50%;
-  background:radial-gradient(circle at 38% 34%, #d4ff6a, #8fff00 55%, #4d8f00);
-  box-shadow:0 0 26px rgba(143,255,0,.8); }
-.omni-dial::after{ content:''; position:absolute; left:50%; top:50%; width:11%; aspect-ratio:1;
-  transform:translate(-50%,-50%) rotate(45deg);
-  background:
-    linear-gradient(to bottom, #101720 42%, transparent 42%, transparent 58%, #101720 58%),
-    linear-gradient(to right,  #101720 42%, transparent 42%, transparent 58%, #101720 58%); }
-
 .omni-slot{ position:absolute; width:21%; aspect-ratio:1; transform:translate(-50%,-50%);
   border-radius:50%; border:3px solid rgba(255,255,255,.22); cursor:pointer;
   background:rgba(255,255,255,.07); padding:5px 5px 12px; transition:.18s;
@@ -551,6 +541,7 @@
 
 .crate-field{ position:relative; display:grid; grid-template-columns:repeat(3,1fr);
   gap:12px; padding:8px 6px 74px; width:100%; }
+.crate-field .villain{ order:-1; }
 @media (max-width:380px){ .crate-field{ grid-template-columns:repeat(2,1fr); } }
 
 /* קופסת קרטון מרובעת */
@@ -608,6 +599,73 @@
 
   .fb-alien{ width:120px; height:145px; margin:0 auto; }
   .smash-word{ font-size:3.4rem; line-height:1.1; margin:6px 0 2px; }
+
+/* ===== ליבת האומניטריקס: לחיצה ארוכה = טרנספורמציה ===== */
+/* חשוב: aspect-ratio לא עובד על <button> בכרום (הסגנון המובנה של הכפתור
+   קובע את הגובה), ולכן מציינים גובה מפורש. אחוזים נמדדים מול החוגה שהיא ריבועית. */
+.omni-btn{ position:absolute; left:50%; top:50%; width:26%; height:26%;
+  transform:translate(-50%,-50%); border-radius:50%; border:none; padding:0;
+  appearance:none; -webkit-appearance:none;
+  cursor:pointer; z-index:8; background:transparent; -webkit-tap-highlight-color:transparent;
+  touch-action:none; }
+/* טבעת הטעינה — מתמלאת ככל שמחזיקים */
+.omni-btn::before{ content:''; position:absolute; inset:-7%; border-radius:50%;
+  background:conic-gradient(#d4ff6a 0deg, #d4ff6a var(--charge,0deg), rgba(255,255,255,.10) var(--charge,0deg));
+  transition:opacity .2s; }
+/* הכפתור הירוק עצמו */
+.omni-btn::after{ content:''; position:absolute; inset:9%; border-radius:50%;
+  background:radial-gradient(circle at 38% 34%, #d4ff6a, #8fff00 55%, #4d8f00);
+  box-shadow:0 0 26px rgba(143,255,0,.8), inset 0 -5px 12px rgba(0,0,0,.35); }
+/* סמל ה-X של האומניטריקס: שני פסים מוצלבים.
+   (גרסת ה-linear-gradient הקודמת ציירה ריבוע מלא ולא צלב) */
+.omni-btn .core-x{ position:absolute; left:50%; top:50%; width:44%; height:44%; z-index:2;
+  transform:translate(-50%,-50%); pointer-events:none; }
+.omni-btn .core-x::before, .omni-btn .core-x::after{
+  content:''; position:absolute; top:0; bottom:0; left:50%; width:24%; margin-left:-12%;
+  background:#101720; border-radius:2px; }
+.omni-btn .core-x::before{ transform:rotate(45deg); }
+.omni-btn .core-x::after{ transform:rotate(-45deg); }
+.omni-btn.charging{ animation:coreShake .12s infinite; }
+.omni-btn.charging::after{ box-shadow:0 0 46px rgba(212,255,106,1), inset 0 -5px 12px rgba(0,0,0,.35); }
+@keyframes coreShake{ 0%,100%{ transform:translate(-50%,-50%) } 50%{ transform:translate(-50%,-50%) scale(1.05) } }
+.omni-btn.fizzle::after{ animation:fizzle .4s; }
+@keyframes fizzle{ 0%,100%{ filter:none } 50%{ filter:grayscale(1) brightness(.6) } }
+
+.omni-hint{ text-align:center; font-size:.82rem; opacity:.85; margin-top:6px; }
+.omni-hint b{ color:#8fff00; }
+
+/* הבזק הטרנספורמציה */
+.omni-flash{ position:fixed; inset:0; z-index:200; pointer-events:none;
+  background:radial-gradient(circle at 50% 50%, #eaffc4 0%, #8fff00 30%, rgba(143,255,0,0) 72%);
+  animation:omniFlash .65s ease-out forwards; }
+@keyframes omniFlash{ 0%{ opacity:0; transform:scale(.2) } 22%{ opacity:1; transform:scale(1.1) }
+  100%{ opacity:0; transform:scale(1.7) } }
+
+/* כפתור אומניטריקס קטן בתוך המשחק — אפשר להחליף חייזר תוך כדי */
+.omni-mini{ position:relative; width:46px; height:46px; flex-shrink:0; }
+.omni-mini .omni-btn{ width:100%; height:100%; }
+
+/* ===== הרשעים ===== */
+.villain{ grid-column:1 / -1; display:flex; align-items:center; gap:9px;
+  background:linear-gradient(90deg, rgba(60,20,80,.55), rgba(60,20,80,.15));
+  border:1px solid rgba(255,120,220,.3); border-radius:14px; padding:6px 9px; margin-bottom:2px; }
+.villain .alien-svg{ width:56px; height:68px; flex-shrink:0;
+  animation:vFloat 2.4s ease-in-out infinite;
+  filter:drop-shadow(0 3px 7px rgba(0,0,0,.6)); }
+@keyframes vFloat{ 0%,100%{ transform:translateY(0) rotate(-3deg) } 50%{ transform:translateY(-6px) rotate(3deg) } }
+.v-bubble{ flex:1; min-width:0; font-size:.76rem; line-height:1.4; color:#ffd8f4; text-align:right;
+  background:rgba(30,12,40,.9); border:1px solid rgba(255,120,220,.35);
+  border-radius:11px; padding:6px 9px; }
+@keyframes vLaugh{ 0%,100%{ transform:none } 25%{ transform:scale(1.15) rotate(-8deg) }
+  60%{ transform:scale(1.15) rotate(8deg) } }
+/* נלכד בבועה — בלי אלימות */
+/* נלכד — הרשע מתכווץ לתוך בועה, בלי אלימות */
+.villain.caught{ border-color:rgba(150,230,255,.7); background:rgba(20,60,80,.4); }
+.villain.caught .alien-svg{ animation:vCaught .7s forwards; }
+@keyframes vCaught{ to{ transform:scale(.6) rotate(20deg); opacity:.6; filter:hue-rotate(170deg) blur(.6px) } }
+.villain.caught .v-bubble{ color:#cdefff; border-color:rgba(150,230,255,.5); }
+.villain.laughing .alien-svg{ animation:vLaugh .6s; }
+
 </style>
 </head>
 <body>
@@ -693,7 +751,12 @@
         <div class="omni-count" id="omniCount"></div></div>
       <button class="icon-btn" onclick="Game.openSettings()">⚙️</button>
     </div>
-    <div class="omni-dial" id="omniDial"></div>
+    <div class="omni-dial" id="omniDial">
+      <button class="omni-btn" id="omniCore" aria-label="החזק לחוץ כדי להפוך לחייזר">
+        <i class="core-x"></i>
+      </button>
+    </div>
+    <div class="omni-hint">👆 <b>לחץ והחזק</b> על האומניטריקס כדי להפוך לחייזר חדש!</div>
     <div class="omni-card" id="omniCard"></div>
   </div>
 
@@ -733,7 +796,11 @@
         <button class="icon-btn" onclick="Game.quitToMenu()">⬅️</button>
         <div class="pill"><span>⭐</span><span id="scoreVal">0</span></div>
       </div>
-      <div class="pill"><span class="lbl">חיים</span><span id="livesVal">❤️❤️❤️</span></div>
+      <div class="hud-left">
+        <div class="omni-mini"><button class="omni-btn" id="omniCoreGame"
+             aria-label="החזק לחוץ כדי להחליף חייזר"><i class="core-x"></i></button></div>
+        <div class="pill"><span class="lbl">חיים</span><span id="livesVal">❤️❤️❤️</span></div>
+      </div>
     </div>
 
     <div class="prog-dots" id="progDots"></div>
@@ -1635,6 +1702,7 @@ const Game = {
   goTitle(){ this.stopTimer(); Voice.stop(); SFX.click(); this.show('titleScreen'); },
   goMenu(){
     this.focusLetter = null;
+    Villain.clear();
     this.stopTimer(); Voice.stop(); SFX.init(); SFX.click();
     this.show('menuScreen');
     this.buildBuddyRow();
@@ -1837,6 +1905,7 @@ const Game = {
     };
     drawGreyMatter();
     this.show('gameScreen');
+    Transform.bind(document.getElementById('omniCoreGame'));
     this.updateHUD();
     this.buildProgDots();
     setTimeout(()=>this.nextQuestion(), 450);
@@ -2620,6 +2689,13 @@ const AlienArt = {
     return one(42, cy-3, 4.4) + one(58, cy-3, 4.4) + one(44, cy+6, 3.6) + one(56, cy+6, 3.6);
   },
 
+  // גבות זועמות — מה שהופך חייזר לרשע
+  brows(body, c){
+    const cy = body === 'round' ? 58 : (body === 'tall' ? 20 : 24);
+    return `<path d="M35 ${cy-8} L47 ${cy-3}" stroke="${c.dark}" stroke-width="3.4" stroke-linecap="round"/>
+            <path d="M65 ${cy-8} L53 ${cy-3}" stroke="${c.dark}" stroke-width="3.4" stroke-linecap="round"/>`;
+  },
+
   arms(n, body, c){
     const w = body === 'round' ? 26 : 22;
     // זוג זרועות אחד: מתחיל בגוף ויוצא החוצה, עם אגרוף בקצה
@@ -2747,7 +2823,8 @@ const AlienArt = {
                ${this.badge(alien.body)}
                ${this.head(alien.body,c)}
                ${this.horns(alien.horns, alien.body, c)}
-               ${this.eyes(alien.eyes, alien.body, c)}`;
+               ${this.eyes(alien.eyes, alien.body, c)}
+               ${alien.villain ? this.brows(alien.body, c) : ''}`;
     }
     const out = `<svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg"
                    class="alien-svg" aria-label="${alien.short}">${inner}</svg>`;
@@ -2821,7 +2898,8 @@ const OmniUI = {
 
   render(){
     const dial = document.getElementById('omniDial');
-    dial.innerHTML = '';
+    // מנקים רק את המשבצות; כפתור הליבה נשאר במקומו
+    dial.querySelectorAll('.omni-slot').forEach(s=>s.remove());
     const n = ALIENS.length;
     ALIENS.forEach((a, i)=>{
       // פריסה במעגל, בדיוק כמו העיגולים בציור
@@ -2840,6 +2918,7 @@ const OmniUI = {
     });
     document.getElementById('omniCount').textContent =
       `${Omnitrix.countUnlocked()} מתוך ${ALIENS.length} חייזרים נפתחו`;
+    Transform.bind(document.getElementById('omniCore'));
     this.showCard(Omnitrix.active());
   },
 
@@ -2943,6 +3022,13 @@ const Smash = {
     cont.className = 'crate-field';
     cont.innerHTML = `<div class="smasher" id="smasher">${AlienArt.svg(alien)}</div>`;
 
+    // "עוצרים רשעים, וזה נותן להם נקודות" — מרמה 2 מופיע רשע שמתגרה
+    Villain.clear();
+    if((st.level || 1) >= 2){
+      Villain.spawn();
+      Villain.render(cont);
+    }
+
     options.forEach(l=>{
       const b = document.createElement('button');
       b.className = 'crate';
@@ -2964,6 +3050,7 @@ const Smash = {
       Voice.say(word.w, {rate:0.85});
       G._lastSpeak = `באיזו אות מתחילה המילה ${word.w}?`;
     }
+    Villain.taunt();
     G.startTimer();
   },
 
@@ -2990,9 +3077,16 @@ const Smash = {
     if(ok){
       this.explode(box);
       SFX.correct();
+      // הרשע נלכד יחד עם ניפוץ הקופסה
+      const bonus = Villain.catch();
+      if(bonus){
+        Game.state.score += bonus;
+        Game.updateHUD();
+      }
     } else {
       box.classList.add('wobble');
       SFX.wrong();
+      Villain.escape();
       setTimeout(()=>box.classList.remove('wobble'), 500);
     }
 
@@ -3026,6 +3120,199 @@ const Smash = {
       setTimeout(()=>p.remove(), 900);
     }
   }
+};
+
+/* =====================================================================
+   הטרנספורמציה — הלב של הרעיון
+   "ארבע זרועות חוזר לבן, הוא לוחץ על האומניטריקס שלו הרבה זמן,
+    ואז יוצאת דמות חדשה."
+   לוחצים ומחזיקים על ליבת האומניטריקס. ככל שמחזיקים יותר, הטעינה גדלה,
+   הצליל עולה — ובסוף הבזק ירוק וחייזר חדש יוצא.
+   ===================================================================== */
+const Transform = {
+  HOLD_MS: 1500,          // כמה זמן צריך להחזיק
+  t0: 0, raf: null, holding: false, tone: null, gain: null,
+
+  bind(el){
+    if(!el || el._tbound) return;
+    el._tbound = true;
+    const down = e =>{ e.preventDefault(); this.start(el); };
+    const up   = e =>{ e.preventDefault(); this.release(el); };
+    el.addEventListener('pointerdown', down);
+    el.addEventListener('pointerup', up);
+    el.addEventListener('pointercancel', up);
+    el.addEventListener('pointerleave', up);
+    // מקלדת — נגישות
+    el.addEventListener('keydown', e=>{ if((e.key===' '||e.key==='Enter') && !this.holding){ e.preventDefault(); this.start(el); } });
+    el.addEventListener('keyup',   e=>{ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); this.release(el); } });
+  },
+
+  start(el){
+    if(this.holding) return;
+    this.holding = true;
+    this.t0 = performance.now();
+    el.classList.add('charging');
+    Voice.stop();
+    this.startTone();
+
+    const tick = ()=>{
+      if(!this.holding) return;
+      const p = Math.min(1, (performance.now() - this.t0) / this.HOLD_MS);
+      el.style.setProperty('--charge', (p * 360) + 'deg');
+      if(this.tone) this.tone.frequency.value = 180 + p * 700;   // הצליל עולה עם הטעינה
+      if(p >= 1){ this.fire(el); return; }
+      this.raf = requestAnimationFrame(tick);
+    };
+    this.raf = requestAnimationFrame(tick);
+  },
+
+  release(el){
+    if(!this.holding) return;
+    const p = (performance.now() - this.t0) / this.HOLD_MS;
+    this.stop(el);
+    if(p < 1){
+      // שחררו מוקדם מדי — רמז ידידותי
+      el.classList.add('fizzle');
+      setTimeout(()=>el.classList.remove('fizzle'), 400);
+      SFX.beep(160, 0.18, 'sawtooth', 0.12);
+      if(!this._hinted){
+        this._hinted = true;
+        Voice.speak('תחזיק את האומניטריקס לחוץ יותר זמן!');
+      }
+    }
+  },
+
+  stop(el){
+    this.holding = false;
+    cancelAnimationFrame(this.raf);
+    this.stopTone();
+    el.classList.remove('charging');
+    el.style.setProperty('--charge', '0deg');
+  },
+
+  // צליל טעינה עולה
+  startTone(){
+    try{
+      SFX.init();
+      if(!SFX.ctx || !Game.settings.sfx) return;
+      this.tone = SFX.ctx.createOscillator();
+      this.gain = SFX.ctx.createGain();
+      this.tone.type = 'sawtooth';
+      this.tone.frequency.value = 180;
+      this.gain.gain.value = 0.07;
+      this.tone.connect(this.gain); this.gain.connect(SFX.ctx.destination);
+      this.tone.start();
+    }catch(e){}
+  },
+  stopTone(){
+    try{
+      if(this.gain) this.gain.gain.exponentialRampToValueAtTime(0.0001, SFX.ctx.currentTime + 0.08);
+      if(this.tone) this.tone.stop(SFX.ctx.currentTime + 0.1);
+    }catch(e){}
+    this.tone = null; this.gain = null;
+  },
+
+  /* הטעינה הושלמה — הבזק וחייזר חדש יוצא */
+  fire(el){
+    this.stop(el);
+    const next = this.pickNext();
+
+    // הבזק ירוק על כל המסך, כמו באומניטריקס האמיתי
+    const flash = document.createElement('div');
+    flash.className = 'omni-flash';
+    document.body.appendChild(flash);
+    SFX.transform();
+    setTimeout(()=>flash.remove(), 700);
+
+    setTimeout(()=>{
+      if(next.fresh){
+        Omnitrix.unlock(next.alien.id);
+        Omnitrix.setActive(next.alien.id);
+        OmniUI.celebrate(next.alien);
+      } else {
+        Omnitrix.setActive(next.alien.id);
+        SFX.coin();
+        Voice.speak('הפכת ל');
+        Voice.say(next.alien.short, {rate:0.9});
+      }
+      if(document.getElementById('omniScreen').classList.contains('active')) OmniUI.render();
+      Game.refreshOmniButton && Game.refreshOmniButton();
+    }, 260);
+  },
+
+  /* מה יוצא מהטרנספורמציה?
+     אם הילד השלים את הלמידה של אות — יוצא החייזר החדש שלה.
+     אחרת — מתחלפים בין החייזרים שכבר נפתחו. */
+  pickNext(){
+    const ready = ALIENS.find(a => Omnitrix.readyToUnlock(a));
+    if(ready) return { alien: ready, fresh: true };
+    const pool = ALIENS.filter(a => Omnitrix.isUnlocked(a) && a.id !== Omnitrix.state.active);
+    if(pool.length) return { alien: pool[Math.floor(Math.random() * pool.length)], fresh: false };
+    return { alien: Omnitrix.active(), fresh: false };
+  }
+};
+
+/* =====================================================================
+   הרשעים — "עוצרים רשעים, וזה נותן להם נקודות"
+   רשעים שמתעסקים באותיות: מוחקים, מערבבים, חוטפים ומרעישים.
+   עוצרים אותם בתשובה נכונה — בלי אלימות, לוכדים אותם בבועה.
+   ===================================================================== */
+const VILLAINS = [
+  { id:'kashkush', name:'קַשְׁקוּשׁ', short:'קשקוש', taunt:'קשקשתי לך על האותיות! חחח',
+    caught:'אוי לא! תפסת אותי!', body:'blob', arms:2, eyes:1, horns:2, texture:'spark', villain:true,
+    c:{ skin:'#7a4bd0', dark:'#3a1d70', suit:'#1d0d3d', accent:'#ff5bd0' } },
+  { id:'balagan', name:'בַּלְגָּן', short:'בלגן', taunt:'ערבבתי לך את כל האותיות!',
+    caught:'לא הוגן! סידרת הכל!', body:'bulky', arms:4, eyes:3, horns:2, texture:'metal', villain:true,
+    c:{ skin:'#4f5b6e', dark:'#232a36', suit:'#e8483f', accent:'#ffd84d' } },
+  { id:'hatifon', name:'חֲטִיפוֹן', short:'חטיפון', taunt:'חטפתי את האות ואתה לא תמצא אותה!',
+    caught:'קח את האות שלך בחזרה…', body:'slim', arms:2, eyes:2, horns:2, texture:'spike', villain:true,
+    c:{ skin:'#2f9e6b', dark:'#124a30', suit:'#0a2a1b', accent:'#c9ff6b' } },
+  { id:'raashan', name:'רַעֲשָׁן', short:'רעשן', taunt:'בוווווםםם! לא תשמע כלום!',
+    caught:'שקט… ניצחת.', body:'round', arms:2, eyes:2, horns:0, texture:'armor', villain:true,
+    c:{ skin:'#e8a33f', dark:'#7a4a06', suit:'#3d2503', accent:'#fff0c2' } },
+];
+
+const Villain = {
+  current: null,
+
+  spawn(){
+    this.current = VILLAINS[Math.floor(Math.random() * VILLAINS.length)];
+    return this.current;
+  },
+
+  render(host){
+    if(!this.current || !host) return;
+    const v = this.current;
+    const box = document.createElement('div');
+    box.className = 'villain';
+    box.id = 'villainEl';
+    box.innerHTML = AlienArt.svg(v) + `<div class="v-bubble">${v.taunt}</div>`;
+    host.insertBefore(box, host.firstChild);
+  },
+
+  taunt(){
+    if(!this.current) return;
+    Voice.say(this.current.taunt, {pitch:0.8, rate:1.05});
+  },
+
+  // נתפס — בועה, ניקוד בונוס, וחגיגה קטנה
+  catch(){
+    const el = document.getElementById('villainEl');
+    if(!el || !this.current) return 0;
+    el.classList.add('caught');
+    const b = el.querySelector('.v-bubble');
+    if(b) b.textContent = this.current.caught;
+    SFX.coin();
+    Voice.say('עצרת את ' + this.current.short + '!');
+    return 15;                       // נקודות בונוס על עצירת רשע
+  },
+
+  escape(){
+    const el = document.getElementById('villainEl');
+    if(el){ el.classList.add('laughing'); setTimeout(()=>el.classList.remove('laughing'), 600); }
+  },
+
+  clear(){ this.current = null; }
 };
 
 /* =====================================================================
