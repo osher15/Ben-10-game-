@@ -351,21 +351,27 @@
   /* ===== PUZZLE (mode 6) ===== */
   .puzzle-stage { display:flex; flex-direction:column; align-items:center; gap:14px; width:100%; }
   .puzzle-board {
-    width:280px; height:280px; max-width:80vw; max-height:80vw;
-    display:grid; gap:4px; background:rgba(0,0,0,.4);
-    border:4px solid rgba(143,255,0,.4); border-radius:18px; padding:5px;
-    box-shadow:0 0 30px rgba(143,255,0,.25);
+    width:280px; height:280px; max-width:82vw; max-height:82vw;
+    display:grid; gap:0; background:rgba(0,0,0,.45);
+    border:4px solid rgba(143,255,0,.45); border-radius:16px; padding:4px;
+    box-shadow:0 0 30px rgba(143,255,0,.25); overflow:hidden;
   }
-  .puzzle-slot { background:rgba(255,255,255,.04); border-radius:6px; position:relative; overflow:hidden; transition:.2s; background-repeat:no-repeat; }
-  .puzzle-slot.with-hint::after { content:''; position:absolute; inset:0; background:rgba(13,20,36,.7); border-radius:6px; }
-  .puzzle-slot.over { background-color:rgba(143,255,0,.15); box-shadow:inset 0 0 0 3px var(--omni-green); }
-  .puzzle-slot.filled { background:transparent; }
+  /* בלי מרווח ובלי פינות עגולות בין המשבצות — אחרת התמונה המורכבת
+     נראית כמו אריחים נפרדים ולא כמו תמונה אחת שלמה */
+  .puzzle-slot { position:relative; overflow:hidden; transition:background-color .2s;
+    background:rgba(255,255,255,.03); background-repeat:no-repeat; }
+  .puzzle-slot:not(.filled){ outline:1px solid rgba(255,255,255,.13); outline-offset:-1px; }
+  .puzzle-slot.with-hint::after { content:''; position:absolute; inset:0;
+    background:rgba(13,20,36,var(--hint-dim,.72)); }
+  .puzzle-slot.over { background-color:rgba(143,255,0,.18);
+    box-shadow:inset 0 0 0 3px var(--omni-green); z-index:2; }
+  .puzzle-slot.filled { background:transparent; outline:none; }
   .puzzle-slot.filled::after { display:none; }
-  .puzzle-slot canvas { width:100%; height:100%; display:block; border-radius:6px; }
+  .puzzle-slot canvas { width:100%; height:100%; display:block; }
   .puzzle-cell {
-    display:flex; align-items:center; justify-content:center;
+    display:flex; align-items:center; justify-content:center; aspect-ratio:1;
     background:linear-gradient(135deg,#1a2440,#0d1424);
-    border-radius:8px; cursor:grab; touch-action:none; transition:transform .12s;
+    border-radius:6px; cursor:grab; touch-action:none; transition:transform .12s;
     border:2px solid rgba(143,255,0,.35); overflow:hidden;
   }
   .puzzle-cell canvas { width:100%; height:100%; display:block; }
@@ -374,8 +380,10 @@
     box-shadow:0 8px 28px rgba(0,0,0,.6), 0 0 0 3px var(--omni-green);
     transform:scale(1.12) rotate(-3deg);
   }
-  .puzzle-tray { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; min-height:70px; padding:6px; }
-  .puzzle-tray .puzzle-cell { box-shadow:0 0 14px rgba(143,255,0,.3); }
+  /* המגש בנוי כרשת באותו רוחב כמו הלוח — החתיכות באותו גודל ובשורות שוות */
+  .puzzle-tray { display:grid; gap:6px; justify-content:center;
+    width:280px; max-width:82vw; margin:0 auto; padding:2px; }
+  .puzzle-tray .puzzle-cell { width:100%; height:auto; box-shadow:0 0 12px rgba(143,255,0,.28); }
   .puzzle-reveal-name { font-family:'Rubik','Heebo','Arial Hebrew','Noto Sans Hebrew','Segoe UI',Arial,sans-serif; font-weight:900; font-size:1.7rem; color:var(--omni-green); text-shadow:0 0 16px rgba(143,255,0,.6); text-align:center; animation:correctPop .5s; }
 
   @media (max-height:680px){
@@ -666,6 +674,16 @@
 .villain.caught .v-bubble{ color:#cdefff; border-color:rgba(150,230,255,.5); }
 .villain.laughing .alien-svg{ animation:vLaugh .6s; }
 
+  .vs-input{ width:100%; background:rgba(255,255,255,.09); border:1px solid rgba(255,255,255,.18);
+    color:inherit; border-radius:11px; padding:9px 11px; font-family:inherit; font-size:.95rem;
+    text-align:right; margin-bottom:4px; }
+  .gender-pick{ display:flex; gap:8px; }
+  .g-btn{ flex:1; background:rgba(255,255,255,.08); border:2px solid rgba(255,255,255,.16);
+    color:inherit; border-radius:12px; padding:10px; font-family:inherit; font-size:1rem;
+    font-weight:700; cursor:pointer; transition:.15s; }
+  .g-btn.on{ background:rgba(143,255,0,.2); border-color:var(--omni-green,#8fff00); }
+  .g-preview{ font-size:.82rem; opacity:.85; margin-top:7px; text-align:right;
+    background:rgba(255,255,255,.06); border-radius:10px; padding:7px 10px; }
 </style>
 </head>
 <body>
@@ -678,7 +696,7 @@
     </div>
     <div class="game-title">בן <span class="ten">10</span></div>
     <div class="subtitle">הרפתקת האותיות 🛸</div>
-    <div class="tagline">למד אותיות וצלילים פותחים עם הגיבורים החייזרים!</div>
+    <div class="tagline">{למד|למדי} אותיות וצלילים פותחים עם הגיבורים החייזרים!</div>
     <div class="menu-btns">
       <button class="btn btn-green" onclick="Game.goMenu()">▶️ בואו נתחיל!</button>
       <button class="btn btn-ghost" onclick="Game.openSettings()">⚙️ הגדרות</button>
@@ -690,14 +708,14 @@
   <div class="screen" id="menuScreen">
     <div class="hud">
       <button class="icon-btn" onclick="Game.goTitle()">🏠</button>
-      <div class="menu-head"><h2>בחר משימה</h2></div>
+      <div class="menu-head"><h2>{בחר|בחרי} משימה</h2></div>
       <button class="icon-btn" onclick="Game.openSettings()">⚙️</button>
     </div>
     <div class="menu-head"><p>גרי מטר ימתין לך בכל משימה!</p></div>
 
     <div class="mode-card m1" onclick="OmniUI.open()">
       <div class="ic">🛸</div>
-      <div class="txt"><h3>האומניטריקס</h3><p>בחר חייזר, ופתח חייזרים חדשים בלימוד אותיות!</p></div>
+      <div class="txt"><h3>האומניטריקס</h3><p>{בחר|בחרי} חייזר, {ופתח|ופתחי} חייזרים חדשים בלימוד אותיות!</p></div>
     </div>
     <div class="mode-card m3" onclick="Game.startMode('smash')">
       <div class="ic">📦</div>
@@ -705,27 +723,27 @@
     </div>
     <div class="mode-card m1" onclick="Game.startMode('firstSound')">
       <div class="ic">🔤</div>
-      <div class="txt"><h3>איזה צליל פותח?</h3><p>שמע מילה ובחר את האות שבה היא מתחילה</p></div>
+      <div class="txt"><h3>איזה צליל פותח?</h3><p>{שמע|שמעי} מילה {ובחר|ובחרי} את האות שבה היא מתחילה</p></div>
     </div>
     <div class="mode-card m2" onclick="Game.startMode('findLetter')">
       <div class="ic">🔎</div>
-      <div class="txt"><h3>מצא את האות</h3><p>גרי מטר אומר אות — מצא אותה במהירות!</p></div>
+      <div class="txt"><h3>מצא את האות</h3><p>גרי מטר אומר אות — {מצא|מצאי} אותה במהירות!</p></div>
     </div>
     <div class="mode-card m3" onclick="Game.startMode('matchWord')">
       <div class="ic">🖼️</div>
-      <div class="txt"><h3>איזו מילה מתאימה?</h3><p>בחר את התמונה שמתחילה באות הנכונה</p></div>
+      <div class="txt"><h3>איזו מילה מתאימה?</h3><p>{בחר|בחרי} את התמונה שמתחילה באות הנכונה</p></div>
     </div>
     <div class="mode-card m4" onclick="Game.startMode('letterOrder')">
       <div class="ic">🔢</div>
-      <div class="txt"><h3>מי בא אחרי?</h3><p>למד את סדר האותיות בא-ב</p></div>
+      <div class="txt"><h3>מי בא אחרי?</h3><p>{למד|למדי} את סדר האותיות בא-ב</p></div>
     </div>
     <div class="mode-card m5" onclick="Game.startMode('matchName')">
       <div class="ic">🧩</div>
-      <div class="txt"><h3>התאם שם לתמונה</h3><p>גרור כל מילה אל התמונה הנכונה שלה</p></div>
+      <div class="txt"><h3>התאם שם לתמונה</h3><p>{גרור|גררי} כל מילה אל התמונה הנכונה שלה</p></div>
     </div>
     <div class="mode-card m6" onclick="Game.startMode('puzzle')">
       <div class="ic">🛸</div>
-      <div class="txt"><h3>פאזל החייזר</h3><p>הרכב את תמונת החייזר וגלה מי הוא!</p></div>
+      <div class="txt"><h3>פאזל החייזר</h3><p>{הרכב|הרכיבי} את תמונת החייזר {וגלה|וגלי} מי הוא!</p></div>
     </div>
     <div class="mode-card m7" onclick="Game.startMode('alienName')">
       <div class="ic">👽</div>
@@ -733,11 +751,11 @@
     </div>
     <div class="mode-card m8" onclick="Game.startMode('whoAlien')">
       <div class="ic">❓</div>
-      <div class="txt"><h3>מי החייזר?</h3><p>ראה תמונה ובחר את השם הנכון</p></div>
+      <div class="txt"><h3>מי החייזר?</h3><p>{ראה|ראי} תמונה {ובחר|ובחרי} את השם הנכון</p></div>
     </div>
 
     <div class="buddy-strip">
-      <div class="buddy-title">🦸 בחר את החבר החייזר שלך:</div>
+      <div class="buddy-title">🦸 {בחר|בחרי} את החבר החייזר שלך:</div>
       <div class="buddy-row" id="buddyRow"></div>
     </div>
   </div>
@@ -756,7 +774,7 @@
         <i class="core-x"></i>
       </button>
     </div>
-    <div class="omni-hint">👆 <b>לחץ והחזק</b> על האומניטריקס כדי להפוך לחייזר חדש!</div>
+    <div class="omni-hint">👆 <b>{לחץ והחזק|לחצי והחזיקי}</b> על האומניטריקס כדי להפוך לחייזר חדש!</div>
     <div class="omni-card" id="omniCard"></div>
   </div>
 
@@ -764,13 +782,13 @@
   <div class="screen" id="diffScreen">
     <div class="hud">
       <button class="icon-btn" onclick="Game.goMenu()">⬅️</button>
-      <div class="menu-head"><h2>בחר רמה</h2></div>
+      <div class="menu-head"><h2>{בחר|בחרי} רמה</h2></div>
       <button class="icon-btn" onclick="Game.openSettings()">⚙️</button>
     </div>
     <div class="game-body" style="gap:14px; justify-content:center;">
       <div class="grey-bubble" id="diffBubble" style="margin-bottom:6px;">
         <svg class="grey-avatar" id="greyAvatarDiff" viewBox="0 0 100 110"></svg>
-        <div class="grey-text">באיזו רמה תרצה להתחיל, גיבור?</div>
+        <div class="grey-text">באיזו רמה {תרצה|תרצי} להתחיל, {גיבור|גיבורה}?</div>
       </div>
       <div class="menu-btns" style="max-width:380px; gap:14px;">
         <button class="btn btn-green diff-btn" onclick="Game.startGame(1)">
@@ -812,7 +830,7 @@
         <div class="grey-text" id="greyText">...</div>
       </div>
 
-      <button class="speaker-btn" id="repeatBtn" onclick="Game.repeatPrompt()">🔊 שמע שוב</button>
+      <button class="speaker-btn" id="repeatBtn" onclick="Game.repeatPrompt()">🔊 {שמע|שמעי} שוב</button>
 
       <div class="prompt-card" id="promptCard"></div>
 
@@ -859,6 +877,19 @@
 <div class="modal-bg" id="settingsModal">
   <div class="modal">
     <h3>⚙️ הגדרות</h3>
+    <div class="voice-section">
+      <div class="vs-title">🧒 מי משחק?</div>
+      <label class="vs-label">שם הילד/ה (המשחק יקרא בשם):</label>
+      <input type="text" id="childName" class="vs-input" maxlength="14" placeholder="לדוגמה: זוהר"
+             oninput="Game.setChildName(this.value)">
+      <label class="vs-label">לשון פנייה:</label>
+      <div class="gender-pick">
+        <button class="g-btn" id="gM" onclick="Game.setGender('m')">👦 בן</button>
+        <button class="g-btn" id="gF" onclick="Game.setGender('f')">👧 בת</button>
+      </div>
+      <div class="g-preview" id="gPreview"></div>
+    </div>
+
     <div class="setting-row">
       <span>🔊 קול</span>
       <div class="toggle on" id="tgVoice" onclick="Game.toggleSetting('voice',this)"></div>
@@ -1208,6 +1239,39 @@ const SFX = {
 };
 
 /* =====================================================================
+   לשון פנייה — המשחק מדבר אל הילד בלשון הנכונה, ובשמו
+   טקסטים נכתבים כ-{זכר|נקבה}, ו-{name} מוחלף בשם הילד.
+   דוגמה: '{אתה אלוף|את אלופה}!' -> 'אתה אלוף!' או 'את אלופה!'
+   ===================================================================== */
+function T(s){
+  if(s == null) return s;
+  let t = String(s);
+  if(t.indexOf('{') < 0) return t;
+  const fem = (typeof Game !== 'undefined' && Game.settings && Game.settings.gender === 'f');
+  t = t.replace(/\{([^{}|]*)\|([^{}|]*)\}/g, (_, m, f) => fem ? f : m);
+  const nm = (typeof Game !== 'undefined' && Game.settings && Game.settings.childName || '').trim();
+  t = t.replace(/\s*\{name\}/g, nm ? ' ' + nm : '');
+  return t.replace(/[ \t]{2,}/g, ' ').replace(/ ([!?.,:])/g, '$1').trim();
+}
+
+/* מחיל את התבניות על טקסט סטטי בדף. שומר את המקור על כל צומת,
+   כך שאפשר להחליף לשון בכל רגע והטקסט ייבנה מחדש נכון. */
+function applyTextTemplates(root){
+  const scope = root || document.body;
+  if(!scope) return;
+  const walker = document.createTreeWalker(scope, NodeFilter.SHOW_TEXT, null);
+  const nodes = [];
+  while(walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach(n=>{
+    const tpl = (n.__tpl !== undefined) ? n.__tpl : n.nodeValue;
+    if(!tpl || tpl.indexOf('{') < 0) return;
+    n.__tpl = tpl;
+    const out = T(tpl);
+    if(n.nodeValue !== out) n.nodeValue = out;
+  });
+}
+
+/* =====================================================================
    אולפן ההקלטות — קול אנושי אמיתי במקום הכרוז הממוחשב
    המורה/ההורה מקליט את המשפטים בקולו, וההקלטות נשמרות במכשיר (IndexedDB).
    כל משפט שהוקלט מתנגן במקום ההקראה הממוחשבת.
@@ -1487,7 +1551,7 @@ const Voice = {
 
   /* ---------- ניקוי טקסט לפני הקראה ---------- */
   clean(text){
-    let t = ' ' + String(text == null ? '' : text) + ' ';
+    let t = ' ' + T(text == null ? '' : text) + ' ';
     for(const [from,to] of TTS_FIX) t = t.split(from).join(to);
     // הסרת אימוג'י וסמלים גרפיים — מנועי הקראה מקריאים אותם או נתקעים
     t = t.replace(/[\u{1F000}-\u{1FAFF}]/gu, ' ')
@@ -1686,7 +1750,8 @@ function drawGreyMatter(id){
 // =====================================================================
 const Game = {
   settings: { voice:true, sfx:true, timer:true, useClips:true, voicePitch:null, voiceRate:null,
-               favChar:null, voiceProfile:'grey', voiceURI:null },
+               favChar:null, voiceProfile:'grey', voiceURI:null,
+               gender:'m', childName:'' },
   state: {
     mode:null, score:0, lives:3, correct:0,
     qIndex:0, totalQ:8, current:null,
@@ -1695,6 +1760,7 @@ const Game = {
 
   // ---------- ניווט מסכים ----------
   show(id){
+    setTimeout(applyTextTemplates, 0);
     document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
   },
@@ -1707,7 +1773,7 @@ const Game = {
     this.show('menuScreen');
     this.buildBuddyRow();
     drawGreyMatter();
-    setTimeout(()=>Voice.speak('שלום! אני גרי מטר. בחר משימה ובוא נלמד אותיות יחד!'),300);
+    setTimeout(()=>Voice.speak('שלום {name}! אני גרי מטר. {בחר|בחרי} משימה {ובוא|ובואי} נלמד אותיות יחד!'),300);
   },
 
   // ---------- בחירת חבר חייזר ----------
@@ -1750,12 +1816,39 @@ const Game = {
       localStorage.setItem(this.SKEY, JSON.stringify(this.settings));
     }catch(e){}
   },
+  setGender(g){
+    this.settings.gender = (g === 'f') ? 'f' : 'm';
+    SFX.click();
+    this.saveSettings();
+    applyTextTemplates();          // כל הטקסטים בדף נבנים מחדש בלשון החדשה
+    this.applySettingsUI();
+    Voice.speak('{אתה גיבור אמיתי|את גיבורה אמיתית}! {בוא|בואי} נשחק!');
+  },
+  setChildName(v){
+    this.settings.childName = String(v || '').slice(0, 14);
+    this.saveSettings();
+    applyTextTemplates();
+    this.updateGenderPreview();
+  },
+  updateGenderPreview(){
+    const el = document.getElementById('gPreview');
+    if(el) el.textContent = 'כך זה יישמע: „' +
+      T('כל הכבוד {name}! {אתה גיבור אמיתי|את גיבורה אמיתית}!') + '”';
+  },
+
   applySettingsUI(){
     const set=(id,on)=>{ const e=document.getElementById(id); if(e) e.classList.toggle('on', !!on); };
     set('tgVoice', this.settings.voice);
     set('tgSfx',   this.settings.sfx);
     set('tgTimer', this.settings.timer);
     set('tgClips', this.settings.useClips !== false);
+    const fem = this.settings.gender === 'f';
+    const gm=document.getElementById('gM'), gf=document.getElementById('gF');
+    if(gm) gm.classList.toggle('on', !fem);
+    if(gf) gf.classList.toggle('on', fem);
+    const cn=document.getElementById('childName');
+    if(cn) cn.value = this.settings.childName || '';
+    this.updateGenderPreview();
     const pp=document.getElementById('voiceProfile'); if(pp) pp.value = Voice.activeProfile;
     const ps=document.getElementById('pitchSlider'), rs=document.getElementById('rateSlider');
     const prof = Voice.profiles[Voice.activeProfile] || Voice.profiles.grey;
@@ -1851,7 +1944,7 @@ const Game = {
     if(l) l.textContent = v<0.85?'איטי':(v<1.15?'רגיל':(v<1.35?'מהיר':'מהיר מאוד')); },
   testVoice(){
     if(!this.settings.voice){ this.settings.voice=true; const t=document.getElementById('tgVoice'); if(t)t.classList.add('on'); }
-    Voice.speak('שלום! אני גרי מטר. בוא נלמד אותיות יחד!');
+    Voice.speak('שלום! אני גרי מטר. {בוא|בואי} נלמד אותיות יחד!');
   },
 
   // ---------- בחירת מצב -> מסך רמת קושי ----------
@@ -1860,7 +1953,7 @@ const Game = {
     this.pendingMode = mode;
     this.show('diffScreen');
     drawGreyMatter('greyAvatarDiff');
-    setTimeout(()=>Voice.speak('באיזו רמה תרצה להתחיל?'),300);
+    setTimeout(()=>Voice.speak('באיזו רמה {תרצה|תרצי} להתחיל?'),300);
   },
 
   // ---------- פרמטרי רמת קושי ----------
@@ -1956,6 +2049,7 @@ const Game = {
     else if(mode==='alienName') this.qAlienName();
     else if(mode==='whoAlien') this.qWhoAlien();
     else if(mode==='smash') Smash.build();
+    applyTextTemplates();
   },
 
   rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; },
@@ -2001,8 +2095,8 @@ const Game = {
       b.onclick=()=>this.answer(l===target, b, target, options);
       cont.appendChild(b);
     });
-    this.setGreyText(`מצא את האות ${LETTER_NAMES[target]||target}!`);
-    this.speakLetter(`מצא את האות ${LETTER_NAMES[target]||target}`);
+    this.setGreyText(`{מצא|מצאי} את האות ${LETTER_NAMES[target]||target}!`);
+    this.speakLetter(`{מצא|מצאי} את האות ${LETTER_NAMES[target]||target}`);
     this.startTimer();
   },
 
@@ -2105,7 +2199,7 @@ const Game = {
       cont.appendChild(b);
     });
     this.setGreyText('מי החייזר הזה?');
-    this.speakGrey('מי החייזר הזה? בחר את השם הנכון!');
+    this.speakGrey('מי החייזר הזה? {בחר|בחרי} את השם הנכון!');
     this.startTimer();
   },
 
@@ -2153,8 +2247,8 @@ const Game = {
     html += `</div></div>`;
     cont.innerHTML = html;
 
-    this.setGreyText('גרור כל מילה אל התמונה המתאימה!');
-    this.speakGrey('גרור כל מילה אל התמונה המתאימה לה!');
+    this.setGreyText('{גרור|גררי} כל מילה אל התמונה המתאימה!');
+    this.speakGrey('{גרור|גררי} כל מילה אל התמונה המתאימה לה!');
     this.setupDragMatch();
     this.startTimer();
   },
@@ -2187,7 +2281,7 @@ const Game = {
           SFX.wrong();
           zone.classList.add('over');
           setTimeout(()=>zone.classList.remove('over'),300);
-          self.speakGrey('נסה שוב! זה לא מתאים.');
+          self.speakGrey('{נסה|נסי} שוב! זה לא מתאים.');
         }
         return correct;
       });
@@ -2211,16 +2305,18 @@ const Game = {
 
     const imgSrc = CHAR_IMAGES[hero.key].src;
     // רקע רמז עמום של התמונה המלאה מאחורי הלוח
+    // ברמה 1 הרמז ברור, וככל שעולים הוא מתעמעם
+    const hintDim = {1:0.55, 2:0.78, 3:0.93}[this.state.level || 1];
     let board = `<div class="puzzle-stage">
-      <div class="match-instruction">הרכב את החייזר! גרור כל חתיכה למקום 🧩</div>
-      <div class="puzzle-board" id="puzzleBoard" style="grid-template-columns:repeat(${grid},1fr); grid-template-rows:repeat(${grid},1fr);">`;
+      <div class="match-instruction">{הרכב|הרכיבי} את החייזר! {גרור|גררי} כל חתיכה למקום 🧩</div>
+      <div class="puzzle-board" id="puzzleBoard" style="--hint-dim:${hintDim}; grid-template-columns:repeat(${grid},1fr); grid-template-rows:repeat(${grid},1fr);">`;
     for(let i=0;i<total;i++){
       const r=Math.floor(i/grid), c=i%grid;
       // כל slot מציג את החלק הנכון בעמעום כרמז
       const bgPos = `${(c/(grid-1||1))*100}% ${(r/(grid-1||1))*100}%`;
       board += `<div class="puzzle-slot" data-idx="${i}" style="--hint:url('${imgSrc}'); background-image:var(--hint); background-size:${grid*100}% ${grid*100}%; background-position:${bgPos};"></div>`;
     }
-    board += `</div><div class="puzzle-tray" id="puzzleTray"></div>
+    board += `</div><div class="puzzle-tray" id="puzzleTray" style="grid-template-columns:repeat(${grid},1fr);"></div>
       <div class="puzzle-reveal-name" id="puzzleName" style="visibility:hidden">🛸 ${hero.name}</div>
     </div>`;
     cont.innerHTML = board;
@@ -2229,8 +2325,8 @@ const Game = {
 
     this.buildPuzzlePieces(hero, grid);
 
-    this.setGreyText('הרכב את החייזר וגלה מי הוא!');
-    this.speakGrey('הרכב את חתיכות הפאזל וגלה איזה חייזר זה!');
+    this.setGreyText('{הרכב|הרכיבי} את החייזר {וגלה|וגלי} מי הוא!');
+    this.speakGrey('{הרכב|הרכיבי} את חתיכות הפאזל {וגלה|וגלי} איזה חייזר זה!');
     this.startTimer();
   },
 
@@ -2242,8 +2338,6 @@ const Game = {
     const order = this.shuffle([...Array(total).keys()]);
     const tray = document.getElementById('puzzleTray');
     const slots = document.querySelectorAll('.puzzle-slot');
-    // גודל חתיכה במגש לפי גריד (גדול יותר ברשתות קטנות)
-    const cellPx = grid<=2 ? 84 : (grid===3 ? 72 : 58);
 
     const buildAll = ()=>{
       const srcSize = Math.min(img.width, img.height);
@@ -2258,7 +2352,6 @@ const Game = {
 
         const cell=document.createElement('div');
         cell.className='puzzle-cell'; cell.dataset.idx=idx;
-        cell.style.width=cellPx+'px'; cell.style.height=cellPx+'px';
         cell.appendChild(cv);
         tray.appendChild(cell);
 
@@ -2270,7 +2363,8 @@ const Game = {
             const c2=cellEl.querySelector('canvas').cloneNode(true);
             const cc=c2.getContext('2d');
             cc.drawImage(cellEl.querySelector('canvas'),0,0);
-            c2.style.width='100%'; c2.style.height='100%'; c2.style.display='block';
+            c2.style.width='100%'; c2.style.height='100%';
+            c2.style.display='block'; c2.style.borderRadius='0';
             slot.innerHTML=''; slot.appendChild(c2);
             cellEl.style.display='none';
             SFX.click();
@@ -2287,7 +2381,7 @@ const Game = {
               self.spawnParticles();
               self.speakGrey('כל הכבוד! הרכבת את');
               Voice.say(hero.name);
-              setTimeout(()=>self.showFeedback(true, 'הרכבת את ' + hero.name + '! 🛸', 'איזה גיבור אתה!'),1500);
+              setTimeout(()=>self.showFeedback(true, 'הרכבת את ' + hero.name + '! 🛸', 'איזה {גיבור אתה|גיבורה את}!'),1500);
             }
             return true;
           } else {
@@ -2376,7 +2470,7 @@ const Game = {
 
 
   // ---------- גרי מטר מדבר ----------
-  setGreyText(t){ document.getElementById('greyText').textContent = t; this._lastPrompt=t; },
+  setGreyText(t){ document.getElementById('greyText').textContent = T(t); this._lastPrompt=t; },
   speakGrey(t, opts){ this._lastSpeak=t; this._lastSpeakOpts=opts; Voice.speak(t, opts||{}); },
   // שמות אותיות נאמרים לאט יותר כדי שהילד יספיק לקלוט את הצליל
   speakLetter(t){ this.speakGrey(t, {rate:0.82}); },
@@ -2407,7 +2501,7 @@ const Game = {
     this.loseLife();
     const dragMode = (this.state.mode==='matchName' || this.state.mode==='puzzle');
     if(!dragMode) this.highlightCorrect();
-    const sub = dragMode ? 'אל דאגה, ננסה משימה חדשה!' : 'בוא ננסה את הבא ביחד!';
+    const sub = dragMode ? 'אל דאגה, ננסה משימה חדשה!' : '{בוא|בואי} ננסה את הבא ביחד!';
     this.showFeedback(false, 'נגמר הזמן! ⏰', sub);
   },
 
@@ -2469,16 +2563,16 @@ const Game = {
 
     if(correct){
       const praises = [
-        {t:'מעולה! 🎉', s:'גרי מטר גאה בך!', spk:'מעולה! כל הכבוד! גרי מטר גאה בך!'},
-        {t:'כל הכבוד! 💪', s:'אתה גיבור אמיתי!', spk:'כל הכבוד! אתה גיבור אמיתי!'},
-        {t:'איזה יופי! ⚡', s:'תשובה נכונה!', spk:'איזה יופי! צדקת!'},
-        {t:'מדהים! 🌟', s:'אתה לומד מהר!', spk:'מדהים! אתה לומד מהר מאוד!'},
+        {t:'מעולה! 🎉', s:'גרי מטר גאה בך!', spk:'מעולה {name}! כל הכבוד! גרי מטר גאה בך!'},
+        {t:'כל הכבוד! 💪', s:'{אתה גיבור אמיתי|את גיבורה אמיתית}!', spk:'כל הכבוד {name}! {אתה גיבור אמיתי|את גיבורה אמיתית}!'},
+        {t:'איזה יופי! ⚡', s:'תשובה נכונה!', spk:'איזה יופי {name}! צדקת!'},
+        {t:'מדהים! 🌟', s:'{אתה לומד|את לומדת} מהר!', spk:'מדהים {name}! {אתה לומד|את לומדת} מהר מאוד!'},
         {t:'נהדר! 🚀', s:'ממשיכים הלאה!', spk:'נהדר! ממשיכים הלאה!'},
-        {t:'וואו! 🤩', s:'אתה אלוף!', spk:'וואו! אתה אלוף אמיתי!'},
-        {t:'מצוין! ✨', s:'ידעת את זה!', spk:'מצוין! ידעת את זה יופי!'},
+        {t:'וואו! 🤩', s:'{אתה אלוף|את אלופה}!', spk:'וואו {name}! {אתה אלוף אמיתי|את אלופה אמיתית}!'},
+        {t:'מצוין! ✨', s:'ידעת את זה!', spk:'מצוין {name}! ידעת את זה יופי!'},
         {t:'בול! 🎯', s:'פגעת בדיוק!', spk:'בול! פגעת בדיוק בול!'},
-        {t:'גאון! 🧠', s:'אתה חכם כמו גרי מטר!', spk:'אתה חכם כמו גרי מטר!'},
-        {t:'חזק! 🦾', s:'אתה בלתי מנוצח!', spk:'חזק מאוד! אתה בלתי מנוצח!'},
+        {t:'גאון! 🧠', s:'{אתה חכם|את חכמה} כמו גרי מטר!', spk:'{אתה חכם|את חכמה} כמו גרי מטר!'},
+        {t:'חזק! 🦾', s:'{אתה בלתי מנוצח|את בלתי מנוצחת}!', spk:'{חזק|חזקה} מאוד! {אתה בלתי מנוצח|את בלתי מנוצחת}!'},
       ];
       const p = this.rand(praises);
       // אם נבחר חבר חייזר - הצג את התמונה שלו, אחרת אמוג'י
@@ -2488,14 +2582,14 @@ const Game = {
         // החייזר שנבחר באומניטריקס הוא זה שמופיע ומעודד
         hero.innerHTML = `<div class="fb-alien">${AlienArt.svg(Omnitrix.active())}</div>`;
       }
-      title.textContent = p.t; title.className='fb-title';
-      sub.textContent = p.s;
+      title.textContent = T(p.t); title.className='fb-title';
+      sub.textContent = T(p.s);
       this.speakGrey(p.spk);
     } else {
       hero.textContent = '👽';
-      title.textContent = customTitle || 'כמעט! 💚'; title.className='fb-title bad';
-      const enc = customSub || 'אל תדאג, גיבורים גם טועים. נסה שוב!';
-      sub.textContent = enc;
+      title.textContent = T(customTitle || 'כמעט! 💚'); title.className='fb-title bad';
+      const enc = customSub || '{אל תדאג|אל תדאגי}, גיבורים גם טועים. {נסה|נסי} שוב!';
+      sub.textContent = T(enc);
       // גרי מטר מעודד ומלמד
       if(customSub){
         this.speakGrey(customSub);
@@ -2506,11 +2600,12 @@ const Game = {
            להתנגן מהקלטה אמיתית של המורה, ולא בהקראה ממוחשבת. */
         this.speakGrey('כמעט! התשובה הנכונה היא');
         Voice.say(ansName, {rate:0.8});
-        Voice.say('אתה תצליח בפעם הבאה!');
+        Voice.say('{אתה תצליח|את תצליחי} בפעם הבאה!');
         this._lastSpeak = `כמעט! התשובה הנכונה היא ${ansName}. אתה תצליח בפעם הבאה!`;
       }
     }
 
+    applyTextTemplates(ov);
     ov.classList.add('show');
     setTimeout(()=>{
       ov.classList.remove('show');
@@ -2556,10 +2651,10 @@ const Game = {
     }
 
     let title, hero, spk;
-    if(stars===3){ title='גיבור אומניטריקס! 🏆'; hero='🦸'; spk='וואו! אתה גיבור אומניטריקס אמיתי! ענית כמעט על הכל נכון! אני כל כך גאה בך!'; }
-    else if(stars===2){ title='כל הכבוד גיבור! 🎉'; hero='💪'; spk='כל הכבוד! עבדת מצוין! בוא נמשיך להתאמן יחד!'; }
-    else { title='התחלה מצוינת! 🌟'; hero='👽'; spk='התחלה מצוינת! כל גיבור מתחיל לאט. בוא ננסה שוב ונשתפר!'; }
-    document.getElementById('resultTitle').textContent=title;
+    if(stars===3){ title='{גיבור|גיבורת} אומניטריקס! 🏆'; hero='🦸'; spk='וואו {name}! {אתה גיבור|את גיבורת} אומניטריקס {אמיתי|אמיתית}! ענית כמעט על הכל נכון! אני כל כך גאה בך!'; }
+    else if(stars===2){ title='כל הכבוד {גיבור|גיבורה}! 🎉'; hero='💪'; spk='כל הכבוד {name}! עבדת מצוין! {בוא|בואי} נמשיך להתאמן יחד!'; }
+    else { title='התחלה מצוינת! 🌟'; hero='👽'; spk='התחלה מצוינת {name}! כל גיבור מתחיל לאט. {בוא|בואי} ננסה שוב ונשתפר!'; }
+    document.getElementById('resultTitle').textContent=T(title);
     document.getElementById('resultHero').textContent=hero;
 
     Progress.recGame(this.state.mode, this.state.level, stars);
@@ -2893,7 +2988,7 @@ const OmniUI = {
     SFX.click(); SFX.transform();
     Game.show('omniScreen');
     this.render();
-    Voice.speak('זה האומניטריקס שלך! בחר חייזר, או פתח חייזר חדש בלימוד אותיות.');
+    Voice.speak('זה האומניטריקס שלך! {בחר|בחרי} חייזר, או {פתח|פתחי} חייזר חדש בלימוד אותיות.');
   },
 
   render(){
@@ -2920,6 +3015,7 @@ const OmniUI = {
       `${Omnitrix.countUnlocked()} מתוך ${ALIENS.length} חייזרים נפתחו`;
     Transform.bind(document.getElementById('omniCore'));
     this.showCard(Omnitrix.active());
+    applyTextTemplates(document.getElementById('omniScreen'));
   },
 
   pick(a){
@@ -2949,12 +3045,12 @@ const OmniUI = {
       <div class="oc-info">
         <div class="oc-name">${unlocked ? a.short : 'חייזר נעול'}</div>
         <div class="oc-power">${unlocked ? '⚡ ' + a.power : '🔒 צריך ללמוד את האות ' + a.letter}</div>
-        <div class="oc-desc">${unlocked ? a.desc : `ענה נכון על ${need} שאלות עם האות ${LETTER_NAMES[a.letter]||a.letter} והחייזר ייפתח!`}</div>
+        <div class="oc-desc">${unlocked ? a.desc : `{ענה|עני} נכון על ${need} שאלות עם האות ${LETTER_NAMES[a.letter]||a.letter} והחייזר ייפתח!`}</div>
         ${unlocked ? `<div class="oc-letter">האות שלו: <b>${a.letter}</b> · ${LETTER_NAMES[a.letter]||''}</div>`
                    : `<div class="oc-bar"><i style="width:${got/need*100}%"></i></div>
                       <div class="oc-prog">${got} מתוך ${need}</div>
                       <button class="btn btn-green oc-go" onclick="OmniUI.practice('${a.letter}')">
-                        🎯 תרגל את האות ${a.letter} עכשיו</button>`}
+                        🎯 {תרגל|תרגלי} את האות ${a.letter} עכשיו</button>`}
       </div>`;
   },
 
@@ -3040,13 +3136,13 @@ const Smash = {
     });
 
     if(showLetter){
-      G.setGreyText(`נפץ את הקופסה עם האות ${LETTER_NAMES[letter] || letter}!`);
-      G.speakGrey(`${alien.short}, נפץ את הקופסה עם האות`);
+      G.setGreyText(`{נפץ|נפצי} את הקופסה עם האות ${LETTER_NAMES[letter] || letter}!`);
+      G.speakGrey(`${alien.short}, {נפץ|נפצי} את הקופסה עם האות`);
       Voice.say(LETTER_NAMES[letter] || letter, {rate:0.8});
-      G._lastSpeak = `נפץ את הקופסה עם האות ${LETTER_NAMES[letter] || letter}`;
+      G._lastSpeak = `{נפץ|נפצי} את הקופסה עם האות ${LETTER_NAMES[letter] || letter}`;
     } else {
-      G.setGreyText(`באיזו אות מתחילה המילה ${word.w}? נפץ את הקופסה שלה!`);
-      G.speakGrey('נפץ את הקופסה של האות שפותחת את המילה');
+      G.setGreyText(`באיזו אות מתחילה המילה ${word.w}? {נפץ|נפצי} את הקופסה שלה!`);
+      G.speakGrey('{נפץ|נפצי} את הקופסה של האות שפותחת את המילה');
       Voice.say(word.w, {rate:0.85});
       G._lastSpeak = `באיזו אות מתחילה המילה ${word.w}?`;
     }
@@ -3177,7 +3273,7 @@ const Transform = {
       SFX.beep(160, 0.18, 'sawtooth', 0.12);
       if(!this._hinted){
         this._hinted = true;
-        Voice.speak('תחזיק את האומניטריקס לחוץ יותר זמן!');
+        Voice.speak('{תחזיק|תחזיקי} את האומניטריקס {לחוץ|לחוצה} יותר זמן!');
       }
     }
   },
@@ -3264,7 +3360,7 @@ const VILLAINS = [
   { id:'balagan', name:'בַּלְגָּן', short:'בלגן', taunt:'ערבבתי לך את כל האותיות!',
     caught:'לא הוגן! סידרת הכל!', body:'bulky', arms:4, eyes:3, horns:2, texture:'metal', villain:true,
     c:{ skin:'#4f5b6e', dark:'#232a36', suit:'#e8483f', accent:'#ffd84d' } },
-  { id:'hatifon', name:'חֲטִיפוֹן', short:'חטיפון', taunt:'חטפתי את האות ואתה לא תמצא אותה!',
+  { id:'hatifon', name:'חֲטִיפוֹן', short:'חטיפון', taunt:'חטפתי את האות {ואתה לא תמצא|ואת לא תמצאי} אותה!',
     caught:'קח את האות שלך בחזרה…', body:'slim', arms:2, eyes:2, horns:2, texture:'spike', villain:true,
     c:{ skin:'#2f9e6b', dark:'#124a30', suit:'#0a2a1b', accent:'#c9ff6b' } },
   { id:'raashan', name:'רַעֲשָׁן', short:'רעשן', taunt:'בוווווםםם! לא תשמע כלום!',
@@ -3466,7 +3562,7 @@ const Studio = {
       'גרור כל מילה אל התמונה המתאימה לה!',
       'הרכב את חתיכות הפאזל וגלה איזה חייזר זה!',
       'מצוין! כל הכבוד!','יופי! ענית נכון!','אלוף! ככה בדיוק!','מדהים! אתה גיבור!',
-      'נסה שוב! אתה תצליח.','כמעט! בוא ננסה עוד פעם.','לא נורא, ממשיכים!',
+      '{נסה|נסי} שוב! {אתה תצליח|את תצליחי}.','כמעט! {בוא|בואי} ננסה עוד פעם.','לא נורא, ממשיכים!',
       'וואו! אתה גיבור אומניטריקס אמיתי! ענית כמעט על הכל נכון! אני כל כך גאה בך!',
       'כל הכבוד! עבדת מצוין! בוא נמשיך להתאמן יחד!',
       'התחלה מצוינת! כל גיבור מתחיל לאט. בוא ננסה שוב ונשתפר!',
@@ -3843,6 +3939,7 @@ window.addEventListener('load', ()=>{
   drawGreyMatter();
   Voice.load();
   Game.applySettingsUI();
+  applyTextTemplates();
 });
 
 // עצירת הדיבור כשעוברים לטאב אחר — אחרת ההקראה "נתקעת" ברקע
