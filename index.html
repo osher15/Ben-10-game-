@@ -59,6 +59,10 @@
     max-height:920px;
     display:none; flex-direction:column;
     padding:18px 16px 22px;
+    /* body מגדיר overflow:hidden כדי שהאפליקציה תתנהג כמסך משחק קבוע,
+       אבל אם תוכן המסך (הגדרות, אומניטריקס, זירת קרב) גבוה מהחלון עצמו,
+       חייבים לתת לו לגלול בתוך עצמו — אחרת חלק מהתוכן פשוט לא נגיש */
+    overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain;
   }
   .screen.active { display:flex; animation:screenIn .5s cubic-bezier(.2,.9,.3,1.4); }
   @keyframes screenIn { from{opacity:0; transform:scale(.92) translateY(20px);} to{opacity:1; transform:scale(1) translateY(0);} }
@@ -250,7 +254,11 @@
   @keyframes fall { to{ transform:translateY(110vh) rotate(720deg); opacity:0; } }
 
   /* settings modal */
-  .modal-bg { position:fixed; inset:0; z-index:80; background:rgba(4,6,13,.85); display:none; align-items:center; justify-content:center; padding:20px; }
+  /* align-items:center על תוכן שגבוה מהחלון "חותך" משני הצדדים בלי אפשרות
+     לגלול אליו — לכן flex-start + גלילה, במקום center קשיח */
+  .modal-bg { position:fixed; inset:0; z-index:80; background:rgba(4,6,13,.85); display:none;
+    align-items:flex-start; justify-content:center; padding:24px 16px;
+    overflow-y:auto; -webkit-overflow-scrolling:touch; }
   .modal-bg.show { display:flex; }
   .modal { background:var(--omni-black2); border:3px solid rgba(143,255,0,.3); border-radius:24px; padding:24px; width:100%; max-width:360px; }
   .modal h3 { font-family:'Rubik','Heebo','Arial Hebrew','Noto Sans Hebrew','Segoe UI',Arial,sans-serif; color:#fff; font-size:1.4rem; text-align:center; margin-bottom:16px; }
