@@ -87,7 +87,7 @@
   @keyframes omniPulse { 0%,100%{filter:brightness(1);} 50%{filter:brightness(1.5);} }
 
   /* ===== TITLE SCREEN ===== */
-  #titleScreen { justify-content:center; align-items:center; text-align:center; gap:8px; }
+  #titleScreen { justify-content:flex-start; align-items:center; text-align:center; gap:8px; padding-top:6vh; }
   .big-omni {
     width:150px; height:150px; border-radius:50%;
     background:radial-gradient(circle at 35% 30%, #1a2238, #04060d);
@@ -135,7 +135,9 @@
   .menu-btns { width:100%; max-width:340px; display:flex; flex-direction:column; gap:12px; }
 
   /* ===== MODE SELECT ===== */
-  #menuScreen { justify-content:center; gap:14px; }
+  /* justify-content:center על תוכן גבוה מהחלון גורם לתחילת הרשימה
+     "להיתלות" מעל קצה המסך בלי דרך לגלול אליה - ראו גם .modal-bg למעלה */
+  #menuScreen { justify-content:flex-start; gap:14px; padding-top:8px; }
   .menu-head { text-align:center; margin-bottom:4px; }
   .menu-head h2 { font-family:'Rubik','Heebo','Arial Hebrew','Noto Sans Hebrew','Segoe UI',Arial,sans-serif; font-weight:900; color:#fff; font-size:1.7rem; text-shadow:0 0 14px rgba(143,255,0,.5); }
   .menu-head p { color:#9fb0d0; font-size:.95rem; margin-top:4px; }
@@ -177,7 +179,7 @@
   @keyframes pulseBar { 0%,100%{opacity:1;} 50%{opacity:.6;} }
 
   /* ===== QUESTION AREA ===== */
-  .game-body { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; }
+  .game-body { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:16px; }
 
   .grey-bubble {
     display:flex; align-items:center; gap:12px;
@@ -239,7 +241,7 @@
   .fb-sub { color:#eaf2ff; font-size:1.2rem; margin-top:8px; font-weight:700; max-width:340px; }
 
   /* ===== RESULTS ===== */
-  #resultsScreen { justify-content:center; align-items:center; text-align:center; gap:14px; }
+  #resultsScreen { justify-content:flex-start; align-items:center; text-align:center; gap:14px; padding-top:16px; }
   .result-hero { font-size:8rem; line-height:1; animation:floaty 3s ease-in-out infinite; }
   .result-title { font-family:'Rubik','Heebo','Arial Hebrew','Noto Sans Hebrew','Segoe UI',Arial,sans-serif; font-weight:900; font-size:2.2rem; color:#fff; text-shadow:0 0 18px rgba(143,255,0,.6); }
   .result-stars { display:flex; gap:8px; justify-content:center; margin:6px 0; }
@@ -888,7 +890,7 @@
       <div class="menu-head"><h2>{בחר|בחרי} רמה</h2></div>
       <button class="icon-btn" onclick="Game.openSettings()">⚙️</button>
     </div>
-    <div class="game-body" style="gap:14px; justify-content:center;">
+    <div class="game-body" style="gap:14px; justify-content:flex-start;">
       <div class="grey-bubble" id="diffBubble" style="margin-bottom:6px;">
         <svg class="grey-avatar" id="greyAvatarDiff" viewBox="0 0 100 110"></svg>
         <div class="grey-text">באיזו רמה {תרצה|תרצי} להתחיל, {גיבור|גיבורה}?</div>
