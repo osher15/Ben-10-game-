@@ -4,6 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>בן 10 - הרפתקת האותיות 🛸</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a0e1a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="בן 10">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="128x128" href="icons/favicon-128.png">
 <style>
   /* פונטים מהרשת - שיפור בלבד. בלי אינטרנט המשחק נופל לפונט עברי מקומי תקין */
   @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800;900&family=Rubik:wght@500;700;900&display=swap');
@@ -3970,6 +3979,23 @@ window.addEventListener('load', ()=>{
 
 // עצירת הדיבור כשעוברים לטאב אחר — אחרת ההקראה "נתקעת" ברקע
 document.addEventListener('visibilitychange', ()=>{ if(document.hidden) Voice.stop(); });
+
+/* רישום ה-Service Worker — רק דרך שרת (לא file://).
+   בזכותו עדכונים מגיעים לאפליקציה שבמסך הבית בלי למחוק ולהתקין מחדש. */
+if('serviceWorker' in navigator && location.protocol.indexOf('http') === 0){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      // גרסה חדשה שהתגלתה ברקע — מפעילים אותה מיד בטעינה הבאה
+      reg.addEventListener('updatefound', () => {
+        const sw = reg.installing;
+        if(sw) sw.addEventListener('statechange', () => {
+          if(sw.state === 'installed' && navigator.serviceWorker.controller) sw.postMessage('skipWaiting');
+        });
+      });
+    }).catch(() => {});
+  });
+}
+
 window.addEventListener('beforeunload', ()=>{ try{ speechSynthesis.cancel(); }catch(e){} });
 
 </script>
