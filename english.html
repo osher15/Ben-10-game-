@@ -32,6 +32,9 @@
 
   #app{
     position:fixed; inset:0;
+    /* בטלפון סרגל הכתובת של הדפדפן מכסה את תחתית המסך. dvh מודד את הגובה
+       האמיתי שנשאר, ודפדפנים ישנים פשוט מתעלמים מהשורה הזו. */
+    height:100dvh;
     display:flex; align-items:center; justify-content:center;
     background:
       radial-gradient(ellipse at 50% 0%, rgba(185,128,255,.16), transparent 55%),

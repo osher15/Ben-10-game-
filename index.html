@@ -33,6 +33,9 @@
 
   #app {
     position:fixed; inset:0;
+    /* בטלפון סרגל הכתובת של הדפדפן מכסה את תחתית המסך. dvh מודד את הגובה
+       האמיתי שנשאר, ודפדפנים ישנים פשוט מתעלמים מהשורה הזו. */
+    height:100dvh;
     display:flex; align-items:center; justify-content:center;
     background:
       radial-gradient(ellipse at 50% 0%, rgba(143,255,0,0.12), transparent 55%),
@@ -131,10 +134,13 @@
   .menu-btns { width:100%; max-width:340px; display:flex; flex-direction:column; gap:12px; }
 
   /* ===== MODE SELECT ===== */
-  /* התפריט ארוך מהמסך בטלפונים — חייב לגלול, אחרת הכרטיסים העליונים נחתכים ולא ניתן להגיע אליהם.
-     'safe center' משאיר מרכוז במסכים גבוהים, ומיישר לראש הרשימה כשאין מספיק מקום. */
-  #menuScreen { justify-content:center; justify-content:safe center; gap:14px;
-                overflow-y:auto; overscroll-behavior:contain; }
+  /* התפריט ארוך מהמסך בטלפונים — חייב לגלול, אחרת הכרטיסים העליונים נחתכים ולא ניתן להגיע אליהם. */
+  #menuScreen { justify-content:flex-start; gap:14px;
+                overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
+  /* מרכוז שלא חוסם גלילה: כשיש מקום פנוי השוליים האוטומטיים מרכזים את הרשימה,
+     וכשאין — הם מתאפסים והרשימה נגללת מהתחלה ועד הסוף. */
+  #menuScreen > :first-child { margin-top:auto; }
+  #menuScreen > :last-child { margin-bottom:auto; }
   #menuScreen::-webkit-scrollbar { width:6px; }
   #menuScreen::-webkit-scrollbar-thumb { background:rgba(143,255,0,.3); border-radius:6px; }
   .menu-head { text-align:center; margin-bottom:4px; }
@@ -258,9 +264,15 @@
   @keyframes fall { to{ transform:translateY(110vh) rotate(720deg); opacity:0; } }
 
   /* settings modal */
-  .modal-bg { position:fixed; inset:0; z-index:80; background:rgba(4,6,13,.85); display:none; align-items:center; justify-content:center; padding:20px; }
+  /* החלונות גבוהים מהמסך בטלפון, ולכן חייבים לגלול.
+     align-items:center יחד עם גלילה חותך את הקצה העליון, ולכן המרכוז נעשה ב-margin:auto
+     על החלון עצמו — זו הדרך היחידה שמרכזת וגם מאפשרת להגיע לשני הקצוות. */
+  .modal-bg { position:fixed; inset:0; z-index:80; background:rgba(4,6,13,.85); display:none; align-items:flex-start; justify-content:center; padding:20px;
+              overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
   .modal-bg.show { display:flex; }
-  .modal { background:var(--omni-black2); border:3px solid rgba(143,255,0,.3); border-radius:24px; padding:24px; width:100%; max-width:360px; }
+  .modal-bg::-webkit-scrollbar { width:6px; }
+  .modal-bg::-webkit-scrollbar-thumb { background:rgba(143,255,0,.3); border-radius:6px; }
+  .modal { background:var(--omni-black2); border:3px solid rgba(143,255,0,.3); border-radius:24px; padding:24px; width:100%; max-width:360px; margin:auto; }
   .modal h3 { font-family:'Rubik','Heebo','Arial Hebrew','Noto Sans Hebrew','Segoe UI',Arial,sans-serif; color:#fff; font-size:1.4rem; text-align:center; margin-bottom:16px; }
   .setting-row { display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid rgba(255,255,255,.08); }
   .setting-row span { color:#eaf2ff; font-weight:700; }
