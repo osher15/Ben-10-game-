@@ -131,7 +131,12 @@
   .menu-btns { width:100%; max-width:340px; display:flex; flex-direction:column; gap:12px; }
 
   /* ===== MODE SELECT ===== */
-  #menuScreen { justify-content:center; gap:14px; }
+  /* התפריט ארוך מהמסך בטלפונים — חייב לגלול, אחרת הכרטיסים העליונים נחתכים ולא ניתן להגיע אליהם.
+     'safe center' משאיר מרכוז במסכים גבוהים, ומיישר לראש הרשימה כשאין מספיק מקום. */
+  #menuScreen { justify-content:center; justify-content:safe center; gap:14px;
+                overflow-y:auto; overscroll-behavior:contain; }
+  #menuScreen::-webkit-scrollbar { width:6px; }
+  #menuScreen::-webkit-scrollbar-thumb { background:rgba(143,255,0,.3); border-radius:6px; }
   .menu-head { text-align:center; margin-bottom:4px; }
   .menu-head h2 { font-family:'Rubik','Heebo','Arial Hebrew','Noto Sans Hebrew','Segoe UI',Arial,sans-serif; font-weight:900; color:#fff; font-size:1.7rem; text-shadow:0 0 14px rgba(143,255,0,.5); }
   .menu-head p { color:#9fb0d0; font-size:.95rem; margin-top:4px; }
@@ -149,6 +154,9 @@
   .mode-card.m2 { border-color:rgba(0,212,255,.4); } .mode-card.m2 .ic { background:linear-gradient(135deg,#3ee0ff,#0086c9); }
   .mode-card.m3 { border-color:rgba(255,149,0,.4); } .mode-card.m3 .ic { background:linear-gradient(135deg,#ffb24a,#e07000); }
   .mode-card.m4 { border-color:rgba(255,59,59,.4); } .mode-card.m4 .ic { background:linear-gradient(135deg,#ff6b6b,#cc1f1f); }
+  .mode-card.m9 { border-color:rgba(185,128,255,.5); box-shadow:0 0 22px rgba(185,128,255,.14); }
+  .mode-card.m9 .ic { background:linear-gradient(135deg,#c894ff,#6b34c9); }
+  .mode-card.m9 .txt h3 .en-tag { font-size:.72rem; color:#c894ff; letter-spacing:1px; margin-right:6px; }
 
   /* ===== GAME HUD ===== */
   .hud { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
@@ -716,6 +724,11 @@
     <div class="mode-card m1" onclick="OmniUI.open()">
       <div class="ic">🛸</div>
       <div class="txt"><h3>האומניטריקס</h3><p>{בחר|בחרי} חייזר, {ופתח|ופתחי} חייזרים חדשים בלימוד אותיות!</p></div>
+    </div>
+    <div class="mode-card m9" onclick="Game.openEnglish()">
+      <div class="ic">🌙</div>
+      <div class="txt"><h3>אנגלית עם מיס לונה<span class="en-tag" dir="ltr">ENGLISH</span></h3>
+      <p>הרפתקה קצרה באנגלית — הכל בשמיעה ובתמונות, בלי לקרוא!</p></div>
     </div>
     <div class="mode-card m3" onclick="Game.startMode('smash')">
       <div class="ic">📦</div>
@@ -1766,6 +1779,7 @@ const Game = {
   },
   startSound(){ SFX.init(); SFX.transform(); },
   goTitle(){ this.stopTimer(); Voice.stop(); SFX.click(); this.show('titleScreen'); },
+  openEnglish(){ this.stopTimer(); Voice.stop(); SFX.click(); location.href = 'english.html'; },
   goMenu(){
     this.focusLetter = null;
     Villain.clear();
