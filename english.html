@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>מיס לונה — אנגלית עם בן 10</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a0e1a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="בן 10">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="128x128" href="icons/favicon-128.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800;900&family=Rubik:wght@500;700;900&family=Fredoka:wght@500;700&display=swap');
+
+  :root{
+    --luna:#b980ff;
+    --luna2:#6ee7ff;
+    --omni-green:#8fff00;
+    --sun:#ffd24a;
+    --pink:#ff8ac4;
+    --ok:#3ddc84;
+    --no:#ff6b6b;
+    --bg:#0a0e1a;
+    --panel:rgba(18,26,46,.92);
+    --dim:#9fb0d0;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+  html,body{
+    height:100%;
+    font-family:'Heebo','Noto Sans Hebrew','Arial Hebrew','Segoe UI',Arial,sans-serif;
+    background:var(--bg); color:#fff;
+    overflow:hidden; user-select:none; touch-action:manipulation;
+  }
+
+  #app{
+    position:fixed; inset:0;
+    /* בטלפון סרגל הכתובת של הדפדפן מכסה את תחתית המסך. dvh מודד את הגובה
+       האמיתי שנשאר, ודפדפנים ישנים פשוט מתעלמים מהשורה הזו. */
+    height:100dvh;
+    display:flex; align-items:center; justify-content:center;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(185,128,255,.16), transparent 55%),
+      radial-gradient(ellipse at 50% 100%, rgba(110,231,255,.13), transparent 55%),
+      linear-gradient(160deg,#070a14 0%,#0a0e1a 50%,#120d24 100%);
+  }
+  #app::before{
+    content:''; position:absolute; inset:-50%;
+    background-image:
+      linear-gradient(rgba(185,128,255,.05) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(185,128,255,.05) 1px,transparent 1px);
+    background-size:46px 46px;
+    transform:perspective(400px) rotateX(56deg);
+    animation:gridMove 10s linear infinite;
+    pointer-events:none;
+  }
+  @keyframes gridMove{from{background-position:0 0}to{background-position:0 46px}}
+  body.calm #app::before{animation:none;opacity:.5;}
+
+  .screen{
+    position:relative; z-index:2;
+    width:100%; max-width:520px; height:100%; max-height:940px;
+    display:none; flex-direction:column;
+    padding:16px 14px 18px;
+  }
+  .screen.active{display:flex;animation:screenIn .45s cubic-bezier(.2,.9,.3,1.4);}
+  body.calm .screen.active{animation:none;}
+  @keyframes screenIn{from{opacity:0;transform:scale(.94) translateY(16px)}to{opacity:1;transform:none}}
+
+  .scroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;}
+  .scroll::-webkit-scrollbar{width:6px}
+  .scroll::-webkit-scrollbar-thumb{background:rgba(185,128,255,.35);border-radius:6px}
+
+  /* ===== כותרת עליונה ===== */
+  .hud{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-shrink:0;}
+  .icon-btn{
+    width:44px;height:44px;border-radius:13px;
+    background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15);
+    color:#fff;font-size:1.25rem;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    transition:transform .12s;
+  }
+  .icon-btn:active{transform:scale(.9)}
+  .hud-title{font-family:'Rubik',sans-serif;font-weight:900;font-size:1.05rem;text-align:center;flex:1;}
+  .hud-title small{display:block;color:var(--dim);font-size:.72rem;font-weight:500;margin-top:1px;}
+
+  /* ===== מיס לונה ===== */
+  .luna-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;}
+  .luna{
+    width:150px;height:150px;position:relative;flex-shrink:0;
+    animation:floaty 3.4s ease-in-out infinite;
+  }
+  .luna.sm{width:78px;height:78px;animation-duration:4s;}
+  body.calm .luna{animation:none;}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+  .luna svg{width:100%;height:100%;display:block;filter:drop-shadow(0 6px 22px rgba(185,128,255,.45));}
+  .luna .mouth{transform-origin:center;transition:transform .12s;}
+  .luna.talking .mouth{animation:talk .32s ease-in-out infinite;}
+  body.calm .luna.talking .mouth{animation-duration:.5s;}
+  @keyframes talk{0%,100%{transform:scaleY(.45)}50%{transform:scaleY(1.25)}}
+  .luna.talking{filter:drop-shadow(0 0 16px rgba(185,128,255,.5));}
+
+  .luna-name{
+    font-family:'Fredoka','Rubik',sans-serif;font-weight:700;
+    font-size:2.1rem;color:#fff;letter-spacing:.5px;
+    text-shadow:0 0 20px rgba(185,128,255,.8),0 3px 0 #3a2560;
+  }
+  .luna-name b{color:var(--sun)}
+  .luna-sub{color:var(--luna2);font-weight:700;font-size:1.05rem;text-shadow:0 0 12px rgba(110,231,255,.5);}
+  .luna-tag{color:var(--dim);font-size:.92rem;text-align:center;line-height:1.5;}
+
+  /* ===== כפתורים ===== */
+  .btn{
+    font-family:'Rubik',sans-serif;font-weight:700;border:none;cursor:pointer;color:#fff;
+    border-radius:18px;padding:15px 22px;font-size:1.12rem;
+    transition:transform .12s,filter .2s;width:100%;
+  }
+  .btn:active{transform:scale(.96)}
+  .btn-luna{background:linear-gradient(135deg,#c894ff,#7a3fd6);box-shadow:0 6px 0 #4d2090,0 8px 22px rgba(185,128,255,.4);}
+  .btn-sky{background:linear-gradient(135deg,#5fe0ff,#0086c9);box-shadow:0 6px 0 #005f91,0 8px 22px rgba(0,212,255,.32);}
+  .btn-ghost{background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.16);box-shadow:none;font-size:1rem;padding:13px 18px;}
+  .btn-row{display:flex;gap:10px;}
+  .btn-row .btn{flex:1}
+
+  /* ===== כרטיסי הרפתקה ===== */
+  .adv-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-bottom:8px;}
+  .adv{
+    background:var(--panel);border:3px solid rgba(255,255,255,.09);
+    border-radius:24px;padding:16px 10px 14px;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    transition:transform .12s,border-color .2s,box-shadow .25s;position:relative;
+  }
+  .adv:active{transform:scale(.96)}
+  .adv .em{font-size:3.4rem;line-height:1;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5));}
+  .adv .he{font-family:'Rubik',sans-serif;font-weight:700;font-size:1.1rem;}
+  .adv .en{font-size:.85rem;color:var(--dim);font-weight:700;letter-spacing:.4px;}
+  .adv .stars{position:absolute;top:8px;inset-inline-end:10px;font-size:.8rem;color:var(--sun);font-weight:700;}
+  .adv.a1{border-color:rgba(255,210,74,.5)}
+  .adv.a2{border-color:rgba(143,255,0,.5)}
+  .adv.a3{border-color:rgba(0,212,255,.5)}
+  .adv.a4{border-color:rgba(255,138,196,.5)}
+
+  /* ===== מסך משחק ===== */
+  .dots{display:flex;gap:5px;justify-content:center;margin-bottom:10px;flex-shrink:0;}
+  .dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.18);transition:.3s;}
+  .dot.on{background:var(--sun);box-shadow:0 0 10px var(--sun);transform:scale(1.25);}
+  .dot.now{background:var(--luna2);box-shadow:0 0 12px var(--luna2);transform:scale(1.45);}
+
+  .bubble{
+    background:var(--panel);border:3px solid rgba(185,128,255,.35);
+    border-radius:22px;padding:14px 16px;text-align:center;
+    margin-bottom:12px;flex-shrink:0;
+  }
+  .bubble .en{
+    direction:ltr;font-family:'Fredoka','Rubik',sans-serif;font-weight:700;
+    font-size:1.5rem;line-height:1.3;color:#fff;
+  }
+  .bubble .he{color:var(--dim);font-size:.88rem;margin-top:6px;line-height:1.4;}
+
+  .word-big{
+    direction:ltr;font-family:'Fredoka','Rubik',sans-serif;font-weight:700;
+    font-size:3.1rem;color:var(--sun);letter-spacing:2px;
+    text-shadow:0 0 26px rgba(255,210,74,.6);
+    display:block;margin:4px 0;
+  }
+  .word-big.wi{display:inline-block;font-size:1.9rem;vertical-align:baseline;margin:0;}
+  .word-big.pop{animation:wordPop .45s cubic-bezier(.2,.9,.3,1.6);}
+  body.calm .word-big.pop{animation:none}
+  @keyframes wordPop{0%{transform:scale(.7);opacity:.4}60%{transform:scale(1.18)}100%{transform:scale(1)}}
+
+  .stage{
+    flex:1;min-height:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:12px;overflow:hidden;
+  }
+  .hero-em{
+    font-size:6.2rem;line-height:1;
+    filter:drop-shadow(0 8px 20px rgba(0,0,0,.6));
+    animation:heroIn .5s cubic-bezier(.2,.9,.3,1.5);
+  }
+  body.calm .hero-em{animation:none}
+  @keyframes heroIn{from{transform:scale(.4) rotate(-12deg);opacity:0}to{transform:none;opacity:1}}
+  .hero-em.bounce{animation:heroBounce .6s ease-in-out infinite;}
+  body.calm .hero-em.bounce{animation:heroBounce 1.4s ease-in-out infinite;}
+  @keyframes heroBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-24px)}}
+  .hero-em.fly{animation:heroFly 1.6s ease-in-out infinite;}
+  @keyframes heroFly{0%,100%{transform:translate(-40px,10px) rotate(-8deg)}50%{transform:translate(40px,-30px) rotate(8deg)}}
+  .hero-em.shake{animation:heroShake .5s ease-in-out infinite;}
+  @keyframes heroShake{0%,100%{transform:scale(1)}25%{transform:scale(1.12) rotate(-5deg)}75%{transform:scale(1.12) rotate(5deg)}}
+
+  .choices{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;width:100%;}
+  .choice{
+    background:var(--panel);border:4px solid rgba(255,255,255,.12);
+    border-radius:26px;cursor:pointer;
+    width:calc(33.333% - 8px);min-width:96px;aspect-ratio:1/1;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+    font-size:3.2rem;transition:transform .12s,border-color .2s,box-shadow .25s;
+  }
+  .choice.two{width:calc(50% - 6px)}
+  .choice:active{transform:scale(.94)}
+  .choice .cap{direction:ltr;font-size:.85rem;font-weight:700;color:var(--dim);font-family:'Fredoka',sans-serif;}
+  .choice.right{border-color:var(--ok);box-shadow:0 0 30px rgba(61,220,132,.55);animation:rightPulse .5s;}
+  @keyframes rightPulse{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
+  .choice.wrong{border-color:var(--no);animation:nudge .4s;}
+  body.calm .choice.right,body.calm .choice.wrong{animation:none}
+  @keyframes nudge{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+  .choice.dimmed{opacity:.32}
+
+  .swatch{width:100%;height:100%;border-radius:20px;}
+
+  .yn{display:flex;gap:14px;width:100%;}
+  .yn button{
+    flex:1;border:none;cursor:pointer;border-radius:24px;padding:20px 0;
+    font-family:'Fredoka','Rubik',sans-serif;font-weight:700;font-size:1.5rem;color:#062012;
+    display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .12s;
+    direction:ltr;
+  }
+  .yn button:active{transform:scale(.95)}
+  .yn .y{background:linear-gradient(135deg,#6dffab,#1fae63);box-shadow:0 6px 0 #147a45;}
+  .yn .n{background:linear-gradient(135deg,#ff9e9e,#e03b3b);box-shadow:0 6px 0 #a32020;color:#2b0808;}
+  .yn .em{font-size:2.2rem}
+  .yn button.wrong{animation:nudge .4s;outline:4px solid var(--no);}
+  body.calm .yn button.wrong{animation:none}
+
+  .mic-btn{
+    width:132px;height:132px;border-radius:50%;border:none;cursor:pointer;
+    background:linear-gradient(135deg,#ff9ed8,#c73f9a);
+    box-shadow:0 8px 0 #8d1f68,0 0 40px rgba(255,138,196,.5);
+    font-size:3.4rem;color:#fff;display:flex;align-items:center;justify-content:center;
+    transition:transform .12s;position:relative;
+  }
+  .mic-btn:active{transform:scale(.94)}
+  .mic-btn.rec{background:linear-gradient(135deg,#ff6b6b,#b81d1d);box-shadow:0 8px 0 #7d1010,0 0 0 0 rgba(255,107,107,.7);animation:recPulse 1s ease-out infinite;}
+  @keyframes recPulse{0%{box-shadow:0 8px 0 #7d1010,0 0 0 0 rgba(255,107,107,.6)}100%{box-shadow:0 8px 0 #7d1010,0 0 0 34px rgba(255,107,107,0)}}
+  .mic-hint{color:var(--dim);font-size:.9rem;text-align:center;}
+
+  .bar{display:flex;gap:8px;flex-shrink:0;margin-top:10px;}
+  .bar .icon-btn{flex:1;width:auto;font-size:1rem;gap:6px;font-family:'Rubik',sans-serif;font-weight:700;}
+
+  .praise{
+    position:fixed;inset:0;z-index:60;display:none;
+    align-items:center;justify-content:center;flex-direction:column;gap:10px;
+    background:rgba(6,9,18,.82);backdrop-filter:blur(3px);text-align:center;padding:24px;
+  }
+  .praise.show{display:flex;animation:screenIn .35s;}
+  .praise .big{font-size:5rem;animation:heroBounce .7s ease-in-out infinite;}
+  body.calm .praise .big{animation:none}
+  .praise .txt{direction:ltr;font-family:'Fredoka','Rubik',sans-serif;font-weight:700;font-size:2rem;color:var(--sun);text-shadow:0 0 24px rgba(255,210,74,.7);}
+
+  .confetti{position:fixed;inset:0;pointer-events:none;z-index:70;overflow:hidden;}
+  .conf{position:absolute;font-size:1.6rem;animation:fall linear forwards;}
+  @keyframes fall{to{transform:translateY(110vh) rotate(540deg);opacity:0}}
+
+  /* ===== סיום ===== */
+  .sticker{
+    width:190px;height:190px;border-radius:50%;
+    background:radial-gradient(circle at 34% 28%,#2a1c48,#0b0716);
+    border:8px solid var(--sun);
+    box-shadow:0 0 0 6px #0a0e1a,0 0 60px rgba(255,210,74,.55);
+    display:flex;align-items:center;justify-content:center;font-size:5.5rem;
+    animation:floaty 3s ease-in-out infinite;
+  }
+  body.calm .sticker{animation:none}
+  .stars-big{font-size:2rem;letter-spacing:6px;}
+
+  /* ===== הגדרות הורים ===== */
+  .card{
+    background:var(--panel);border:2px solid rgba(255,255,255,.1);
+    border-radius:18px;padding:14px;margin-bottom:12px;
+  }
+  .card h3{font-family:'Rubik',sans-serif;font-size:1.02rem;margin-bottom:10px;color:var(--luna2);}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);}
+  .row:last-child{border-bottom:none}
+  .row .lab{font-size:.95rem}
+  .row .lab small{display:block;color:var(--dim);font-size:.76rem;margin-top:2px;line-height:1.35;}
+  .sw{width:56px;height:31px;border-radius:16px;background:rgba(255,255,255,.15);position:relative;cursor:pointer;flex-shrink:0;transition:background .2s;border:none;}
+  .sw::after{content:'';position:absolute;top:3px;inset-inline-start:3px;width:25px;height:25px;border-radius:50%;background:#fff;transition:.2s;}
+  .sw.on{background:var(--ok)}
+  .sw.on::after{inset-inline-start:28px}
+  select,input[type=text]{
+    background:rgba(255,255,255,.09);border:2px solid rgba(255,255,255,.16);
+    color:#fff;border-radius:12px;padding:9px 11px;font-family:inherit;font-size:.92rem;
+    max-width:60%;text-overflow:ellipsis;
+  }
+  input[type=range]{max-width:56%;accent-color:var(--luna);}
+  option{background:#131a2e}
+  .prog-word{
+    display:inline-flex;align-items:center;gap:5px;direction:ltr;
+    background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.12);
+    border-radius:12px;padding:5px 10px;margin:3px;font-family:'Fredoka',sans-serif;font-weight:700;font-size:.9rem;
+  }
+  .prog-word.hot{border-color:var(--ok);color:var(--ok)}
+  .empty{color:var(--dim);font-size:.88rem;text-align:center;padding:10px 0;}
+  .note{color:var(--dim);font-size:.8rem;line-height:1.6;}
+
+  .warn{
+    background:rgba(255,149,0,.12);border:2px solid rgba(255,149,0,.4);
+    border-radius:14px;padding:10px 12px;color:#ffd39a;font-size:.85rem;line-height:1.5;margin-bottom:12px;
+  }
+
+  @media (max-height:680px){
+    .luna{width:112px;height:112px}
+    .luna-name{font-size:1.7rem}
+    .hero-em{font-size:4.6rem}
+    .mic-btn{width:108px;height:108px;font-size:2.8rem}
+    .sticker{width:150px;height:150px;font-size:4.2rem}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.01ms !important;animation-iteration-count:1 !important;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ================= מסך פתיחה ================= -->
+  <div class="screen active" id="titleScreen">
+    <div class="hud">
+      <button class="icon-btn" onclick="Luna.backToBen10()" title="חזרה למשחק בן 10">🛸</button>
+      <div class="hud-title">אנגלית עם מיס לונה<small dir="ltr">English is fun!</small></div>
+      <button class="icon-btn" onclick="Luna.openParents()" title="הגדרות למורה ולהורה">⚙️</button>
+    </div>
+
+    <div class="scroll">
+      <div class="luna-wrap" style="margin-top:6px">
+        <div class="luna" id="lunaBig" onclick="Luna.hello()"></div>
+        <div class="luna-name" dir="ltr">Miss <b>Luna</b> 🌙</div>
+        <div class="luna-sub">המורה לאנגלית שלך</div>
+        <div class="luna-tag" id="titleTag">
+          לומדים אנגלית בלי לקרוא — רק שומעים, מדמיינים ואומרים!<br>
+          פוקימון · בן 10 · גיבורי-על · חיות
+        </div>
+      </div>
+
+      <div style="height:18px"></div>
+      <button class="btn btn-luna" onclick="Luna.goAdventures()">▶️ בואו נתחיל!</button>
+      <div style="height:10px"></div>
+      <button class="btn btn-ghost" onclick="Luna.openParents()">⚙️ הגדרות למורה ולהורה</button>
+      <div style="height:10px"></div>
+      <button class="btn btn-ghost" onclick="Luna.backToBen10()">🛸 חזרה למשחק האותיות</button>
+      <div style="height:14px"></div>
+      <div class="note" style="text-align:center">
+        💡 מומלץ עם קול פתוח. באנגלית הקול של הדפדפן נשמע טוב מאוד ברוב המכשירים.
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= בחירת הרפתקה ================= -->
+  <div class="screen" id="advScreen">
+    <div class="hud">
+      <button class="icon-btn" onclick="Luna.goTitle()">🏠</button>
+      <div class="hud-title" id="advTitle">איזו הרפתקה היום?<small dir="ltr">Choose your adventure!</small></div>
+      <button class="icon-btn" onclick="Luna.openParents()">⚙️</button>
+    </div>
+
+    <div class="scroll">
+      <div class="luna-wrap" style="margin-bottom:12px">
+        <div class="luna sm" id="lunaAdv"></div>
+      </div>
+      <div class="adv-grid" id="advGrid"></div>
+      <div style="height:12px"></div>
+      <div class="note" style="text-align:center">כל הרפתקה נמשכת בערך <bdi>5-8</bdi> דקות 🕐</div>
+      <div style="height:10px"></div>
+      <button class="btn btn-ghost" onclick="Luna.sayAdventureChoices()">🔊 מיס לונה, תגידי שוב</button>
+    </div>
+  </div>
+
+  <!-- ================= משחק ================= -->
+  <div class="screen" id="playScreen">
+    <div class="hud">
+      <button class="icon-btn" onclick="Luna.quitLesson()">⬅️</button>
+      <div class="hud-title" id="playTitle"></div>
+      <div class="luna sm" id="lunaPlay" style="width:52px;height:52px"></div>
+    </div>
+    <div class="dots" id="dots"></div>
+
+    <div class="bubble" id="bubble">
+      <div class="en" id="bubbleEn"></div>
+      <div class="he" id="bubbleHe"></div>
+    </div>
+
+    <div class="stage" id="stage"></div>
+
+    <div class="bar">
+      <button class="icon-btn" onclick="Luna.repeatPrompt()">🔁 שוב</button>
+      <button class="icon-btn" onclick="Luna.helpHebrew()">🇮🇱 בעברית</button>
+      <button class="icon-btn" onclick="Luna.skipStep()">⏭️ הלאה</button>
+    </div>
+  </div>
+
+  <!-- ================= סיום ================= -->
+  <div class="screen" id="doneScreen">
+    <div class="hud">
+      <button class="icon-btn" onclick="Luna.goAdventures()">⬅️</button>
+      <div class="hud-title">כל הכבוד!<small dir="ltr">You did it!</small></div>
+      <button class="icon-btn" onclick="Luna.openParents()">⚙️</button>
+    </div>
+    <div class="scroll" style="display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center">
+      <div class="sticker" id="doneSticker">🏅</div>
+      <div class="stars-big" id="doneStars">⭐⭐⭐</div>
+      <div class="bubble" style="width:100%">
+        <div class="en" id="doneEn">You are a superstar!</div>
+        <div class="he" id="doneHe">אתה כוכב-על! 🌟</div>
+      </div>
+      <div id="doneWords" style="text-align:center"></div>
+      <div style="width:100%">
+        <button class="btn btn-luna" onclick="Luna.replayLesson()">🔁 עוד פעם אותה הרפתקה</button>
+        <div style="height:10px"></div>
+        <button class="btn btn-sky" onclick="Luna.goAdventures()">🎒 הרפתקה אחרת</button>
+        <div style="height:10px"></div>
+        <button class="btn btn-ghost" onclick="Luna.goTitle()">🏠 מסך הבית</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= הגדרות למורה ולהורה ================= -->
+  <div class="screen" id="parentScreen">
+    <div class="hud">
+      <button class="icon-btn" onclick="Luna.closeParents()">⬅️</button>
+      <div class="hud-title">למורה ולהורה<small>הגדרות והתקדמות</small></div>
+      <div style="width:44px"></div>
+    </div>
+    <div class="scroll">
+      <div id="voiceWarn"></div>
+
+      <div class="card">
+        <h3>🧒 מי לומד?</h3>
+        <div class="row">
+          <div class="lab">שם הילד/ה
+            <small>מיס לונה תקרא לו בשם באנגלית</small></div>
+          <input type="text" id="pName" dir="auto" maxlength="14" placeholder="לדוגמה: איתן"
+                 oninput="Luna.setName(this.value)">
+        </div>
+        <div class="row">
+          <div class="lab">השם באותיות אנגליות
+            <small>קול אנגלי לא יודע להגות אותיות עבריות. מולא אוטומטית — כדאי לתקן לכתיב שנשמע נכון</small></div>
+          <input type="text" id="pNameEn" dir="ltr" maxlength="16" placeholder="Eitan"
+                 oninput="Luna.setNameEn(this.value)">
+        </div>
+        <div class="row">
+          <div class="lab">שמיעה של השם</div>
+          <button class="icon-btn" style="width:auto;padding:0 14px" onclick="Luna.testName()">▶️ נסה</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🔊 קול ודיבור</h3>
+        <div class="row">
+          <div class="lab">קול של מיס לונה
+            <small>הקראה באנגלית</small></div>
+          <button class="sw" id="swVoice" onclick="Luna.toggle('voice')"></button>
+        </div>
+        <div class="row">
+          <div class="lab">בחירת קול</div>
+          <select id="pVoice" onchange="Luna.setVoice(this.value)"></select>
+        </div>
+        <div class="row">
+          <div class="lab">מהירות דיבור
+            <small>איטי יותר = קל יותר לחקות</small></div>
+          <input type="range" id="pRate" min="55" max="105" step="5" oninput="Luna.setRate(this.value)">
+        </div>
+        <div class="row">
+          <div class="lab">צלילי משחק</div>
+          <button class="sw" id="swSfx" onclick="Luna.toggle('sfx')"></button>
+        </div>
+        <div class="row">
+          <div class="lab">בדיקת קול</div>
+          <button class="icon-btn" style="width:auto;padding:0 14px" onclick="Luna.testVoice()">▶️ נסה</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🎤 מיקרופון — "התור שלי"</h3>
+        <div class="row">
+          <div class="lab">הקלטה ושמיעה עצמית
+            <small>הילד אומר את המילה, שומע את עצמו, ואז את מיס לונה. אם אין הרשאה — יופיע כפתור "אמרתי!" במקום</small></div>
+          <button class="sw" id="swMic" onclick="Luna.toggle('mic')"></button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🧘 מצב רגוע</h3>
+        <div class="row">
+          <div class="lab">פחות גירויים
+            <small>בלי קונפטי, בלי אנימציות מהירות, צלילים רכים. מומלץ אם יש עומס חושי</small></div>
+          <button class="sw" id="swCalm" onclick="Luna.toggle('calm')"></button>
+        </div>
+        <div class="row">
+          <div class="lab">רמז בעברית אוטומטי
+            <small>אחרי כל משפט באנגלית תיאמר גם עברית. כבוי = עברית רק בלחיצה על "בעברית"</small></div>
+          <button class="sw" id="swHeb" onclick="Luna.toggle('hebrew')"></button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>📊 מה כבר למדנו</h3>
+        <div id="progWords"></div>
+        <div style="height:10px"></div>
+        <div class="note" id="progSummary"></div>
+      </div>
+
+      <div class="card">
+        <h3>📖 איך זה עובד</h3>
+        <div class="note">
+          כל הרפתקה בנויה תמיד באותו סדר — <b>שומעים · חוזרים · בוחרים תמונה · זזים · כן/לא · חוגגים</b>.
+          הסדר הקבוע עוזר לילד לדעת מה הולך לקרות.<br><br>
+          אין טיימר, אין הפסד ואין "טעות" — תשובה לא נכונה מקבלת רק עידוד וניסיון נוסף.<br><br>
+          הכל מבוסס שמיעה ותמונות. אין שום מקום שבו צריך לקרוא.
+        </div>
+      </div>
+
+      <button class="btn btn-ghost" onclick="Luna.resetProgress()">🗑️ איפוס ההתקדמות</button>
+      <div style="height:20px"></div>
+    </div>
+  </div>
+
+  <div class="praise" id="praise" onclick="Luna.hidePraise()">
+    <div class="big" id="praiseEm">🎉</div>
+    <div class="txt" id="praiseTxt">Amazing!</div>
+  </div>
+  <div class="confetti" id="confetti"></div>
+</div>
+<script>
+/* =====================================================================
+   מיס לונה — אנגלית ראשונה בשמיעה בלבד
+   נבנה לילד בן 6 שעדיין לא קורא: הכל קול, תמונות ותנועה.
+   קובץ HTML יחיד, עובד גם בלי אינטרנט.
+   ===================================================================== */
+
+const ABORT = Symbol('abort');
+
+/* ---------- הגדרות ---------- */
+const S = {
+  KEY:'luna_settings_v1',
+  BEN10_KEY:'ben10_settings_v2',
+  d:{ voice:true, sfx:true, mic:true, calm:false, hebrew:false, rate:80, voiceURI:null, name:'', nameEn:'' },
+  v:null,
+  load(){
+    this.v = Object.assign({}, this.d);
+    try{
+      const raw = localStorage.getItem(this.KEY);
+      if(raw) Object.assign(this.v, JSON.parse(raw) || {});
+    }catch(e){}
+    // אם עוד לא הוגדר שם — לוקחים את השם ממשחק בן 10 שבאותו מכשיר
+    if(!this.v.name){
+      try{
+        const b = JSON.parse(localStorage.getItem(this.BEN10_KEY) || '{}');
+        if(b && b.childName) this.v.name = String(b.childName).slice(0,14);
+      }catch(e){}
+    }
+    return this.v;
+  },
+  save(){ try{ localStorage.setItem(this.KEY, JSON.stringify(this.v)); }catch(e){} },
+  get(k){ if(!this.v) this.load(); return this.v[k]; },
+  set(k,val){ if(!this.v) this.load(); this.v[k]=val; this.save(); }
+};
+S.load();
+
+/* ---------- התקדמות ---------- */
+const P = {
+  KEY:'luna_progress_v1',
+  d:{ words:{}, stickers:{}, sessions:0 },
+  v:null,
+  load(){
+    this.v = JSON.parse(JSON.stringify(this.d));
+    try{
+      const raw = localStorage.getItem(this.KEY);
+      if(raw) Object.assign(this.v, JSON.parse(raw) || {});
+    }catch(e){}
+    this.v.words = this.v.words || {};
+    this.v.stickers = this.v.stickers || {};
+    return this.v;
+  },
+  save(){ try{ localStorage.setItem(this.KEY, JSON.stringify(this.v)); }catch(e){} },
+  hitWord(w){ this.v.words[w] = (this.v.words[w]||0) + 1; this.save(); },
+  addSticker(id){ this.v.stickers[id] = (this.v.stickers[id]||0) + 1; this.v.sessions++; this.save(); },
+  reset(){ this.v = JSON.parse(JSON.stringify(this.d)); this.save(); }
+};
+P.load();
+
+/* ---------- תעתיק שם מעברית לאותיות לועזיות ----------
+   קול אנגלי לא יודע להגות אותיות עבריות, ולכן צריך כתיב לועזי.
+   זו הצעה בלבד — ההורה יכול לתקן אותה בהגדרות. */
+function translitHe(name){
+  const M = {
+    'א':['a',1],'ב':['b',0],'ג':['g',0],'ד':['d',0],'ה':['h',0],'ו':['o',1],'ז':['z',0],
+    'ח':['ch',0],'ט':['t',0],'י':['i',1],'כ':['k',0],'ך':['ch',0],'ל':['l',0],'מ':['m',0],
+    'ם':['m',0],'נ':['n',0],'ן':['n',0],'ס':['s',0],'ע':['a',1],'פ':['p',0],'ף':['f',0],
+    'צ':['ts',0],'ץ':['ts',0],'ק':['k',0],'ר':['r',0],'ש':['sh',0],'ת':['t',0]
+  };
+  const src = String(name || '').trim();
+  if(!src || !/[\u0590-\u05FF]/.test(src)) return src;
+  const chars = src.split('');
+  const toks = [];
+  chars.forEach((ch, i) => {
+    if(ch === 'ה' && i === chars.length - 1){ toks.push(['a',1]); return; }  // ה סופית נשמעת כתנועה
+    if(M[ch]) toks.push(M[ch].slice());
+    else if(/\s|-/.test(ch)) toks.push([' ',1]);
+  });
+  // שני עיצורים בסוף — מוסיפים תנועה כדי שיישמע כמו שם ולא כמו ראשי תיבות
+  if(toks.length >= 2 && !toks[toks.length-1][1] && !toks[toks.length-2][1]) toks.splice(toks.length-1, 0, ['a',1]);
+  let out = '';
+  toks.forEach(t => { if(!(t[1] && out.slice(-t[0].length) === t[0])) out += t[0]; });
+  out = out.trim();
+  return out ? out.charAt(0).toUpperCase() + out.slice(1) : '';
+}
+
+/* ---------- דיבור ---------- */
+const Voice = {
+  list:[], en:null, he:null, ready:false,
+
+  load(){
+    if(!('speechSynthesis' in window)) return;
+    this.list = speechSynthesis.getVoices() || [];
+    if(!this.list.length) return;
+
+    const wanted = S.get('voiceURI');
+    const chosen = wanted && this.list.find(v => v.voiceURI === wanted);
+    this.en = chosen || this.bestEnglish();
+    this.he = this.list.find(v => (v.lang||'').toLowerCase().startsWith('he')) || null;
+    this.ready = true;
+    try{ if(Luna && Luna.fillVoiceSelect) Luna.fillVoiceSelect(); }catch(e){}
+  },
+
+  englishVoices(){
+    return this.list.filter(v => (v.lang||'').toLowerCase().startsWith('en'));
+  },
+
+  score(v){
+    const n = (v.name||'') + ' ' + (v.voiceURI||'');
+    const lang = (v.lang||'').toLowerCase();
+    let s = 0;
+    if(/natural|neural/i.test(n)) s += 45;
+    if(/google/i.test(n)) s += 30;
+    if(/samantha|aria|jenny|sonia|libby|ava|allison|karen|moira|tessa|zira/i.test(n)) s += 22;
+    if(v.localService === false) s += 8;
+    if(lang === 'en-us') s += 15;
+    else if(lang === 'en-gb') s += 11;
+    else s += 4;
+    if(/female|woman/i.test(n)) s += 6;
+    if(/compact|eloquence|espeak/i.test(n)) s -= 25;
+    return s;
+  },
+
+  bestEnglish(){
+    const en = this.englishVoices();
+    if(!en.length) return null;
+    return en.slice().sort((a,b) => this.score(b) - this.score(a))[0];
+  },
+
+  /* אמירה אחת. מחזיר Promise שנסגר כשהמשפט נגמר (או אחרי שומר-זמן) */
+  say(text, opt){
+    opt = opt || {};
+    const heb = opt.lang === 'he';
+    return new Promise(resolve => {
+      if(!text){ resolve(); return; }
+      if(!S.get('voice') || !('speechSynthesis' in window)){
+        setTimeout(resolve, Math.min(1800, 350 + String(text).length * 45));
+        return;
+      }
+      if(heb && !this.he){ setTimeout(resolve, 300); return; }
+
+      try{ speechSynthesis.cancel(); }catch(e){}
+
+      const u = new SpeechSynthesisUtterance(String(text));
+      const v = heb ? this.he : this.en;
+      if(v) u.voice = v;
+      u.lang = heb ? (v && v.lang || 'he-IL') : (v && v.lang || 'en-US');
+      const base = (S.get('rate') || 80) / 100;
+      u.rate  = Math.max(.4, Math.min(1.3, (opt.rate || 1) * (heb ? Math.min(1, base + .15) : base)));
+      u.pitch = opt.pitch || (heb ? 1.05 : 1.18);
+      u.volume = 1;
+
+      let done = false;
+      const keepAlive = setInterval(() => {
+        if(!speechSynthesis.speaking){ clearInterval(keepAlive); return; }
+        try{ speechSynthesis.pause(); speechSynthesis.resume(); }catch(e){}
+      }, 7000);
+      const finish = () => {
+        if(done) return;
+        done = true;
+        clearTimeout(guardTimer); clearInterval(keepAlive);
+        try{ Luna.mouthOff(); }catch(e){}
+        resolve();
+      };
+      // שומר-זמן: דפדפנים לפעמים לא יורים onend
+      const guardTimer = setTimeout(finish, Math.max(3200, String(text).length * 240 / u.rate));
+
+      u.onend = finish;
+      u.onerror = finish;
+      try{ Luna.mouthOn(); }catch(e){}
+      try{ speechSynthesis.speak(u); }
+      catch(e){ finish(); }
+    });
+  },
+
+  stop(){ try{ speechSynthesis.cancel(); }catch(e){} try{ Luna.mouthOff(); }catch(e){} },
+
+  /* פותח את מנוע הדיבור בלחיצה הראשונה (דרישה של iOS/Safari) */
+  unlock(){
+    if(this._unlocked || !('speechSynthesis' in window)) return;
+    this._unlocked = true;
+    try{
+      const u = new SpeechSynthesisUtterance(' ');
+      u.volume = 0; u.lang = 'en-US';
+      speechSynthesis.speak(u);
+    }catch(e){}
+  }
+};
+if('speechSynthesis' in window){
+  Voice.load();
+  speechSynthesis.onvoiceschanged = () => Voice.load();
+  setTimeout(() => Voice.load(), 900);
+}
+
+/* ---------- צלילים ---------- */
+const Sfx = {
+  ctx:null,
+  ac(){
+    if(!S.get('sfx')) return null;
+    if(!this.ctx){
+      try{ this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ return null; }
+    }
+    if(this.ctx.state === 'suspended'){ try{ this.ctx.resume(); }catch(e){} }
+    return this.ctx;
+  },
+  tone(freq, dur, type, vol, delay){
+    const ac = this.ac(); if(!ac) return;
+    const soft = S.get('calm') ? .45 : 1;
+    const t0 = ac.currentTime + (delay || 0);
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = type || 'sine';
+    o.frequency.setValueAtTime(freq, t0);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(Math.max(.001, (vol || .18) * soft), t0 + .015);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    o.connect(g); g.connect(ac.destination);
+    o.start(t0); o.stop(t0 + dur + .05);
+  },
+  tap(){ this.tone(620, .07, 'triangle', .12); },
+  good(){ [523,659,784].forEach((f,i) => this.tone(f, .22, 'triangle', .16, i*.09)); },
+  star(){ [784,1046,1318].forEach((f,i) => this.tone(f, .2, 'sine', .14, i*.07)); },
+  soft(){ this.tone(330, .18, 'sine', .1); },
+  fanfare(){
+    if(S.get('calm')){ this.good(); return; }
+    [523,659,784,1046,1318].forEach((f,i) => this.tone(f, .3, 'triangle', .17, i*.11));
+  }
+};
+
+/* ---------- מיקרופון ---------- */
+const Mic = {
+  stream:null, denied:false,
+  supported(){ return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder); },
+  async ensure(){
+    if(this.stream) return true;
+    if(this.denied || !this.supported()) return false;
+    try{
+      this.stream = await navigator.mediaDevices.getUserMedia({ audio:true });
+      return true;
+    }catch(e){ this.denied = true; return false; }
+  },
+  record(ms){
+    return new Promise(resolve => {
+      let rec;
+      try{ rec = new MediaRecorder(this.stream); }
+      catch(e){ resolve(null); return; }
+      const chunks = [];
+      let settled = false;
+      const done = () => {
+        if(settled) return; settled = true;
+        resolve(chunks.length ? new Blob(chunks, { type: rec.mimeType || 'audio/webm' }) : null);
+      };
+      rec.ondataavailable = e => { if(e.data && e.data.size) chunks.push(e.data); };
+      rec.onstop = done;
+      rec.onerror = done;
+      try{ rec.start(); }catch(e){ resolve(null); return; }
+      setTimeout(() => { try{ rec.stop(); }catch(e){ done(); } }, ms);
+    });
+  },
+  play(blob){
+    return new Promise(resolve => {
+      if(!blob || !blob.size){ resolve(); return; }
+      const url = URL.createObjectURL(blob);
+      const a = new Audio(url);
+      let settled = false;
+      const done = () => { if(settled) return; settled = true; URL.revokeObjectURL(url); resolve(); };
+      a.onended = done; a.onerror = done;
+      setTimeout(done, 6000);
+      a.play().catch(done);
+    });
+  }
+};
+
+/* =====================================================================
+   התוכן — ארבע הרפתקאות
+   כל הרפתקה: 3 מילים · משחק תמונות · משחק תנועה · כן/לא · חגיגה
+   ===================================================================== */
+const ADVENTURES = [
+  {
+    id:'pokemon', cls:'a1', em:'⚡', he:'פוקימון', en:'POKÉMON', sticker:'⚡',
+    hi:{ en:"Hello! Pikachu is here! Let's play!", he:"שלום! פיקאצ'ו כאן! בואו נשחק!" },
+    words:[
+      { w:'hello',  em:'👋', he:'שלום',  sent:'Pikachu says hello!',  sentHe:"פיקאצ'ו אומר שלום!" },
+      { w:'yellow', em:'💛', he:'צהוב',  sent:'Pikachu is yellow!',   sentHe:"פיקאצ'ו הוא צהוב!" },
+      { w:'red',    em:'❤️', he:'אדום',  sent:'This one is red!',     sentHe:'זה אדום!' }
+    ],
+    action:{ w:'jump', em:'🦘', he:'לקפוץ', anim:'bounce',
+             cue:'Pikachu can jump! Jump with me!', cueHe:"פיקאצ'ו יודע לקפוץ! תקפצו איתו!" },
+    yesno:[
+      { q:'Is Pikachu a cat?',  qHe:"האם פיקאצ'ו הוא חתול?", em:'🐱', a:false },
+      { q:'Is Pikachu yellow?', qHe:"האם פיקאצ'ו צהוב?",     em:'💛', a:true  }
+    ]
+  },
+  {
+    id:'ben10', cls:'a2', em:'⌚', he:'בן 10', en:'BEN 10', sticker:'👽',
+    hi:{ en:"Ben 10 is here! Let's transform!", he:'בן 10 כאן! בואו נעשה טרנספורמציה!' },
+    words:[
+      { w:'fire',   em:'🔥', he:'אש',   sent:'Heatblast makes fire!',  sentHe:'היטבלאסט עושה אש!' },
+      { w:'ice',    em:'🧊', he:'קרח',  sent:'Big Chill makes ice!',   sentHe:'ביג צ׳יל עושה קרח!' },
+      { w:'strong', em:'💪', he:'חזק',  sent:'Four Arms is strong!',   sentHe:'ארבע זרועות הוא חזק!' }
+    ],
+    action:{ w:'run', em:'🏃', he:'לרוץ', anim:'shake',
+             cue:'Four Arms can run! Run with me!', cueHe:'ארבע זרועות יודע לרוץ! תרוצו איתו!' },
+    yesno:[
+      { q:'Is fire hot?', qHe:'האם אש היא חמה?', em:'🔥', a:true  },
+      { q:'Is ice hot?',  qHe:'האם קרח הוא חם?', em:'🧊', a:false }
+    ]
+  },
+  {
+    id:'heroes', cls:'a3', em:'🦸', he:'גיבורי-על', en:'HEROES', sticker:'🦸',
+    hi:{ en:"The superheroes are here! Let's fly!", he:'גיבורי-העל כאן! בואו נעוף!' },
+    words:[
+      { w:'up',     em:'⬆️', he:'למעלה', sent:'Superman goes up!',   sentHe:'סופרמן עולה למעלה!' },
+      { w:'down',   em:'⬇️', he:'למטה',  sent:'Superman goes down!', sentHe:'סופרמן יורד למטה!' },
+      { w:'strong', em:'💪', he:'חזק',   sent:'A hero is strong!',   sentHe:'גיבור הוא חזק!' }
+    ],
+    action:{ w:'fly', em:'🦸', he:'לעוף', anim:'fly',
+             cue:'Superman can fly! Fly with me!', cueHe:'סופרמן יודע לעוף! תעופו איתו!' },
+    yesno:[
+      { q:'Can Superman fly?',  qHe:'האם סופרמן יכול לעוף?', em:'🦸', a:true  },
+      { q:'Is Superman a dog?', qHe:'האם סופרמן הוא כלב?',   em:'🐶', a:false }
+    ]
+  },
+  {
+    id:'animals', cls:'a4', em:'🦁', he:'חיות', en:'ANIMALS', sticker:'🐾',
+    hi:{ en:'The animals are here! Listen!', he:'החיות כאן! בואו נקשיב!' },
+    words:[
+      { w:'lion', em:'🦁', he:'אריה', sent:'A lion says roar!',  sentHe:'אריה אומר ראוו!' },
+      { w:'dog',  em:'🐶', he:'כלב',  sent:'A dog says woof!',   sentHe:'כלב אומר האו!' },
+      { w:'cat',  em:'🐱', he:'חתול', sent:'A cat says meow!',   sentHe:'חתול אומר מיאו!' }
+    ],
+    action:{ w:'roar', em:'🦁', he:'לשאוג', anim:'shake',
+             cue:'Roar like a lion! Roar with me!', cueHe:'תשאגו כמו אריה!' },
+    yesno:[
+      { q:'Is a lion big?',   qHe:'האם אריה הוא גדול?', em:'🦁', a:true  },
+      { q:'Is a cat a bird?', qHe:'האם חתול הוא ציפור?', em:'🐱', a:false }
+    ]
+  }
+];
+
+const PRAISE = [
+  { en:'Amazing!',   em:'🎉' },
+  { en:'Wow! Super!',em:'🌟' },
+  { en:'Great job!', em:'🏆' },
+  { en:'Fantastic!', em:'✨' },
+  { en:'You did it!',em:'🎊' },
+  { en:'Excellent!', em:'💫' }
+];
+
+const LUNA_SVG = `
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="מיס לונה">
+  <defs>
+    <radialGradient id="lg" cx="35%" cy="28%">
+      <stop offset="0%" stop-color="#3b2a63"/><stop offset="100%" stop-color="#150f2b"/>
+    </radialGradient>
+    <linearGradient id="hair" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c894ff"/><stop offset="100%" stop-color="#6b34c9"/>
+    </linearGradient>
+    <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffe0c2"/><stop offset="100%" stop-color="#f6c39a"/>
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="47" fill="url(#lg)" stroke="#b980ff" stroke-width="3"/>
+  <path d="M50 12c-19 0-28 13-28 30 0 6 1 11 3 15-4-14 2-24 6-26 4 8 15 11 25 8 8-2 13-6 15-11 3 5 4 17 2 29 3-5 5-10 5-16 0-17-9-29-28-29z" fill="url(#hair)"/>
+  <circle cx="50" cy="52" r="23" fill="url(#skin)"/>
+  <path d="M27 44c0-16 10-26 23-26s23 10 23 26c-4-9-13-13-23-13s-19 4-23 13z" fill="url(#hair)"/>
+  <circle cx="41" cy="50" r="4.6" fill="#2a1636"/>
+  <circle cx="59" cy="50" r="4.6" fill="#2a1636"/>
+  <circle cx="42.6" cy="48.4" r="1.7" fill="#fff"/>
+  <circle cx="60.6" cy="48.4" r="1.7" fill="#fff"/>
+  <path d="M35.5 42.5q5.5-3.5 11 0" stroke="#5a2f9e" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M53.5 42.5q5.5-3.5 11 0" stroke="#5a2f9e" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <ellipse cx="33.5" cy="58" rx="4.4" ry="2.9" fill="#ff9ec4" opacity=".65"/>
+  <ellipse cx="66.5" cy="58" rx="4.4" ry="2.9" fill="#ff9ec4" opacity=".65"/>
+  <ellipse class="mouth" cx="50" cy="62.5" rx="7.5" ry="5.2" fill="#8c2b52"
+           style="transform-box:fill-box;transform-origin:center"/>
+  <ellipse cx="50" cy="60.6" rx="5.6" ry="1.7" fill="#fff" opacity=".92"/>
+  <path d="M72 22a9 9 0 1 0 6.5 15.5A11 11 0 0 1 72 22z" fill="#ffd24a"/>
+  <path d="M22 28l1.6 3.6 3.9.4-2.9 2.6.8 3.8-3.4-2-3.4 2 .8-3.8-2.9-2.6 3.9-.4z" fill="#6ee7ff"/>
+</svg>`;
+
+/* =====================================================================
+   מנוע המשחק
+   ===================================================================== */
+const Luna = {
+  tok:0, _runTok:-1, _aborts:[], _resolveNow:null, _awaiting:false,
+  lastEn:'', lastHe:'',
+  adv:null, steps:[], stepIx:0, stars:3, learned:[],
+
+  /* ---------- אתחול ---------- */
+  init(){
+    S.load(); P.load();
+    document.body.classList.toggle('calm', !!S.get('calm'));
+    ['lunaBig','lunaAdv','lunaPlay'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.innerHTML = LUNA_SVG;
+    });
+    this.renderAdventures();
+    this.syncParents();
+    // פתיחת מנוע הקול והצליל בלחיצה הראשונה במסך
+    const unlock = () => { Voice.unlock(); Sfx.ac(); };
+    document.addEventListener('pointerdown', unlock, { once:true });
+    document.addEventListener('keydown', unlock, { once:true });
+  },
+
+  /* ---------- מסכים ---------- */
+  show(id){
+    this.tok++;
+    this._aborts.splice(0).forEach(f => { try{ f(); }catch(e){} });
+    this._resolveNow = null;
+    this._awaiting = false;
+    Voice.stop();
+    const cf = document.getElementById('confetti'); if(cf) cf.innerHTML = '';
+    document.getElementById('praise').classList.remove('show');
+    document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === id));
+    const sc = document.querySelector('#' + id + ' .scroll');
+    if(sc) sc.scrollTop = 0;
+  },
+  goTitle(){ this.show('titleScreen'); },
+  goAdventures(){
+    this.show('advScreen');
+    this.renderAdventures();
+    setTimeout(() => this.sayAdventureChoices(), 350);
+  },
+  openParents(){ this.show('parentScreen'); this.syncParents(); },
+  closeParents(){ document.body.classList.toggle('calm', !!S.get('calm')); this.goTitle(); },
+  backToBen10(){ Voice.stop(); location.href = 'index.html'; },
+
+  /* ---------- עזרי זרימה ---------- */
+  guard(){ if(this._runTok !== this.tok) throw ABORT; },
+  waitFor(setup){
+    return new Promise((resolve, reject) => {
+      const rej = () => reject(ABORT);
+      this._aborts.push(rej);
+      const done = v => {
+        this._aborts = this._aborts.filter(f => f !== rej);
+        if(this._resolveNow === done) this._resolveNow = null;
+        resolve(v);
+      };
+      this._resolveNow = done;
+      setup(done);
+    });
+  },
+  delay(ms){ return this.waitFor(done => setTimeout(() => done(), ms)); },
+  async say(en, he, opt){
+    this.lastEn = en || this.lastEn;
+    if(he !== undefined) this.lastHe = he;
+    await Voice.say(en, opt);
+    this.guard();
+    if(he && S.get('hebrew') && Voice.he){
+      await this.delay(180);
+      await Voice.say(he, { lang:'he' });
+      this.guard();
+    }
+  },
+  mouthOn(){ document.querySelectorAll('.luna').forEach(l => l.classList.add('talking')); },
+  mouthOff(){ document.querySelectorAll('.luna').forEach(l => l.classList.remove('talking')); },
+  name(){ return (S.get('name') || '').trim(); },
+  /* השם שמיס לונה אומרת בקול — חייב אותיות לועזיות */
+  nameEn(){
+    const en = (S.get('nameEn') || '').trim();
+    if(en) return en;
+    const he = this.name();
+    return /[\u0590-\u05FF]/.test(he) ? '' : he;
+  },
+  withName(txt){ const n = this.nameEn(); return n ? txt.replace(/!$/, ', ' + n + '!') : txt; },
+
+  /* ---------- כפתורי הסרגל התחתון ---------- */
+  repeatPrompt(){
+    // רק כשמחכים לילד — אחרת נקטע משפט של מיס לונה והזרימה תתבלבל
+    if(!this._awaiting){ Sfx.soft(); return; }
+    Sfx.tap();
+    if(this.lastEn) Voice.say(this.lastEn, { rate:.92 });
+  },
+  helpHebrew(){
+    if(!this._awaiting){ Sfx.soft(); return; }
+    Sfx.tap();
+    if(!this.lastHe) return;
+    if(Voice.he) Voice.say(this.lastHe, { lang:'he' });
+    else this.flashBubbleHe();
+  },
+  flashBubbleHe(){
+    const el = document.getElementById('bubbleHe');
+    if(!el) return;
+    el.style.transition = 'none'; el.style.color = '#ffd24a'; el.style.fontSize = '1.15rem';
+    setTimeout(() => { el.style.transition = 'all .6s'; el.style.color = ''; el.style.fontSize = ''; }, 1400);
+  },
+  skipStep(){
+    Sfx.soft();
+    if(!this._resolveNow) return;
+    this.stars = Math.max(1, this.stars - 1);
+    this._awaiting = false;
+    this._resolveNow('__skip');
+  },
+  quitLesson(){ this.goAdventures(); },
+
+  /* ---------- בחירת הרפתקה ---------- */
+  renderAdventures(){
+    const g = document.getElementById('advGrid');
+    if(!g) return;
+    g.innerHTML = ADVENTURES.map(a => {
+      const n = P.v.stickers[a.id] || 0;
+      return '<div class="adv ' + a.cls + '" onclick="Luna.startLesson(\'' + a.id + '\')">' +
+             (n ? '<div class="stars">⭐<bdi>' + n + '</bdi></div>' : '') +
+             '<div class="em">' + a.em + '</div>' +
+             '<div class="he">' + a.he + '</div>' +
+             '<div class="en" dir="ltr">' + a.en + '</div></div>';
+    }).join('');
+  },
+  async sayAdventureChoices(){
+    const n = this.nameEn();
+    await Voice.say('Hi' + (n ? ' ' + n : '') + '! What do you want today? Pokémon, Ben Ten, Superheroes, or Animals?');
+  },
+  hello(){
+    const n = this.nameEn();
+    Sfx.star();
+    Voice.say('Hello' + (n ? ' ' + n : '') + '! I am Miss Luna! Let us learn English!');
+  },
+
+  /* ---------- בניית שיעור ---------- */
+  buildSteps(){
+    return [
+      { t:'intro' },
+      { t:'teach', i:0 },
+      { t:'teach', i:1 },
+      { t:'pick', from:[0,1], target:0 },
+      { t:'teach', i:2 },
+      { t:'pick', from:[0,1,2], target:2 },
+      { t:'pick', from:[0,1,2], target:1 },
+      { t:'action' },
+      { t:'yesno', i:0 },
+      { t:'yesno', i:1 },
+      { t:'finish' }
+    ];
+  },
+
+  startLesson(id){
+    const adv = ADVENTURES.find(a => a.id === id);
+    if(!adv) return;
+    this.adv = adv;
+    this.steps = this.buildSteps();
+    this.stepIx = 0;
+    this.stars = 3;
+    this.learned = [];
+    Sfx.tap();
+    this.show('playScreen');
+    this._runTok = this.tok;
+    document.getElementById('playTitle').innerHTML =
+      adv.em + ' ' + adv.he + '<small dir="ltr">' + adv.en + '</small>';
+    this.run().catch(e => { if(e !== ABORT) console.error(e); });
+  },
+  replayLesson(){ if(this.adv) this.startLesson(this.adv.id); },
+
+  async run(){
+    for(this.stepIx = 0; this.stepIx < this.steps.length; this.stepIx++){
+      this.guard();
+      this.renderDots();
+      const st = this.steps[this.stepIx];
+      if(st.t === 'intro')       await this.stepIntro();
+      else if(st.t === 'teach')  await this.stepTeach(this.adv.words[st.i]);
+      else if(st.t === 'pick')   await this.stepPick(st);
+      else if(st.t === 'action') await this.stepAction();
+      else if(st.t === 'yesno')  await this.stepYesNo(this.adv.yesno[st.i]);
+      else if(st.t === 'finish') await this.stepFinish();
+    }
+  },
+
+  renderDots(){
+    const d = document.getElementById('dots');
+    if(!d) return;
+    let html = '';
+    this.steps.forEach((s, i) => {
+      if(s.t === 'intro' || s.t === 'finish') return;
+      const cls = i < this.stepIx ? 'dot on' : (i === this.stepIx ? 'dot now' : 'dot');
+      html += '<div class="' + cls + '"></div>';
+    });
+    d.innerHTML = html;
+  },
+
+  bubble(en, he){
+    document.getElementById('bubbleEn').innerHTML = en || '';
+    document.getElementById('bubbleHe').textContent = he || '';
+    this.lastEn = en ? String(en).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() : this.lastEn;
+    if(he) this.lastHe = he;
+  },
+  stage(html){ document.getElementById('stage').innerHTML = html; },
+
+  /* ---------- שלב: פתיחה ---------- */
+  async stepIntro(){
+    const a = this.adv, n = this.nameEn(), he = this.name();
+    this.bubble('Hello' + (n ? ' ' + n : '') + '! I am Miss Luna!', 'שלום' + (he ? ' ' + he : '') + '! אני מיס לונה!');
+    this.stage('<div class="hero-em bounce">' + a.em + '</div>');
+    await this.say('Hello' + (n ? ' ' + n : '') + '! I am Miss Luna!', 'שלום' + (he ? ' ' + he : '') + '! אני מיס לונה!');
+    await this.delay(200);
+    this.bubble(a.hi.en, a.hi.he);
+    await this.say(a.hi.en, a.hi.he);
+    await this.delay(150);
+    this.bubble('Are you ready? Let\'s go!', 'מוכן? יוצאים לדרך!');
+    this.stage(
+      '<div class="hero-em bounce">' + a.em + '</div>' +
+      '<button class="btn btn-luna" style="max-width:280px" id="goBtn">🚀 <span dir="ltr">Let\'s go!</span></button>'
+    );
+    await this.say('Are you ready? Let us go!', 'מוכן? יוצאים לדרך!');
+    await this.tapButton('goBtn');
+  },
+
+  tapButton(id){
+    return this.waitFor(done => {
+      const b = document.getElementById(id);
+      if(!b){ done(); return; }
+      this._awaiting = true;
+      b.addEventListener('click', () => { Sfx.tap(); this._awaiting = false; done(); }, { once:true });
+    });
+  },
+
+  /* ---------- שלב: לימוד מילה ---------- */
+  async stepTeach(word){
+    const a = this.adv;
+    this.bubble(word.sent, word.sentHe);
+    this.stage('<div class="hero-em">' + word.em + '</div><div class="word-big" style="visibility:hidden">' + word.w + '</div>');
+    await this.say(word.sent, word.sentHe);
+    await this.delay(150);
+
+    // אומרים את המילה שלוש פעמים: רגיל, לאט, רגיל
+    const big = document.querySelector('#stage .word-big');
+    if(big) big.style.visibility = 'visible';
+    this.bubble('Listen: <span class="word-big wi">' + word.w + '</span>', 'שומעים: ' + word.he);
+    this.lastEn = word.w;
+    this.lastHe = word.he;
+    const rates = [1, .72, 1];
+    for(const r of rates){
+      this.guard();
+      if(big){ big.classList.remove('pop'); void big.offsetWidth; big.classList.add('pop'); }
+      await Voice.say(word.w, { rate:r });
+      this.guard();
+      await this.delay(360);
+    }
+
+    // התור של הילד
+    P.hitWord(word.w);
+    if(this.learned.indexOf(word.w) < 0) this.learned.push(word.w);
+    await this.myTurn(word);
+  },
+
+  async myTurn(word){
+    this.bubble('Your turn! Say: <span class="word-big wi">' + word.w + '</span>',
+                'התור שלך! תגיד: ' + word.he);
+    this.lastEn = 'Say: ' + word.w;
+    this.lastHe = 'תגיד: ' + word.he;
+
+    const micWanted = S.get('mic') && Mic.supported() && !Mic.denied;
+    this.stage(
+      '<div class="hero-em">' + word.em + '</div>' +
+      '<button class="mic-btn" id="micBtn">' + (micWanted ? '🎤' : '✅') + '</button>' +
+      '<div class="mic-hint" id="micHint">' +
+        (micWanted ? 'לחץ על המיקרופון ותגיד את המילה' : 'תגיד את המילה בקול — ואז לחץ') +
+      '</div>'
+    );
+    await this.say('Your turn! Say ' + word.w + '!', 'התור שלך! תגיד: ' + word.he);
+
+    const res = await this.tapValue('micBtn');
+    if(res === '__skip') return;
+
+    if(micWanted){
+      const ok = await Mic.ensure();
+      this.guard();
+      if(ok){
+        const btn = document.getElementById('micBtn');
+        const hint = document.getElementById('micHint');
+        if(btn){ btn.classList.add('rec'); btn.textContent = '🔴'; }
+        if(hint) hint.textContent = 'מקליט... תגיד עכשיו!';
+        const blob = await Mic.record(2600);
+        this.guard();
+        if(btn){ btn.classList.remove('rec'); btn.textContent = '🎧'; }
+        if(hint) hint.textContent = 'עכשיו שומעים אותך...';
+        await this.delay(250);
+        this.guard();
+        await Mic.play(blob);
+        this.guard();
+        if(hint) hint.textContent = 'ועכשיו מיס לונה:';
+        await this.delay(200);
+        await Voice.say(word.w, { rate:.8 });
+        this.guard();
+      }
+    }
+    await this.celebrate();
+  },
+
+  tapValue(id){
+    return this.waitFor(done => {
+      const b = document.getElementById(id);
+      if(!b){ done(); return; }
+      this._awaiting = true;
+      b.addEventListener('click', () => { Sfx.tap(); this._awaiting = false; done('tap'); }, { once:true });
+    });
+  },
+
+  /* ---------- שלב: איפה התמונה? ---------- */
+  async stepPick(st){
+    const a = this.adv;
+    const target = a.words[st.target];
+    const opts = st.from.map(i => a.words[i]);
+    // ערבוב מיקומים כדי שלא ילמד לפי מקום
+    for(let i = opts.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      const t = opts[i]; opts[i] = opts[j]; opts[j] = t;
+    }
+    const q = 'Where is ' + target.w + '?';
+    const qHe = 'איפה ' + target.he + '?';
+    this.bubble('Where is <span class="word-big wi">' + target.w + '</span>?', qHe);
+    this.lastEn = q; this.lastHe = qHe;
+
+    const two = opts.length === 2 ? ' two' : '';
+    this.stage('<div class="choices">' + opts.map((o, i) =>
+      '<button class="choice' + two + '" data-w="' + o.w + '" data-i="' + i + '">' +
+        '<span>' + o.em + '</span><span class="cap" dir="ltr">' + o.w + '</span>' +
+      '</button>').join('') + '</div>');
+
+    await this.say(q, qHe);
+
+    let solved = false;
+    while(!solved){
+      this.guard();
+      const pick = await this.waitFor(done => {
+        this._awaiting = true;
+        document.querySelectorAll('#stage .choice').forEach(b => {
+          b.addEventListener('click', () => { this._awaiting = false; done(b); }, { once:true });
+        });
+      });
+      if(pick === '__skip') return;
+      this.guard();
+      if(!pick || !pick.dataset) return;
+
+      if(pick.dataset.w === target.w){
+        solved = true;
+        pick.classList.add('right');
+        document.querySelectorAll('#stage .choice').forEach(b => { if(b !== pick) b.classList.add('dimmed'); });
+        Sfx.good();
+        P.hitWord(target.w);
+        await this.say('Yes! ' + target.w + '!', 'כן! ' + target.he + '!');
+        await this.celebrate();
+      }else{
+        Sfx.soft();
+        pick.classList.add('wrong');
+        this.stars = Math.max(1, this.stars - (this._missed ? 0 : 1));
+        this._missed = true;
+        await this.say('Almost! Try again. Where is ' + target.w + '?', 'כמעט! נסה שוב. איפה ' + target.he + '?');
+        this.guard();
+        pick.classList.remove('wrong');
+        // מחזירים מאזינים לכל הכפתורים (once הסיר אותם)
+        const html = document.getElementById('stage').innerHTML;
+        document.getElementById('stage').innerHTML = html;
+      }
+    }
+    this._missed = false;
+  },
+
+  /* ---------- שלב: קמים וזזים ---------- */
+  async stepAction(){
+    const act = this.adv.action;
+    this.bubble(act.cue, act.cueHe);
+    this.stage('<div class="hero-em ' + (act.anim || 'bounce') + '">' + act.em + '</div>');
+    await this.say(act.cue, act.cueHe);
+    await this.delay(150);
+
+    this.bubble('<span class="word-big wi" style="font-size:2.2rem">' + act.w + '! ' + act.w + '! ' + act.w + '!</span>',
+                act.he + '! ' + act.he + '! ' + act.he + '!');
+    this.lastEn = act.w; this.lastHe = act.he;
+    for(let i = 0; i < 3; i++){
+      this.guard();
+      await Voice.say(act.w + '!', { rate:.95 });
+      this.guard();
+      await this.delay(320);
+    }
+    P.hitWord(act.w);
+    if(this.learned.indexOf(act.w) < 0) this.learned.push(act.w);
+
+    this.stage(
+      '<div class="hero-em ' + (act.anim || 'bounce') + '">' + act.em + '</div>' +
+      '<button class="btn btn-luna" style="max-width:280px" id="didBtn">🎉 <span dir="ltr">I did it!</span></button>'
+    );
+    this.bubble('Did you ' + act.w + '? Show me!', 'עשית? תראה לי!');
+    await this.say('Did you ' + act.w + '?', 'עשית ' + act.he + '?');
+    const r = await this.tapValue('didBtn');
+    if(r === '__skip') return;
+    await this.celebrate();
+  },
+
+  /* ---------- שלב: כן / לא ---------- */
+  async stepYesNo(item){
+    this.bubble(item.q, item.qHe);
+    this.lastEn = item.q; this.lastHe = item.qHe;
+    this.stage(
+      '<div class="hero-em">' + item.em + '</div>' +
+      '<div class="yn">' +
+        '<button class="y" data-v="1"><span class="em">✅</span>YES</button>' +
+        '<button class="n" data-v="0"><span class="em">❌</span>NO</button>' +
+      '</div>'
+    );
+    await this.say(item.q, item.qHe);
+
+    let solved = false;
+    while(!solved){
+      this.guard();
+      const btn = await this.waitFor(done => {
+        this._awaiting = true;
+        document.querySelectorAll('#stage .yn button').forEach(b => {
+          b.addEventListener('click', () => { this._awaiting = false; done(b); }, { once:true });
+        });
+      });
+      if(btn === '__skip') return;
+      this.guard();
+      if(!btn || !btn.dataset) return;
+
+      const said = btn.dataset.v === '1';
+      if(said === item.a){
+        solved = true;
+        Sfx.good();
+        const w = item.a ? 'Yes' : 'No';
+        await this.say(w + '! That is right! ' + (item.a ? 'Yes!' : 'No!'),
+                       (item.a ? 'כן' : 'לא') + '! נכון מאוד!');
+        await this.celebrate();
+      }else{
+        Sfx.soft();
+        btn.classList.add('wrong');
+        this.stars = Math.max(1, this.stars - (this._missed ? 0 : 1));
+        this._missed = true;
+        await this.say('Hmm... think again! ' + item.q, 'תחשוב שוב! ' + item.qHe);
+        this.guard();
+        const html = document.getElementById('stage').innerHTML;
+        document.getElementById('stage').innerHTML = html;
+      }
+    }
+    this._missed = false;
+  },
+
+  /* ---------- חגיגה קטנה ---------- */
+  async celebrate(){
+    const p = PRAISE[Math.floor(Math.random() * PRAISE.length)];
+    const el = document.getElementById('praise');
+    document.getElementById('praiseEm').textContent = p.em;
+    document.getElementById('praiseTxt').textContent = this.withName(p.en);
+    el.classList.add('show');
+    Sfx.star();
+    if(!S.get('calm')) this.confetti(14);
+    await Voice.say(this.withName(p.en), { rate:1.02, pitch:1.3 });
+    this.guard();
+    await this.delay(S.get('calm') ? 250 : 450);
+    el.classList.remove('show');
+    await this.delay(120);
+  },
+  hidePraise(){ document.getElementById('praise').classList.remove('show'); },
+
+  confetti(n){
+    const box = document.getElementById('confetti');
+    if(!box) return;
+    const bits = ['⭐','🎉','✨','💫','🌟','🎊'];
+    for(let i = 0; i < n; i++){
+      const d = document.createElement('div');
+      d.className = 'conf';
+      d.textContent = bits[Math.floor(Math.random() * bits.length)];
+      d.style.left = Math.random() * 96 + 'vw';
+      d.style.top = '-8vh';
+      d.style.animationDuration = (1.6 + Math.random() * 1.4) + 's';
+      d.style.animationDelay = (Math.random() * .5) + 's';
+      box.appendChild(d);
+      setTimeout(() => d.remove(), 3600);
+    }
+  },
+
+  /* ---------- שלב: סיום ---------- */
+  async stepFinish(){
+    const a = this.adv, n = this.nameEn(), he = this.name();
+    P.addSticker(a.id);
+    this.show('doneScreen');
+    this._runTok = this.tok;
+
+    document.getElementById('doneSticker').textContent = a.sticker;
+    document.getElementById('doneStars').textContent = '⭐'.repeat(Math.max(1, this.stars));
+    const line = n ? 'You are a superstar, ' + n + '!' : 'You are a superstar!';
+    document.getElementById('doneEn').textContent = line;
+    document.getElementById('doneHe').textContent = (he ? he + ', אתה' : 'אתה') + ' כוכב-על! 🌟';
+    document.getElementById('doneWords').innerHTML =
+      '<div class="note" style="margin-bottom:6px">המילים של היום:</div><div dir="ltr">' +
+      this.learned.map(w => '<span class="prog-word hot">' + w + '</span>').join('') + '</div>';
+
+    Sfx.fanfare();
+    if(!S.get('calm')) this.confetti(30);
+    await Voice.say(line, { rate:1, pitch:1.25 });
+    this.guard();
+    await this.delay(250);
+    await Voice.say('Bye bye! See you soon!', { rate:.95 });
+  },
+
+  /* ---------- הגדרות למורה ולהורה ---------- */
+  toggle(k){
+    S.set(k, !S.get(k));
+    if(k === 'calm') document.body.classList.toggle('calm', !!S.get('calm'));
+    if(k === 'mic' && S.get('mic')) Mic.denied = false;
+    Sfx.tap();
+    this.syncParents();
+  },
+  setName(v){
+    S.set('name', String(v || '').slice(0, 14));
+    // ממלאים הצעה לכתיב הלועזי רק כל עוד ההורה לא כתב משהו משלו
+    if(!this._nameEnTouched){
+      const g = translitHe(S.get('name'));
+      S.set('nameEn', g);
+      const f = document.getElementById('pNameEn');
+      if(f) f.value = g;
+    }
+  },
+  setNameEn(v){ this._nameEnTouched = true; S.set('nameEn', String(v || '').slice(0, 16)); },
+  testName(){
+    const n = this.nameEn();
+    Voice.say(n ? 'Hello ' + n + '! You are amazing!' : 'Please write the name in English letters.');
+  },
+  setRate(v){ S.set('rate', parseInt(v, 10) || 80); },
+  setVoice(uri){ S.set('voiceURI', uri || null); Voice.load(); this.testVoice(); },
+  testVoice(){
+    const n = this.nameEn();
+    Voice.say('Hello' + (n ? ' ' + n : '') + '! I am Miss Luna. Can you say hello?');
+  },
+  fillVoiceSelect(){
+    const sel = document.getElementById('pVoice');
+    if(!sel) return;
+    const en = Voice.englishVoices().slice().sort((a, b) => Voice.score(b) - Voice.score(a));
+    const cur = (Voice.en && Voice.en.voiceURI) || '';
+    sel.innerHTML = en.length
+      ? en.map(v => '<option value="' + v.voiceURI + '"' + (v.voiceURI === cur ? ' selected' : '') + '>' +
+                    v.name + ' (' + v.lang + ')</option>').join('')
+      : '<option value="">אין קול אנגלי במכשיר</option>';
+    const warn = document.getElementById('voiceWarn');
+    if(warn){
+      warn.innerHTML = en.length ? '' :
+        '<div class="warn">⚠️ לא נמצא קול אנגלי במכשיר. המשחק עדיין עובד, אבל בלי הקראה. ' +
+        'ב-Windows: הגדרות → שעה ושפה → דיבור → הוספת קולות. ב-Android/iOS: הגדרות הנגישות → המרת טקסט לדיבור.</div>';
+    }
+  },
+  syncParents(){
+    const sw = (id, on) => { const e = document.getElementById(id); if(e) e.classList.toggle('on', !!on); };
+    sw('swVoice', S.get('voice')); sw('swSfx', S.get('sfx'));
+    sw('swMic', S.get('mic'));     sw('swCalm', S.get('calm'));
+    sw('swHeb', S.get('hebrew'));
+    const nm = document.getElementById('pName'); if(nm) nm.value = S.get('name') || '';
+    const ne = document.getElementById('pNameEn');
+    if(ne){
+      if(!S.get('nameEn') && S.get('name')) S.set('nameEn', translitHe(S.get('name')));
+      ne.value = S.get('nameEn') || '';
+    }
+    const rt = document.getElementById('pRate'); if(rt) rt.value = S.get('rate') || 80;
+    this.fillVoiceSelect();
+
+    const words = Object.keys(P.v.words).sort((a, b) => P.v.words[b] - P.v.words[a]);
+    const box = document.getElementById('progWords');
+    if(box){
+      box.innerHTML = words.length
+        ? words.map(w => '<span class="prog-word' + (P.v.words[w] >= 4 ? ' hot' : '') + '">' + w +
+                         ' <bdi style="opacity:.6">×' + P.v.words[w] + '</bdi></span>').join('')
+        : '<div class="empty">עוד לא התחלנו — כל מילה שנלמד תופיע כאן</div>';
+    }
+    const sum = document.getElementById('progSummary');
+    if(sum){
+      const st = Object.keys(P.v.stickers).reduce((n, k) => n + P.v.stickers[k], 0);
+      sum.innerHTML = words.length
+        ? 'מילים שנפגשנו איתן: <bdi>' + words.length + '</bdi> · הרפתקאות שהושלמו: <bdi>' + st + '</bdi>' +
+          '<br>מילה בירוק = נאמרה <bdi>4</bdi> פעמים או יותר.'
+        : 'כאן יופיע סיכום אחרי ההרפתקה הראשונה.';
+    }
+  },
+  resetProgress(){
+    if(!confirm('לאפס את כל ההתקדמות והמילים שנלמדו?')) return;
+    P.reset();
+    this.syncParents();
+    this.renderAdventures();
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => Luna.init());
+
+/* רישום ה-Service Worker — רק דרך שרת (לא file://).
+   בזכותו עדכונים מגיעים לאפליקציה שבמסך הבית בלי למחוק ולהתקין מחדש. */
+if('serviceWorker' in navigator && location.protocol.indexOf('http') === 0){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      // גרסה חדשה שהתגלתה ברקע — מפעילים אותה מיד בטעינה הבאה
+      reg.addEventListener('updatefound', () => {
+        const sw = reg.installing;
+        if(sw) sw.addEventListener('statechange', () => {
+          if(sw.state === 'installed' && navigator.serviceWorker.controller) sw.postMessage('skipWaiting');
+        });
+      });
+    }).catch(() => {});
+  });
+}
+
+window.addEventListener('beforeunload', () => { try{ speechSynthesis.cancel(); }catch(e){} });
+window.addEventListener('pagehide', () => { try{ speechSynthesis.cancel(); }catch(e){} });
+</script>
+</body>
+</html>

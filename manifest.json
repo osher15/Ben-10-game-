@@ -1,0 +1,27 @@
+{
+  "name": "בן 10 — הרפתקת האותיות",
+  "short_name": "בן 10",
+  "description": "משחק ללימוד אותיות וצלילים פותחים בעברית, ואנגלית ראשונה עם מיס לונה.",
+  "lang": "he",
+  "dir": "rtl",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0e1a",
+  "theme_color": "#0a0e1a",
+  "icons": [
+    { "src": "icons/favicon-128.png",       "sizes": "128x128", "type": "image/png" },
+    { "src": "icons/icon-192.png",          "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png",          "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "אנגלית עם מיס לונה",
+      "short_name": "מיס לונה",
+      "url": "./english.html",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

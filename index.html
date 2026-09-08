@@ -4,6 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>בן 10 - הרפתקת האותיות 🛸</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a0e1a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="בן 10">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="128x128" href="icons/favicon-128.png">
 <style>
   /* פונטים מהרשת - שיפור בלבד. בלי אינטרנט המשחק נופל לפונט עברי מקומי תקין */
   @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800;900&family=Rubik:wght@500;700;900&display=swap');
@@ -33,6 +42,9 @@
 
   #app {
     position:fixed; inset:0;
+    /* בטלפון סרגל הכתובת של הדפדפן מכסה את תחתית המסך. dvh מודד את הגובה
+       האמיתי שנשאר, ודפדפנים ישנים פשוט מתעלמים מהשורה הזו. */
+    height:100dvh;
     display:flex; align-items:center; justify-content:center;
     background:
       radial-gradient(ellipse at 50% 0%, rgba(143,255,0,0.12), transparent 55%),
@@ -131,7 +143,15 @@
   .menu-btns { width:100%; max-width:340px; display:flex; flex-direction:column; gap:12px; }
 
   /* ===== MODE SELECT ===== */
-  #menuScreen { justify-content:center; gap:14px; }
+  /* התפריט ארוך מהמסך בטלפונים — חייב לגלול, אחרת הכרטיסים העליונים נחתכים ולא ניתן להגיע אליהם. */
+  #menuScreen { justify-content:flex-start; gap:14px;
+                overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
+  /* מרכוז שלא חוסם גלילה: כשיש מקום פנוי השוליים האוטומטיים מרכזים את הרשימה,
+     וכשאין — הם מתאפסים והרשימה נגללת מהתחלה ועד הסוף. */
+  #menuScreen > :first-child { margin-top:auto; }
+  #menuScreen > :last-child { margin-bottom:auto; }
+  #menuScreen::-webkit-scrollbar { width:6px; }
+  #menuScreen::-webkit-scrollbar-thumb { background:rgba(143,255,0,.3); border-radius:6px; }
   .menu-head { text-align:center; margin-bottom:4px; }
   .menu-head h2 { font-family:'Rubik','Heebo','Arial Hebrew','Noto Sans Hebrew','Segoe UI',Arial,sans-serif; font-weight:900; color:#fff; font-size:1.7rem; text-shadow:0 0 14px rgba(143,255,0,.5); }
   .menu-head p { color:#9fb0d0; font-size:.95rem; margin-top:4px; }
@@ -149,6 +169,9 @@
   .mode-card.m2 { border-color:rgba(0,212,255,.4); } .mode-card.m2 .ic { background:linear-gradient(135deg,#3ee0ff,#0086c9); }
   .mode-card.m3 { border-color:rgba(255,149,0,.4); } .mode-card.m3 .ic { background:linear-gradient(135deg,#ffb24a,#e07000); }
   .mode-card.m4 { border-color:rgba(255,59,59,.4); } .mode-card.m4 .ic { background:linear-gradient(135deg,#ff6b6b,#cc1f1f); }
+  .mode-card.m9 { border-color:rgba(185,128,255,.5); box-shadow:0 0 22px rgba(185,128,255,.14); }
+  .mode-card.m9 .ic { background:linear-gradient(135deg,#c894ff,#6b34c9); }
+  .mode-card.m9 .txt h3 .en-tag { font-size:.72rem; color:#c894ff; letter-spacing:1px; margin-right:6px; }
 
   /* ===== GAME HUD ===== */
   .hud { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
@@ -250,9 +273,15 @@
   @keyframes fall { to{ transform:translateY(110vh) rotate(720deg); opacity:0; } }
 
   /* settings modal */
-  .modal-bg { position:fixed; inset:0; z-index:80; background:rgba(4,6,13,.85); display:none; align-items:center; justify-content:center; padding:20px; }
+  /* החלונות גבוהים מהמסך בטלפון, ולכן חייבים לגלול.
+     align-items:center יחד עם גלילה חותך את הקצה העליון, ולכן המרכוז נעשה ב-margin:auto
+     על החלון עצמו — זו הדרך היחידה שמרכזת וגם מאפשרת להגיע לשני הקצוות. */
+  .modal-bg { position:fixed; inset:0; z-index:80; background:rgba(4,6,13,.85); display:none; align-items:flex-start; justify-content:center; padding:20px;
+              overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
   .modal-bg.show { display:flex; }
-  .modal { background:var(--omni-black2); border:3px solid rgba(143,255,0,.3); border-radius:24px; padding:24px; width:100%; max-width:360px; }
+  .modal-bg::-webkit-scrollbar { width:6px; }
+  .modal-bg::-webkit-scrollbar-thumb { background:rgba(143,255,0,.3); border-radius:6px; }
+  .modal { background:var(--omni-black2); border:3px solid rgba(143,255,0,.3); border-radius:24px; padding:24px; width:100%; max-width:360px; margin:auto; }
   .modal h3 { font-family:'Rubik','Heebo','Arial Hebrew','Noto Sans Hebrew','Segoe UI',Arial,sans-serif; color:#fff; font-size:1.4rem; text-align:center; margin-bottom:16px; }
   .setting-row { display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid rgba(255,255,255,.08); }
   .setting-row span { color:#eaf2ff; font-weight:700; }
@@ -716,6 +745,11 @@
     <div class="mode-card m1" onclick="OmniUI.open()">
       <div class="ic">🛸</div>
       <div class="txt"><h3>האומניטריקס</h3><p>{בחר|בחרי} חייזר, {ופתח|ופתחי} חייזרים חדשים בלימוד אותיות!</p></div>
+    </div>
+    <div class="mode-card m9" onclick="Game.openEnglish()">
+      <div class="ic">🌙</div>
+      <div class="txt"><h3>אנגלית עם מיס לונה<span class="en-tag" dir="ltr">ENGLISH</span></h3>
+      <p>הרפתקה קצרה באנגלית — הכל בשמיעה ובתמונות, בלי לקרוא!</p></div>
     </div>
     <div class="mode-card m3" onclick="Game.startMode('smash')">
       <div class="ic">📦</div>
@@ -1766,6 +1800,7 @@ const Game = {
   },
   startSound(){ SFX.init(); SFX.transform(); },
   goTitle(){ this.stopTimer(); Voice.stop(); SFX.click(); this.show('titleScreen'); },
+  openEnglish(){ this.stopTimer(); Voice.stop(); SFX.click(); location.href = 'english.html'; },
   goMenu(){
     this.focusLetter = null;
     Villain.clear();
@@ -3944,6 +3979,23 @@ window.addEventListener('load', ()=>{
 
 // עצירת הדיבור כשעוברים לטאב אחר — אחרת ההקראה "נתקעת" ברקע
 document.addEventListener('visibilitychange', ()=>{ if(document.hidden) Voice.stop(); });
+
+/* רישום ה-Service Worker — רק דרך שרת (לא file://).
+   בזכותו עדכונים מגיעים לאפליקציה שבמסך הבית בלי למחוק ולהתקין מחדש. */
+if('serviceWorker' in navigator && location.protocol.indexOf('http') === 0){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      // גרסה חדשה שהתגלתה ברקע — מפעילים אותה מיד בטעינה הבאה
+      reg.addEventListener('updatefound', () => {
+        const sw = reg.installing;
+        if(sw) sw.addEventListener('statechange', () => {
+          if(sw.state === 'installed' && navigator.serviceWorker.controller) sw.postMessage('skipWaiting');
+        });
+      });
+    }).catch(() => {});
+  });
+}
+
 window.addEventListener('beforeunload', ()=>{ try{ speechSynthesis.cancel(); }catch(e){} });
 
 </script>
